@@ -1,0 +1,2305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PlayCre8te Creator Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Tailwind Enabledment -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+<!-- Uppy CSS + JS -->
+<link href="https://releases.transloadit.com/uppy/v3.26.0/uppy.min.css" rel="stylesheet">
+<script src="https://releases.transloadit.com/uppy/v3.26.0/uppy.min.js"></script>
+
+<!-- Video + JS -->
+<link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+<script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+
+<!-- Token and Auth Sections (Begining)-->
+
+<!-- 🔁 Capture tokens, clean URL, and set up auth helpers -->
+<script>
+  (function () {
+    const params = new URLSearchParams(window.location.search);
+
+    const idToken = params.get("id_token");
+    const accessToken = params.get("access_token");
+    const tokenType = params.get("token_type") || "Bearer";
+
+    if (idToken) localStorage.setItem("id_token", idToken);
+    if (accessToken) localStorage.setItem("access_token", accessToken);
+    if (tokenType) localStorage.setItem("token_type", tokenType);
+
+    if (idToken || accessToken) {
+      const cleanUrl = new URL(window.location.href);
+      ["id_token", "access_token", "token_type", "expires_in", "state"].forEach(k =>
+        cleanUrl.searchParams.delete(k)
+      );
+      window.history.replaceState({}, document.title, cleanUrl.toString());
+    }
+  })();
+
+  // ✅ Use this for Authorization: Bearer <token>
+  function getAuthToken() {
+    return localStorage.getItem("access_token") || localStorage.getItem("id_token") || "";
+  }
+
+  // ✅ Optional: safely read Cognito user sub from id_token (JWT) if present
+  function getUserSub() {
+    const idToken = localStorage.getItem("id_token");
+    if (!idToken) return null;
+    try {
+      const payload = JSON.parse(atob(idToken.split('.')[1]));
+      return payload.sub || null;
+    } catch {
+      return null;
+    }
+  }
+
+  // --- PATCH helper (place it here) ---
+  async function patchAsset(assetId, body) {
+  const token = getAuthToken();
+  if (!token) throw new Error('No auth token');
+
+  const res = await fetch(`${MEDIALIBRARY_API}/media/${encodeURIComponent(assetId)}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error('PATCH failed:', res.status, text);
+    throw new Error(`PATCH ${res.status}`);
+  }
+
+  try { 
+    return await res.json(); 
+  } catch { 
+    return {}; 
+  }
+}
+
+//-- Token and Auth Sections (Ending)
+
+//-- Page Proection (Beginning) 
+
+  // 🔒 Redirect to sign-in if no token found
+  (function () {
+    const hasToken = !!getAuthToken();
+    if (!hasToken) {
+      window.location.href = "/index.html";
+    }
+  })();
+</script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top left, #0f172a, #1e293b);
+      z-index: -1;
+    }
+    
+    /* Page Protection (Ending) */
+
+    /* ===============================
+   Uppy — Dark Theme CSS Styling Beginning
+   =============================== */
+
+/* Base dark theme + tokens */
+.uppy-theme-dark {
+  /* Neutrals */
+  --bg:        #0b1220;
+  --panel:     #0f172a;
+  --muted:     #151c2f;
+  --muted-2:   #1f2937;
+  --line:      #334155;
+  /* Use light text everywhere for contrast */
+  --text:      #f9fafb;
+  --text-soft: #f3f4f6;
+  --text-dim:  #e5e7eb;
+
+  /* Brand */
+  --brand:     #38bdf8; /* light blue */
+  --brand-600: #0ea5e9;
+  --accent:    #22c55e; /* success / primary */
+  --accent-700:#16a34a;
+
+  /* Radii / shadows / motion */
+  --radius-lg: 1rem;
+  --radius-md: .75rem;
+  --radius-sm: .5rem;
+  --shadow-lg: 0 20px 45px rgba(0,0,0,.45);
+  --shadow-md: 0 10px 30px rgba(0,0,0,.35);
+  --transition: 180ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* Prefer dark UI */
+@media (prefers-color-scheme: dark) { :root { color-scheme: dark; } }
+
+/* Shell */
+.uppy-theme-dark .uppy-Dashboard-inner {
+  background: var(--panel);
+  color: var(--text);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--line);
+}
+
+/* Top bar + status bar (no logo, no extra padding) */
+.uppy-theme-dark .uppy-DashboardContent-bar,
+.uppy-theme-dark .uppy-StatusBar {
+  background: var(--muted);
+  color: var(--text);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Tabs / provider buttons */
+.uppy-theme-dark .uppy-DashboardTab-btn {
+  background: var(--muted-2);
+  color: var(--text);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: transform var(--transition), background var(--transition), border-color var(--transition);
+}
+.uppy-theme-dark .uppy-DashboardTab-btn:hover {
+  background: var(--muted);
+  border-color: var(--line);
+  transform: translateY(-1px);
+}
+.uppy-theme-dark .uppy-DashboardTab-btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Drop area */
+.uppy-theme-dark .uppy-Dashboard-AddFiles {
+  background: var(--bg);
+  border: 2px dashed var(--line);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition), background var(--transition);
+  color: var(--text);
+}
+.uppy-theme-dark .uppy-Dashboard-AddFiles:hover {
+  border-color: var(--brand);
+  background: linear-gradient(180deg, var(--bg), var(--panel));
+}
+
+/* “Drop files here or” text — make brand blue */
+.uppy-theme-dark .uppy-Dashboard-AddFiles-title {
+  color: var(--brand);
+  font-weight: 500;
+}
+
+/* “Browse files” link/button — make brand blue + smaller text */
+.uppy-theme-dark .uppy-Dashboard-browse {
+  background-color: var(--brand);
+  color: #081320; /* dark text on light blue */
+  font-size: 0.85rem;
+  line-height: 1.1;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.5rem;
+  border: none;
+  transition: background-color var(--transition), transform var(--transition);
+}
+.uppy-theme-dark .uppy-Dashboard-browse:hover {
+  background-color: var(--brand-600);
+  transform: translateY(-1px);
+}
+.uppy-theme-dark .uppy-Dashboard-browse:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* File items */
+.uppy-theme-dark .uppy-DashboardItem-preview {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.uppy-theme-dark .uppy-DashboardItem-name { color: var(--text); }
+.uppy-theme-dark .uppy-DashboardItem-statusSize { color: var(--text-soft); }
+
+/* Inputs */
+.uppy-theme-dark .uppy-Dashboard-input,
+.uppy-theme-dark .uppy-ProviderBrowser-input {
+  background: var(--muted-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: .375rem;
+}
+.uppy-theme-dark .uppy-Dashboard-input::placeholder,
+.uppy-theme-dark .uppy-ProviderBrowser-input::placeholder { color: var(--text-soft); }
+
+/* Provider browser */
+.uppy-theme-dark .uppy-ProviderBrowser {
+  background: var(--panel);
+  color: var(--text);
+  border-top: 1px solid var(--line);
+}
+
+/* Primary actions */
+.uppy-theme-dark .uppy-StatusBar-actionBtn--upload,
+.uppy-theme-dark .uppy-DashboardAddFiles-btn {
+  background: var(--accent);
+  color: #081320;
+  border-radius: .5rem;
+  border: 1px solid transparent;
+  transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+}
+.uppy-theme-dark .uppy-StatusBar-actionBtn--upload:hover,
+.uppy-theme-dark .uppy-DashboardAddFiles-btn:hover {
+  background: var(--accent-700);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(34,197,94,.25);
+}
+.uppy-theme-dark .uppy-StatusBar-actionBtn--upload:focus-visible,
+.uppy-theme-dark .uppy-DashboardAddFiles-btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Secondary buttons */
+.uppy-theme-dark .uppy-StatusBar-actionBtn--cancel,
+.uppy-theme-dark .uppy-c-btn {
+  background: var(--muted-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: .5rem;
+}
+.uppy-theme-dark .uppy-StatusBar-actionBtn--cancel:hover,
+.uppy-theme-dark .uppy-c-btn:hover { background: var(--muted); }
+
+/* Progress + states */
+.uppy-theme-dark .uppy-StatusBar-progress {
+  background: var(--accent);
+  border-radius: .375rem;
+}
+.uppy-theme-dark .uppy-StatusBar.is-waiting,
+.uppy-theme-dark .uppy-StatusBar.is-processing,
+.uppy-theme-dark .uppy-StatusBar.is-complete {
+  background: var(--muted);
+  color: var(--text-soft);
+  border-top: 1px solid var(--line);
+}
+.uppy-theme-dark .uppy-StatusBar.is-complete .uppy-StatusBar-statusPrimary { color: var(--accent); }
+
+/* Informer / toasts */
+.uppy-theme-dark .uppy-Informer {
+  background: var(--muted-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-md);
+}
+
+/* Icon tint */
+.uppy-theme-dark .uppy-c-icon { color: var(--text-soft); }
+
+/* Focus rings */
+.uppy-theme-dark .uppy-Dashboard .uppy-u-reset:focus-visible,
+.uppy-theme-dark .uppy-Dashboard [tabindex]:focus-visible,
+.uppy-theme-dark .uppy-ProviderBrowser [tabindex]:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: .375rem;
+}
+
+/* Mobile polish */
+@media (max-width: 640px) {
+  .uppy-theme-dark .uppy-Dashboard-inner {
+    border-radius: .75rem;
+    box-shadow: 0 12px 28px rgba(0,0,0,.35);
+  }
+}
+
+/* Make the modal's "Done/Close" button readable and on-brand */
+.uppy-Dashboard-close {
+  background-color: var(--brand, #38bdf8) !important;
+  color: #0f172a !important;
+  font-weight: 600;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  border: none;
+}
+.uppy-Dashboard-close:hover {
+  background-color: var(--brand-600, #0ea5e9) !important;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .uppy-theme-dark * { transition: none !important; animation: none !important; }
+}
+
+    /* ===============================
+   Uppy — Dark Theme CSS Styling Ending
+   =============================== */
+
+  </style>
+
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen flex flex-col uppy-theme-dark playcre8te-brand">
+
+<!-- ✅ Unified Sticky Header (Mobile + Desktop) -->
+<header class="sticky top-0 z-50 bg-gray-900 px-4 py-3 border-b border-gray-700 flex justify-between items-center md:px-6">
+  <!-- Left section: Mobile Hamburger + Logo -->
+  <div class="flex items-center space-x-4">
+    <!-- Hamburger for mobile -->
+    <button onclick="toggleMobileMenu()" class="md:hidden text-white text-2xl focus:outline-none">
+      ☰
+    </button>
+    <!-- Logo -->
+    <div class="flex items-center h-10">
+      <img src="./playcrea8telogo.png" alt="PlayCre8te Logo" class="h-9 w-auto md:h-11" />
+    </div>
+  </div>
+
+  <!-- Right section: Avatar + Sign Out -->
+  <div class="flex items-center space-x-4">
+    <button onclick="showSection('settings')" class="focus:outline-none">
+      <img id="avatarHDThumb" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-blue-500" />
+    </button>
+    <button onclick="logout()" class="text-sm text-white bg-red-600 px-3 py-1 rounded hover:bg-red-700">
+      Sign Out
+    </button>
+  </div>
+</header>
+
+
+
+<!-- ✅ Mobile Menu (only shown when hamburger is toggled) -->
+<div id="mobileMenu" class="md:hidden hidden bg-gray-800 px-4 py-4 space-y-3 border-b border-gray-700">
+  <a href="#" onclick="showSection('dashboard'); toggleMobileMenu()" class="block text-white hover:text-blue-400">📊 Dashboard</a>
+  <a href="#" onclick="showSection('media'); toggleMobileMenu()" class="block text-white hover:text-blue-400">🎥 Media Library</a>
+  <a href="#" onclick="showSection('brands'); toggleMobileMenu()" class="block text-white hover:text-blue-400">🏷️ My Brands</a>
+  <a href="#" onclick="showSection('products'); toggleMobileMenu()" class="block text-white hover:text-blue-400">🛍️ Products</a>
+  <a href="#" onclick="showSection('subscribers'); toggleMobileMenu()" class="block text-white hover:text-blue-400">👥 Subscribers</a>
+  <a href="#" onclick="showSection('analytics'); toggleMobileMenu()" class="block text-white hover:text-blue-400">📈 Analytics</a>
+  <a href="#" onclick="showSection('earnings'); toggleMobileMenu()" class="block text-white hover:text-blue-400">💰 Earnings</a>
+  <a href="#" onclick="showSection('addons'); toggleMobileMenu()" class="block text-white hover:text-blue-400">🧩 Add-Ons & Upgrades</a>
+  <a href="#" onclick="showSection('billing'); toggleMobileMenu()" class="block text-white hover:text-blue-400">💳 Account Billing</a>
+  <a href="#" onclick="showSection('settings'); toggleMobileMenu()" class="block text-white hover:text-blue-400">⚙️ Account Settings</a>
+  <a href="#" onclick="showSection('help'); toggleMobileMenu()" class="block text-white hover:text-blue-400">❓ Need Help?</a>
+</div>
+
+
+<div class="flex min-h-screen">
+<!-- ✅ Sidebar: Fixed on desktop, hidden on smaller screens (mobile uses hamburger) -->
+<aside class="fixed top-0 left-0 h-full w-64 bg-gray-800 p-6 z-40 hidden md:block">
+  <!-- <img src="./playcrea8telogo.png" alt="Logo" class="h-10 w-auto mb-8" /> -->
+  <nav class="space-y-4 mt-16">
+    <a href="#" onclick="showSection('dashboard')" class="block text-white font-medium hover:text-blue-400">📊 Dashboard</a>
+    <a href="#" onclick="showSection('media')" class="block text-white hover:text-blue-400">🎥 Media Library</a>
+    <a href="#" onclick="showSection('brands')" class="block text-white hover:text-blue-400">🏷️ My Brands</a>
+    <a href="#" onclick="showSection('products')" class="block text-white hover:text-blue-400">🛍️ Products</a>
+    <a href="#" onclick="showSection('subscribers')" class="block text-white hover:text-blue-400">👥 Subscribers</a>
+    <a href="#" onclick="showSection('analytics')" class="block text-white hover:text-blue-400">📈 Analytics</a>
+    <a href="#" onclick="showSection('earnings')" class="block text-white hover:text-blue-400">💰 Earnings</a>
+    <a href="#" onclick="showSection('addons')" class="block text-white hover:text-blue-400">🧩 Add-Ons & Upgrades</a>
+    <a href="#" onclick="showSection('billing')" class="block text-white hover:text-blue-400">💳 Account Billing</a>
+    <a href="#" onclick="showSection('settings')" class="block text-white hover:text-blue-400">⚙️ Account Settings</a>
+    <a href="#" onclick="showSection('help')" class="block text-white hover:text-blue-400">❓ Need Help?</a>
+  </nav>
+</aside>
+
+
+<!-- Main Content starts here -->
+
+<main class="flex-1 pt-4 md:pl-64 px-4 sm:px-6 md:px-8">
+
+<!-- 🔔 Dynamic Notification Bar Only -->
+<div class="flex justify-center mt-6 mb-6">
+  <div class="bg-gray-800 text-white text-sm md:text-base px-4 py-2 rounded-lg shadow-md animate-fade-in-out transition-opacity duration-500" id="notificationBar">
+    <div id="notificationBar" class="text-sm text-blue-400 font-medium animate-fade-in-out transition-opacity duration-500 ease-in-out"></div>
+  </div>
+</div>
+
+
+
+<!-- Dashboard Section -->
+<div id="dashboardSection" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="bg-gray-800 px-6 py-3 rounded-xl max-w-5xl mx-auto text-center mb-6">
+    <h2 class="text-2xl font-semibold mb-2">📊 Dashboard</h2>
+    <p class="text-sm text-gray-400">View your brand stats, uploads, and fan activity at a glance.</p>
+  </div>
+   
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-gray-800 p-4 rounded">
+      <p class="text-sm text-gray-400">Total Earnings</p>
+      <h3 class="text-xl font-semibold">$2,940</h3>
+    </div>
+    <div class="bg-gray-800 p-4 rounded">
+      <p class="text-sm text-gray-400">Subscribers</p>
+      <h3 class="text-xl font-semibold">320</h3>
+    </div>
+    <div class="bg-gray-800 p-4 rounded">
+      <p class="text-sm text-gray-400">Products Sold</p>
+      <h3 class="text-xl font-semibold">146</h3>
+    </div>
+    <div class="bg-gray-800 p-4 rounded">
+      <p class="text-sm text-gray-400">Media Views</p>
+      <h3 class="text-xl font-semibold">14.2K</h3>
+    </div>
+  </div>
+
+  <!-- Recent Uploads + Earnings by Brand -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="bg-gray-800 p-6 rounded">
+      <h4 class="text-lg font-semibold mb-4">Recent Uploads</h4>
+      <ul class="space-y-3 text-sm">
+        <li class="flex justify-between"><span>🎬 Morning Flow Ep1</span><span class="text-gray-400">2 days ago</span></li>
+        <li class="flex justify-between"><span>📘 Wellness Guide PDF</span><span class="text-gray-400">4 days ago</span></li>
+        <li class="flex justify-between"><span>🎧 Sound Meditation Vol.2</span><span class="text-gray-400">1 week ago</span></li>
+      </ul>
+    </div>
+
+    <div class="bg-gray-800 p-6 rounded">
+      <h4 class="text-lg font-semibold mb-4">Earnings by Brand</h4>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="text-left text-gray-400">
+            <tr>
+              <th class="pb-2">Brand</th>
+              <th class="pb-2">30d Earnings</th>
+              <th class="pb-2">Top Product</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t border-gray-700">
+              <td class="py-2 break-words">MyFitnessShow.tv</td>
+              <td>$840</td>
+              <td>Meal Plan Series</td>
+            </tr>
+            <tr class="border-t border-gray-700">
+              <td class="py-2 break-words">DanceWithMiko.com</td>
+              <td>$560</td>
+              <td>Live Class Replays</td>
+            </tr>
+            <tr class="border-t border-gray-700">
+              <td class="py-2 break-words">StudioSeven.tv</td>
+              <td>$320</td>
+              <td>7-Day Challenge</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Performing Media -->
+  <div class="bg-gray-800 p-6 rounded mb-10">
+    <h4 class="text-lg font-semibold mb-4">Top Performing Media</h4>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+      <div class="bg-gray-700 p-4 rounded">
+        <p class="text-white font-medium mb-1">🎬 Morning Flow Ep1</p>
+        <p class="text-gray-400">Views: 1,250 | Likes: 90</p>
+      </div>
+      <div class="bg-gray-700 p-4 rounded">
+        <p class="text-white font-medium mb-1">🎧 Motivation Mix</p>
+        <p class="text-gray-400">Views: 880 | Likes: 52</p>
+      </div>
+      <div class="bg-gray-700 p-4 rounded">
+        <p class="text-white font-medium mb-1">📘 Recipe eBook</p>
+        <p class="text-gray-400">Views: 620 | Likes: 42</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Media Library Section Begining-->
+<div id="mediaSection" class="hidden">
+  <!-- Wrapper adds horizontal padding -->
+  <div class="px-4 sm:px-6 lg:px-8">
+    <div class="bg-gray-800 pt-6 pr-6 pl-6 pb-3 rounded-xl max-w-5xl mx-auto text-center mb-6">
+      <h2 class="text-2xl font-semibold mb-4">🎥 Media Library</h2>
+      <p class="text-gray-300 mb-4">Upload and manage all your media assets.</p>
+
+      <!-- Upload Media Button Container -->
+      <div class="inline-block bg-gray-700 p-4 rounded mb-6">
+        <button id="openUploader" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold">
+          📤 Upload Media
+        </button>
+      </div>
+
+      <!-- Upload Progress -->
+      <div id="uploadProgressContainer" class="space-y-2 mb-4"></div>
+    </div>
+
+        <!-- 🔍 Media Controls: Filter | Sort | Search -->
+        <div class="w-full px-4 mb-6 mt-4">
+          <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-center gap-4 sm:gap-6 max-w-4xl mx-auto">
+            
+            <!-- Filter -->
+            <div class="flex items-center space-x-2 whitespace-nowrap">
+              <label for="mediaType" class="text-white text-sm">Filter by</label>
+              <select id="mediaType" class="bg-gray-800 text-white text-sm p-2 rounded border border-gray-600 w-36">
+                <option value="all">All</option>
+                <option value="audio">Audio</option>
+                <option value="image">Image</option>
+                <option value="video">Video</option>
+              </select>
+            </div>
+
+            <!-- Separator -->
+            <!--  <span class="hidden sm:inline text-gray-400">|</span> -->
+
+            <!-- Sort -->
+            <div class="flex items-center space-x-2 whitespace-nowrap">
+              <label for="mediaSort" class="text-white text-sm">Sort by</label>
+              <select id="mediaSort" class="bg-gray-800 text-white text-sm p-2 rounded border border-gray-600 w-52">
+                <option value="modified-desc">Modified (Newest → Oldest)</option>
+                <option value="modified-asc">Modified (Oldest → Newest)</option>
+                <option value="created-desc">Created (Newest → Oldest)</option>
+                <option value="created-asc">Created (Oldest → Newest)</option>
+                <option value="title-asc">A–Z (Title)</option>
+                <option value="title-desc">Z–A (Title)</option>
+                <option value="size-desc">Size (Largest to Smallest)</option>
+                <option value="size-asc">Size (Smallest to Largest)</option>
+              </select>
+            </div>
+
+            <!-- Separator -->
+            <!--  <span class="hidden sm:inline text-gray-400">|</span> -->
+
+            <!-- Search -->
+            <div class="flex items-center space-x-2 w-full sm:w-auto">
+              <label for="mediaSearch" class="text-white text-sm whitespace-nowrap">Search</label>
+              <input
+                id="mediaSearch"
+                type="text"
+                placeholder="Title or format (e.g. mp4)"
+                class="bg-gray-800 text-white text-sm p-2 rounded border border-gray-600 w-full sm:w-64"
+              />
+            </div>
+          </div>
+        </div>
+
+
+
+      <!-- Media Grid Container (aligned inside the same horizontal padding wrapper) -->
+      <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 px-4 pb-20"></div>
+    </div>
+</div>
+
+<!-- My Brands Section -->
+<div id="brandsSection" class="hidden">
+  <div class="bg-gray-800 pt-6 pr-6 pl-6 pb-4 rounded-xl max-w-3xl mx-auto text-center mb-6">
+    <h2 class="text-2xl font-semibold mb-3">🏷️ My Brands</h2>
+    <p class="text-gray-300 mb-5">Create and customize your brands. Set themes, descriptions, domains, and manage brand-specific content.</p>
+
+    <!-- Create Brand Button (hides when modal opens) -->
+    <button id="btnCreateBrand"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold">
+      ➕ Create Brand
+    </button>
+  </div>
+
+  <!-- Brand List -->
+  <div class="px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+    <div id="brandList" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+    <div id="brandEmptyState" class="hidden text-center text-gray-400 py-10">
+      You don’t have any brands yet — click <span class="text-blue-400">Create Brand</span> to get started.
+    </div>
+  </div>
+</div>
+
+
+<!-- Products Section -->
+<div id="productsSection" class="hidden">
+  <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+    <h2 class="text-2xl font-semibold mb-4">🛍️ Products</h2>
+    <p class="text-gray-300">Build and manage your digital products, including videos, courses, subscriptions, and exclusive bundles for your audience.</p>
+  </div>
+</div>
+
+<!-- Subscribers Section -->
+<div id="subscribersSection" class="hidden">
+  <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+    <h2 class="text-2xl font-semibold mb-4">👥 Subscribers</h2>
+    <p class="text-gray-300">View and manage your current subscribers. Track growth, engagement, and subscriber profiles.</p>
+  </div>
+</div>
+
+<!-- 📦 Modal that pops up when clicking info icon -->
+<div id="mediaInfoModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+  <div class="bg-gray-900 text-white p-6 rounded-xl shadow-lg max-w-md w-full relative">
+    <button id="closeModalBtn" class="absolute top-2 right-3 text-gray-300 hover:text-white text-xl">&times;</button>
+    <div id="modalContent" class="space-y-2 text-sm text-gray-200"></div>
+  </div>
+</div>
+
+<!-- Analytics Section -->
+<div id="analyticsSection" class="hidden">
+  <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+    <h2 class="text-2xl font-semibold mb-4">📈 Analytics</h2>
+    <p class="text-gray-300">Monitor your content performance. Track views, clicks, conversions, and revenue trends across your media and brands.</p>
+  </div>
+</div>
+
+<!-- Earnings Section -->
+<div id="earningsSection" class="hidden">
+  <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+    <h2 class="text-2xl font-semibold mb-4">💰 Earnings</h2>
+    <p class="text-gray-300">See your real-time earnings, breakdowns by brand and product, and transaction history. Withdraw funds or update payment settings.</p>
+  </div>
+</div>
+
+<!-- Add-Ons Section -->
+  <div id="addonsSection" class="hidden">
+    <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+      <h2 class="text-2xl font-semibold mb-4">🧩 Add-Ons & Upgrades</h2>
+      <p class="text-gray-300">Browse available upgrades like more storage, branded domains, and live streaming features.</p>
+    </div>
+  </div>
+
+<!-- Billing Section -->
+  <div id="billingSection" class="hidden">
+    <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+      <h2 class="text-2xl font-semibold mb-4">💳 Account Billing</h2>
+      <p class="text-gray-300">Manage your subscription, view invoices, and update payment methods.</p>
+    </div>
+  </div>
+
+  <!-- Settings Section -->
+<div id="settingsSection" class="hidden">
+  <div class="max-w-2xl w-full bg-gray-900/90 backdrop-blur-sm p-8 rounded-2xl shadow-xl text-center mx-auto">
+    <img src="./playcrea8telogo.png" alt="PlayCre8te Logo" class="mx-auto mb-6 w-40" />
+
+    <!-- ✅ Only show HD avatar -->
+    <img id="avatarHD" src="" alt="Avatar HD" class="mx-auto mb-6 w-[128px] h-[128px] rounded-full object-cover border-4 border-blue-500 shadow-lg hidden" />
+
+    <div id="userInfo" class="mt-2 space-y-2 text-sm text-gray-300 mb-6">
+      <div><strong>Username:</strong> <span id="displayName">Loading...</span></div>
+      <div><strong>Email:</strong> <span id="email">Loading...</span></div>
+      <div><strong>Mode:</strong> <span id="mode">Loading...</span></div>
+    </div>
+
+    <div id="creatorBio" class="w-full max-w-xl mx-auto mb-6 text-left">
+      <label for="creatorBioInput" class="block mb-1 font-semibold text-blue-300">Creator Bio</label>
+      <textarea id="creatorBioInput" rows="4" class="w-full p-3 rounded text-sm text-gray-900" placeholder="Add your bio here..."></textarea>
+      <button onclick="saveCreatorBio()" class="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold">Save Bio</button>
+      <p id="bioSavedMessage" class="text-green-400 text-sm mt-2 hidden">✅ Bio saved!</p>
+    </div>
+
+    <div class="bg-white text-gray-800 p-6 rounded-xl shadow-md w-full max-w-md mx-auto mb-6">
+      <h2 class="text-center text-lg font-semibold mb-4">Upload Your Avatar Here</h2>
+      <button onclick="uploadAvatar()" class="w-full mb-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded">Upload Avatar</button>
+      <input id="avatarInput" type="file" accept="image/*" class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700" />
+    </div>
+
+    <button onclick="logout()" class="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white font-semibold">Sign Out</button>
+  </div>
+</div>
+
+<!-- Help Section -->
+<div id="helpSection" class="hidden">
+  <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+    <h2 class="text-2xl font-semibold mb-4">❓ Need Help?</h2>
+    <p class="text-gray-300">We're here to assist you with anything related to your creator account. Explore FAQs, reach out to our support team, or request a walkthrough of platform features.</p>
+    <div class="mt-6 space-y-4 text-left text-sm text-blue-300">
+      <p>📘 <a href="#">Visit our Help Center</a></p>
+      <p>📨 <a href="mailto:support@playcre8te.com">Email Support: support@playcre8te.com</a></p>
+      <p>🧑‍💻 <a href="#">Book a Live Support Session</a></p>
+    </div>
+  </div>
+</div>
+
+ </main>
+
+  <!-- Media Library Section Modal Code Begining -->
+  <!-- 🎬 Media Player Modal with integrated thumbnail grid -->
+  <div id="mediaPlayerModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-4 overflow-auto">
+    <div class="bg-gray-900 rounded-xl shadow-xl w-full max-w-2xl relative max-h-[90vh] overflow-y-auto">
+      
+      <!-- Close button -->
+      <button id="closePlayerBtn" class="absolute top-4 right-4 text-white text-3xl font-bold hover:text-red-500 z-10">&times;</button>
+
+      <div class="p-4 space-y-4">
+        <!-- 📺 Video Player (hidden for audio) -->
+        <div id="videoContainer" class="w-full aspect-video hidden">
+          <video id="modalVideoPlayer" class="video-js vjs-default-skin w-full h-full object-contain rounded-xl" controls preload="auto"></video>
+        </div>
+
+        <!-- 🎵 Audio Player -->
+        <div id="audioContainer" class="hidden w-full px-4">
+          <audio
+            id="modalAudioPlayer"
+            class="w-full rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            controls></audio>
+        </div>
+
+        <!-- 🖼️ Thumbnails (video only) -->
+        <div id="videoThumbnailsContainer" class="hidden space-y-2">
+          <div class="text-white font-semibold">Thumbnails</div>
+          <div id="videoThumbnailsGrid" class="grid grid-cols-3 gap-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 🖼️ Image Preview Modal -->
+  <div id="imagePreviewModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-4 overflow-auto">
+    <div class="bg-gray-900 rounded-xl shadow-xl w-full max-w-5xl max-h-[90vh] relative overflow-hidden">
+      <!-- Close button -->
+      <button id="closeImageModalBtn" class="absolute top-4 right-4 text-white text-3xl font-bold hover:text-red-500 z-10">&times;</button>
+
+      <div class="p-6 space-y-4">
+        <div class="text-white text-lg font-semibold">Image Previews</div>
+
+        <!-- ✅ Images will be injected here -->
+        <div id="imagePreviewGrid" class="flex gap-4 justify-start items-center overflow-x-auto max-h-[70vh]"></div>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- ✏️ Edit Asset Modal -->
+    <div id="editAssetModal" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-4">
+      <div class="bg-gray-900 text-white w-full max-w-lg rounded-2xl shadow-xl relative 
+            landscape:my-6 landscape:max-w-md">
+        <!-- Close -->
+        <button id="closeEditModalBtn" class="absolute top-3 right-4 text-2xl leading-none text-gray-300 hover:text-white">&times;</button>
+
+        <div class="p-6 space-y-6">
+          <h3 class="text-xl font-semibold">Edit Asset</h3>
+
+          <!-- Rename -->
+          <div class="space-y-2">
+            <label for="editFileName" class="text-sm text-gray-300">File name</label>
+            <input id="editFileName" type="text" class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none" placeholder="Enter new file name" />
+            <p class="text-xs text-gray-400">Rename your media.</p>
+          </div>
+
+          <!-- Tags -->
+          <div class="space-y-3">
+            <div class="flex items-center justify-between">
+              <label class="text-sm text-gray-300">Tags (max 25)</label>
+              <span id="tagCount" class="text-xs text-gray-400">0 / 25</span>
+            </div>
+
+            <div id="tagChips" class="flex flex-wrap gap-2"></div>
+
+            <div class="flex gap-2">
+              <input id="tagInput" type="text" class="flex-1 p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none" placeholder="Add a tag and press Enter" />
+              <button id="addTagBtn" class="px-3 py-2 bg-blue-600 hover:bg-blue-700 rounded text-sm">Add</button>
+            </div>
+            <p class="text-xs text-gray-400">Add tags to your media.</p>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center justify-between pt-4 border-t border-gray-800">
+            <button id="deleteAssetBtn" class="px-3 py-2 bg-transparent text-red-400 hover:text-red-300 text-sm">
+              Delete asset
+            </button>
+
+            <div class="flex gap-2">
+              <button id="cancelEditBtn" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded">Cancel</button>
+              <button id="saveEditBtn" class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  <!-- Media Library Section Modal Code Ending -->
+
+  <!-- Create Brand Modal -->
+<div id="modalCreateBrand" class="fixed inset-0 bg-black bg-opacity-70 z-50 hidden flex items-center justify-center p-4">
+  <div class="bg-gray-900 text-white w-full max-w-2xl rounded-2xl shadow-xl relative">
+    <!-- Close -->
+    <button data-close-brand-modal
+            class="absolute top-3 right-4 text-2xl leading-none text-gray-300 hover:text-white">&times;</button>
+
+    <form id="formCreateBrand" class="p-6 space-y-6">
+      <h3 class="text-xl font-semibold">Create Brand</h3>
+
+      <!-- Basics -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Display Name *</label>
+          <input name="displayName" required
+                 class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none"
+                 placeholder="e.g., My Fitness Brand" />
+        </div>
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Slug *</label>
+          <input name="slug" required
+                 class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none"
+                 placeholder="my-fitness-brand" />
+          <p class="text-xs text-gray-400 mt-1">Lowercase; letters, numbers, and dashes only.</p>
+        </div>
+      </div>
+
+      <!-- Optional fields (start lean; can expand later) -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm text-gray-300 mb-1">Description</label>
+          <textarea name="description" rows="3"
+                    class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none"
+                    placeholder="Short brand bio..."></textarea>
+        </div>
+        <div class="grid grid-cols-1 gap-4">
+          <div class="flex items-center gap-2">
+            <input id="createBrandIsPublic" type="checkbox" name="isPublic"
+                   class="h-4 w-4 rounded border-gray-600 bg-gray-800" />
+            <label for="createBrandIsPublic" class="text-sm text-gray-300">Public</label>
+          </div>
+          <div>
+            <label class="block text-sm text-gray-300 mb-1">Visibility Level</label>
+            <select name="visibilityLevel"
+                    class="w-full p-2 rounded bg-gray-800 border border-gray-700 focus:outline-none">
+              <option value="public">public</option>
+              <option value="followers">followers</option>
+              <option value="paid">paid</option>
+              <option value="private">private</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-800">
+        <button type="button" data-close-brand-modal
+                class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded">Cancel</button>
+        <button id="btnSubmitCreateBrand" type="submit"
+                class="px-4 py-2 bg-green-600 hover:bg-green-700 rounded">Create</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- Create Brand Modal End -->
+
+
+  <!-- JS Logic ------------------------------------------------>
+
+<!-- ✅ JS for Mobile Toggle -->
+<script>
+  function toggleMobileMenu() {
+    const menu = document.getElementById('mobileMenu');
+    menu.classList.toggle('hidden');
+  }
+</script>
+
+<!-- Creator PAGE APIs  Start -->
+  <script>
+  const SIGNIN_API = 'https://hozj26o2e4.execute-api.us-east-2.amazonaws.com/prod';
+  const MEDIA_API = 'https://l7kt5ga8jk.execute-api.us-east-2.amazonaws.com/prod';
+  const MEDIALIBRARY_API = 'https://rs30cqq30m.execute-api.us-east-2.amazonaws.com/prod';
+  const BRAND_API = 'https://bf8fc5jjb2.execute-api.us-east-2.amazonaws.com/prod/';
+
+  // Small helper so we don’t care about trailing slashes
+function apiJoin(base, path) {
+  if (!base) throw new Error('BRAND_API is not defined');
+  return base.endsWith('/') ? base + path.replace(/^\//, '') : base + '/' + path.replace(/^\//, '');
+}
+
+
+  // On page load, show dashboard and load top avatar
+function showSection(sectionId) {
+  document.querySelectorAll('[id$="Section"]').forEach(div => div.classList.add('hidden'));
+
+  const section = document.getElementById(sectionId + 'Section');
+  if (section) section.classList.remove('hidden');
+
+  const heading = document.getElementById('mainHeading');
+  if (heading) {
+    const titles = {
+      dashboard: 'Dashboard',
+      media: 'Media Library',
+      brands: 'My Brands',
+      products: 'Products',
+      subscribers: 'Subscribers',
+      analytics: 'Analytics',
+      earnings: 'Earnings',
+      addons: 'Add-Ons & Upgrades',
+      billing: 'Account Billing',
+      settings: 'Account Settings',
+      help: 'Need Help?'
+    };
+    heading.textContent = titles[sectionId] || 'Dashboard';
+  }
+
+  if (sectionId === 'settings') {
+    fetchUserInfo();
+  }
+}
+
+  function logout() {
+    localStorage.removeItem('id_token');
+    document.cookie = 'id_token=; Max-Age=0; path=/; domain=.playcre8te.com';
+    window.location.href = '/index.html';
+  }
+
+       
+      function getSize(label) {
+        return { xs: 32, sm: 64, md: 128, lg: 256 }[label] || 64;
+      }
+
+  // ✅ Load only the top avatar thumbnail immediately
+  async function loadTopAvatarOnly() {
+    const idToken = localStorage.getItem('id_token');
+    if (!idToken) return;
+
+    try {
+      const res = await fetch(`${SIGNIN_API}/userinfo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_token: idToken })
+      });
+    const data = await res.json();
+
+      if (res.ok && data.creatorAvatar?.hd) {
+        const avatarHDThumb = document.getElementById('avatarHDThumb');
+        if (avatarHDThumb) avatarHDThumb.src = data.creatorAvatar.hd;
+      }
+    } catch (err) {
+      console.error('Top avatar fetch failed:', err);
+    }
+  }
+
+  // ✅ Run this immediately on page load
+  loadTopAvatarOnly();
+  function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  menu.classList.toggle('hidden');
+}
+
+// Notification Bar Code Beginning
+  const notifications = [
+    "🚀 Welcome to your Creator Dashboard!",
+    "📈 You gained 12 new fans this week.",
+    "💰 Your revenue is up 18% this month.",
+    "🎨 Customize your brand theme for a fresh look!",
+    "📤 Don’t forget to upload your latest content."
+  ];
+
+  let index = 0;
+  const bar = document.getElementById('notificationBar');
+
+  function rotateNotification() {
+    bar.style.opacity = 0;
+    setTimeout(() => {
+      bar.textContent = notifications[index];
+      bar.style.opacity = 1;
+      index = (index + 1) % notifications.length;
+    }, 400);
+  }
+
+  rotateNotification();
+  setInterval(rotateNotification, 7000);
+
+  const lazyObserver = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const img = entry.target;
+      const src = img.dataset.src;
+      if (src) {
+        img.src = src;
+        img.removeAttribute('data-src');
+      }
+      observer.unobserve(img); // stop watching once loaded
+    }
+  });
+}, {
+  rootMargin: "200px",
+  threshold: 0.01
+});
+// Notification Bar Code Ending
+
+// Media Library Section JS Code (Beginging)
+async function listUploadedMedia(sortOrder = 'modified-desc', filterType = 'all', searchTerm = '') {
+  const token = getAuthToken();
+  if (!token) return;
+
+  try {
+    const res = await fetch(`${MEDIALIBRARY_API}/media`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    if (!res.ok) {
+      console.error("API response error:", await res.text());
+      return;
+    }
+
+    const items = await res.json();
+
+    // ✅ Combined filter + search logic (and hide deleted)
+    const filteredItems = items.filter(item => {
+      const type = (item.fileType || item.mediaType || '').toLowerCase();
+      const title = (item.title || item.fileName || '').toLowerCase();
+      const status = (item.status || '').toLowerCase();
+      const search = searchTerm.toLowerCase();
+
+      // 🚫 do not show soft-deleted assets
+      if (status === 'deleted') return false;
+
+      const typeMatches = filterType === 'all' || type === filterType;
+      const searchMatches = search === '' || title.includes(search);
+
+      return typeMatches && searchMatches;
+    });
+
+    // ✅ Sorting logic
+    filteredItems.sort((a, b) => {
+      const getTitle = (item) => (item.title || item.fileName || '').toLowerCase();
+      const getCreated = (item) => new Date(item.createdAt || 0).getTime();
+      const getModified = (item) => new Date(item.updatedAt || 0).getTime();
+      const getSize = (item) => {
+        const s = item.size ?? item.fileSize ?? item.bytes ?? 0;
+        const n = Number(s);
+        return Number.isFinite(n) ? n : 0;
+      };
+
+      switch (sortOrder) {
+        case 'modified-asc': return getModified(a) - getModified(b);
+        case 'modified-desc': return getModified(b) - getModified(a);
+        case 'created-asc': return getCreated(a) - getCreated(b);
+        case 'created-desc': return getCreated(b) - getCreated(a);
+        case 'title-asc': return getTitle(a).localeCompare(getTitle(b));
+        case 'title-desc': return getTitle(b).localeCompare(getTitle(a));
+        case 'size-desc': return getSize(b) - getSize(a);
+        case 'size-asc': return getSize(a) - getSize(b);
+        default: return getModified(b) - getModified(a); // fallback
+      }
+    });
+
+    const grid = document.getElementById('mediaGrid');
+    grid.className = 'grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-4'; // ✅ Responsive columns
+    grid.innerHTML = '';
+
+    filteredItems.forEach(item => {
+      const title = item.title || item.fileName || 'Untitled';
+      const type = item.fileType || item.mediaType || 'unknown';
+      const status = item.status || 'unknown';
+
+      let thumbnailUrl = '';
+      if (type === 'video') {
+        const thumbs = item.mediaUrl?.video?.primary?.thumbnails;
+        thumbnailUrl = thumbs?.rendition3 || thumbs?.rendition2 || thumbs?.rendition1 || '';
+      } else if (type === 'image') {
+        const artwork = item.mediaUrl?.artwork?.primary;
+        thumbnailUrl = artwork?.standard || artwork?.landscape || artwork?.portrait || artwork?.standard_art || artwork?.landscape_art || artwork?.portrait_art || '';
+      } else if (type === 'audio') {
+        thumbnailUrl = '/icons/audio.PNG';
+      }
+
+      const card = document.createElement('div');
+      card.className = 'flex flex-col bg-gray-800 p-3 rounded-xl shadow text-white overflow-hidden relative min-w-0'; // ✅ Flex + min-w-0
+
+      const thumbnailContainer = document.createElement('div');
+      thumbnailContainer.className = 'relative thumbnail-container';
+
+      if (thumbnailUrl) {
+        const spinner = document.createElement('div');
+        spinner.className = 'absolute inset-0 flex items-center justify-center z-10 bg-gray-700 bg-opacity-60';
+        spinner.innerHTML = `<div class="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>`;
+
+        const img = document.createElement('img');
+        img.alt = title;
+        img.className = 'rounded w-full h-40 object-cover mb-2 cursor-pointer relative z-0';
+        img.setAttribute('data-src', thumbnailUrl);
+        img.loading = 'lazy';
+        lazyObserver.observe(img);
+
+        img.addEventListener('load', () => {
+          spinner.remove();
+        });
+
+        img.addEventListener('error', () => {
+          spinner.innerHTML = `<span class="text-xs text-red-500">❌ Failed to load</span>`;
+        });
+
+        img.addEventListener('click', () => {
+          if (type === 'image') showImagePreviewModal(item);
+          else if (type === 'video' || type === 'audio') showMediaPlayer(item);
+        });
+
+        thumbnailContainer.appendChild(spinner);
+        thumbnailContainer.appendChild(img);
+        img.src = thumbnailUrl;
+      } else {
+        thumbnailContainer.innerHTML = `<div class="h-40 mb-2 flex items-center justify-center text-gray-500 italic bg-gray-700 rounded">Processing Content...</div>`;
+      }
+
+      card.innerHTML = `
+        <div class="mb-2 text-blue-300 font-semibold text-center text-sm truncate">${title}</div> <!-- ✅ text-sm for no wrap -->
+      `;
+      card.appendChild(thumbnailContainer);
+
+      const metaRow = document.createElement('div');
+      metaRow.className = 'flex flex-wrap justify-between items-center gap-2 mt-2'; // ✅ flex-wrap + gap
+      metaRow.innerHTML = `
+        <div class="text-xs text-gray-400 whitespace-nowrap">Type: ${type}</div> <!-- ✅ no wrapping -->
+        <div class="flex flex-row-reverse items-center gap-2 action-icons"></div>
+      `;
+      card.appendChild(metaRow);
+
+      const statusRow = document.createElement('div');
+      statusRow.className = `text-xs ${status === 'processed' ? 'text-green-400' : 'text-yellow-400'} whitespace-nowrap`; // ✅ no wrap
+      statusRow.innerText = `Status: ${status}`;
+      card.appendChild(statusRow);
+
+      const actions = metaRow.querySelector('.action-icons');
+      const iconData = [
+        { src: "/icons/info.png", alt: "Info", click: () => showMediaInfo(item) },
+        { src: "/icons/edit.png", alt: "Edit", click: () => openEditAssetModal(item) }, // ← wire it
+        // { src: "/icons/folder.png", alt: "Folder" },
+        { src: "/icons/brand.png", alt: "Brand" }
+      ];
+
+      if (type === 'image') {
+        iconData.push({ src: "/icons/image.PNG", alt: "Preview", click: () => showImagePreviewModal(item) });
+      }
+      if (type === 'video' || type === 'audio') {
+        iconData.push({ src: "/icons/play.PNG", alt: "Play", click: () => showMediaPlayer(item) });
+      }
+
+      iconData.forEach(({ src, alt, click }) => {
+        const icon = document.createElement('img');
+        icon.src = src;
+        icon.alt = alt;
+        icon.className = "w-5 h-5 sm:w-4 sm:h-4 cursor-pointer opacity-80 hover:opacity-100"; // ✅ responsive icon size
+        if (typeof click === 'function') {
+          icon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            click();
+          });
+        }
+        actions.appendChild(icon);
+      });
+
+      grid.appendChild(card);
+    });
+
+  } catch (err) {
+    console.error("Failed to list media:", err);
+    alert("❌ Error listing media files.");
+  }
+}
+
+// ✅ Preserve original showSection behavior
+const originalShowSection = showSection;
+
+// ✅ Extend to support sorting + filtering for Media Library
+showSection = function (sectionId) {
+  originalShowSection(sectionId);
+
+  if (sectionId === 'media') {
+    const sortValue = document.getElementById('mediaSort')?.value || 'modified-desc';
+    const filterValue = document.getElementById('mediaType')?.value || 'all';
+    listUploadedMedia(sortValue, filterValue);
+  }
+};
+
+// ✅ Modal display logic
+function showMediaInfo(item) {
+  const modal = document.getElementById('mediaInfoModal');
+  const modalContent = document.getElementById('modalContent');
+
+  const formatBytes = (bytes) => {
+    if (!bytes || isNaN(bytes)) return 'N/A';
+    const kb = bytes / 1024;
+    const mb = kb / 1024;
+    const gb = mb / 1024;
+    if (gb >= 1) return `${gb.toFixed(2)} GB`;
+    if (mb >= 1) return `${mb.toFixed(2)} MB`;
+    if (kb >= 1) return `${kb.toFixed(2)} KB`;
+    return `${bytes} B`;
+  };
+
+  const formatDuration = (seconds) => {
+    if (!seconds || isNaN(seconds)) return '';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}m ${secs}s`;
+  };
+
+  const formatDateTime = (timestamp) => {
+    if (!timestamp) return 'N/A';
+    const date = new Date(timestamp);
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+      hour12: true,
+    });
+  };
+
+  const fields = [
+    { label: 'File Name', value: item.fileName },
+    { label: 'Created', value: formatDateTime(item.createdAt) },
+    { label: 'Modified', value: formatDateTime(item.updatedAt) },
+    { label: 'Size', value: formatBytes(item.size) },
+    {
+      label: 'Duration',
+      value:
+        item.fileType === 'video' || item.fileType === 'audio'
+          ? formatDuration(item.duration)
+          : null,
+    },
+  ];
+
+  modalContent.innerHTML = fields
+    .filter(f => f.value)
+    .map(f => `<div><strong>${f.label}:</strong> ${f.value}</div>`)
+    .join('');
+
+  modal.classList.remove('hidden');
+}
+
+function showMediaPlayer(item) {
+  const modal = document.getElementById('mediaPlayerModal');
+  const videoContainer = document.getElementById('videoContainer');
+  const audioContainer = document.getElementById('audioContainer');
+  const video = document.getElementById('modalVideoPlayer');
+  const audio = document.getElementById('modalAudioPlayer');
+  const thumbnailsContainer = document.getElementById('videoThumbnailsContainer');
+  const thumbnailsGrid = document.getElementById('videoThumbnailsGrid');
+
+  // Reset all containers
+  videoContainer.classList.add('hidden');
+  audioContainer.classList.add('hidden');
+  thumbnailsContainer.classList.add('hidden');
+  thumbnailsGrid.innerHTML = '';
+
+  // Pause & reset both players
+  if (video.player) {
+    video.player.pause();
+    video.player.currentTime(0);
+  }
+  audio.pause();
+  audio.currentTime = 0;
+
+  const type = item.fileType || item.mediaType;
+  let url = '';
+
+  if (type === 'video') {
+    url = item.mediaUrl?.video?.primary?.hls || item.mediaUrl?.video?.primary?.mp4;
+  } else if (type === 'audio') {
+    url = item.mediaUrl?.audio?.primary?.hls || item.mediaUrl?.audio?.primary?.mp3;
+  }
+
+  if (!url) {
+    alert('⚠️ No playable media found.');
+    return;
+  }
+
+ 
+  if (type === 'video') {
+  // Initially hide the container
+  videoContainer.classList.add('invisible');
+
+  // ✅ Always get an existing player (no re-init)
+  video.player = videojs.getPlayer('modalVideoPlayer');
+
+  if (!video.player) {
+    console.error('❌ Video.js player not initialized yet!');
+    alert('Video player is not ready.');
+    return;
+  }
+
+  // ✅ Force dimensions early (for layout)
+  video.player.dimensions(640, 360);
+
+  // ✅ Set HLS or MP4 source
+  video.player.src({
+    src: url,
+    type: url.endsWith('.m3u8') ? 'application/x-mpegURL' : 'video/mp4'
+  });
+
+  // ✅ Suppress visual error flash
+  video.player.on('error', function () {
+    const err = video.player.error();
+    if (err?.code === 4) {
+      console.warn('⚠️ Ignoring transient MEDIA_ERR_SRC_NOT_SUPPORTED');
+    }
+  });
+
+  // ✅ Show player only when ready
+  video.player.ready(() => {
+    video.player.play().catch(err => {
+      console.warn('Video.js play error:', err);
+    });
+
+    // Show video player cleanly after small delay
+    setTimeout(() => {
+      videoContainer.classList.remove('invisible');
+      videoContainer.classList.remove('hidden'); // Just in case
+    }, 200); // Adjust if needed
+  });
+
+    // ✅ Populate and show only valid thumbnails
+    const thumbs = item.mediaUrl?.video?.primary?.thumbnails || {};
+    const thumbUrls = Object.values(thumbs);
+
+    if (thumbUrls.length > 0) {
+      let validFound = false;
+
+      thumbUrls.forEach((thumbUrl) => {
+        const img = new Image();
+        img.src = thumbUrl;
+        img.alt = 'Video Thumbnail';
+        img.className = 'w-full rounded shadow';
+
+        img.onload = () => {
+          thumbnailsGrid.appendChild(img);
+          if (!validFound) {
+            thumbnailsContainer.classList.remove('hidden');
+            validFound = true;
+          }
+        };
+
+        img.onerror = () => {
+          console.warn('❌ Skipping invalid thumbnail:', thumbUrl);
+        };
+      });
+    }
+  } else if (type === 'audio') {
+    audioContainer.classList.remove('hidden');
+    audio.setAttribute('type', url.endsWith('.m3u8') ? 'application/x-mpegURL' : 'audio/mpeg');
+    audio.src = url;
+    audio.play();
+  }
+
+  modal.classList.remove('hidden');
+}
+
+
+// ✅ Close buttons
+document.getElementById('closeModalBtn').addEventListener('click', () => {
+  document.getElementById('mediaInfoModal').classList.add('hidden');
+});
+
+document.getElementById('closePlayerBtn').addEventListener('click', () => {
+  const modal = document.getElementById('mediaPlayerModal');
+  const videoContainer = document.getElementById('videoContainer');
+  const audioContainer = document.getElementById('audioContainer');
+  const video = document.getElementById('modalVideoPlayer');
+  const audio = document.getElementById('modalAudioPlayer');
+
+  // Stop playback
+  if (video.player) {
+    video.player.pause();
+    video.player.currentTime(0);
+    video.player.src({ src: '', type: '' }); // clear source
+  }
+
+  audio.pause();
+  audio.currentTime = 0;
+  audio.src = '';
+
+  // Hide containers
+  videoContainer.classList.add('hidden');
+  audioContainer.classList.add('hidden');
+
+  // Hide modal
+  modal.classList.add('hidden');
+});
+
+
+function showImagePreviewModal(item) {
+  const modal = document.getElementById('imagePreviewModal');
+  const grid = document.getElementById('imagePreviewGrid');
+  grid.innerHTML = '';
+
+  const artwork = item.mediaUrl?.artwork?.primary || {};
+  const keys = ['landscape', 'portrait', 'standard', 'landscape_art', 'portrait_art', 'standard_art'];
+  const urls = keys.map(k => artwork[k]).filter(url => url && url.startsWith('http'));
+
+  if (urls.length === 0) {
+    grid.innerHTML = `<div class="text-white text-center w-full">No images available.</div>`;
+  } else {
+    urls.forEach(url => {
+      const img = document.createElement('img');
+      img.src = url;
+      img.alt = 'Artwork Preview';
+      img.className = 'max-h-[70vh] max-w-full object-contain border rounded shadow';
+      grid.appendChild(img);
+    });
+  }
+
+  modal.classList.remove('hidden');
+}
+
+// ✅ Close image modal
+document.getElementById('closeImageModalBtn').addEventListener('click', () => {
+  document.getElementById('imagePreviewModal').classList.add('hidden');
+});
+
+
+// ✅ Edit Asset Modal Logic
+/***** Edit Asset Modal: Rename + Tags + Delete *****/
+let _editAsset = { assetId: null, originalItem: null, tags: [] };
+
+function getAssetId(item) {
+  // Prefer the field your API uses as the path param
+  return item.assetId || item.id || item._id || item.key || item.s3Key;
+}
+
+// Accepts array or map -> returns array of strings
+function parseTagsToArray(tagsField) {
+  if (!tagsField) return [];
+  if (Array.isArray(tagsField)) return tagsField.filter(Boolean).map(String);
+  if (typeof tagsField === 'object') return Object.keys(tagsField);
+  return [];
+}
+
+// Convert array -> DynamoDB Map format { tag: true }
+function arrayToTagMap(arr) {
+  const out = {};
+  arr.forEach(t => { out[t] = true; });
+  return out;
+}
+
+// Normalize + dedupe; keep simple, readable tokens
+function sanitizeTag(tag) {
+  return tag.trim().replace(/\s+/g, '-').replace(/[^a-zA-Z0-9-_]/g, '').toLowerCase();
+}
+
+function renderTagChips() {
+  const wrap = document.getElementById('tagChips');
+  const count = document.getElementById('tagCount');
+  wrap.innerHTML = '';
+
+  _editAsset.tags.forEach(tag => {
+    const chip = document.createElement('span');
+    chip.className = 'inline-flex items-center gap-1 px-2 py-1 text-xs bg-gray-800 border border-gray-700 rounded';
+    chip.innerHTML = `
+      <span>#${tag}</span>
+      <button class="text-gray-400 hover:text-white" aria-label="Remove tag">&times;</button>
+    `;
+    chip.querySelector('button').onclick = () => {
+      _editAsset.tags = _editAsset.tags.filter(t => t !== tag);
+      renderTagChips();
+    };
+    wrap.appendChild(chip);
+  });
+
+  count.textContent = `${_editAsset.tags.length} / 25`;
+}
+
+function addTagFromInput() {
+  const input = document.getElementById('tagInput');
+  const raw = input.value || '';
+  let tag = sanitizeTag(raw);
+  if (!tag) return;
+  if (_editAsset.tags.length >= 25) {
+    alert('You may add up to 25 tags.');
+    return;
+  }
+  // prevent duplicates (case-insensitive handled by sanitizeTag)
+  if (!_editAsset.tags.includes(tag)) {
+    _editAsset.tags.push(tag);
+    renderTagChips();
+  }
+  input.value = '';
+}
+
+function refreshMediaGrid() {
+  const sortValue   = document.getElementById('mediaSort')?.value || 'modified-desc';
+  const filterValue = document.getElementById('mediaType')?.value || 'all';
+  const searchTerm  = document.getElementById('mediaSearch')?.value || '';
+  listUploadedMedia(sortValue, filterValue, searchTerm);
+}
+
+async function patchAsset(assetId, body) {
+  const idToken = localStorage.getItem('id_token');
+  if (!idToken) throw new Error('No auth token');
+
+  const res = await fetch(`${MEDIALIBRARY_API}/media/${encodeURIComponent(assetId)}`, {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${idToken}`
+    },
+    body: JSON.stringify(body)
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.error('PATCH failed:', res.status, text);
+    throw new Error(`PATCH ${res.status}`);
+  }
+  try { return await res.json(); } catch { return {}; }
+}
+
+function openEditAssetModal(item) {
+  const assetId = getAssetId(item);
+  if (!assetId) {
+    alert('⚠️ Could not identify assetId for this item.');
+    return;
+  }
+
+  _editAsset.assetId = assetId;
+  _editAsset.originalItem = item;
+  _editAsset.tags = parseTagsToArray(item.tags);
+
+  // Prefill file name
+  const input = document.getElementById('editFileName');
+  input.value = item.fileName || item.title || '';
+
+  // Setup tags UI
+  renderTagChips();
+  const addBtn = document.getElementById('addTagBtn');
+  const tagInput = document.getElementById('tagInput');
+  addBtn.onclick = addTagFromInput;
+  tagInput.onkeydown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      addTagFromInput();
+    }
+  };
+
+  // Buttons
+  document.getElementById('closeEditModalBtn').onclick = closeEditAssetModal;
+  document.getElementById('cancelEditBtn').onclick = closeEditAssetModal;
+  document.getElementById('saveEditBtn').onclick = handleSaveEdits;
+  document.getElementById('deleteAssetBtn').onclick = handleDeleteAsset;
+
+  // Show
+  document.getElementById('editAssetModal').classList.remove('hidden');
+}
+
+function closeEditAssetModal() {
+  document.getElementById('editAssetModal').classList.add('hidden');
+  _editAsset = { assetId: null, originalItem: null, tags: [] };
+}
+
+async function handleSaveEdits() {
+  const newName = (document.getElementById('editFileName').value || '').trim();
+  const originalName = _editAsset.originalItem?.fileName || '';
+  const origTags = parseTagsToArray(_editAsset.originalItem?.tags || []);
+  const newTags = _editAsset.tags;
+
+  // Figure out what changed
+  const nameChanged = newName && newName !== originalName;
+  const tagsChanged = JSON.stringify([...origTags].sort()) !== JSON.stringify([...newTags].sort());
+
+  if (!nameChanged && !tagsChanged) {
+    closeEditAssetModal();
+    return;
+  }
+
+  const payload = { updatedAt: new Date().toISOString() };
+  if (nameChanged) payload.fileName = newName;
+  if (tagsChanged) payload.tags = newTags; // Array of strings ✅
+
+
+  try {
+    await patchAsset(_editAsset.assetId, payload);
+    closeEditAssetModal();
+    refreshMediaGrid();
+    alert('✅ Asset updated.');
+  } catch (err) {
+    console.error('Save edits failed:', err);
+    alert('❌ Failed to update asset.');
+  }
+}
+
+async function handleDeleteAsset() {
+  if (!confirm('Are you sure you want to delete this asset? This asset will be permanently deleted!')) return;
+
+  const payload = {
+    status: 'deleted',
+    updatedAt: new Date().toISOString()
+  };
+
+  try {
+    await patchAsset(_editAsset.assetId, payload);
+    closeEditAssetModal();
+    refreshMediaGrid();
+    alert('🗑️ Asset Permanently Deleted.');
+  } catch (err) {
+    console.error('Delete failed:', err);
+    alert('❌ Failed to delete asset.');
+  }
+}
+
+
+// ✅ Uppy Setup (fresh every time, performance tuned)
+const uppy = new Uppy.Uppy({
+  autoProceed: false,
+  debug: true,
+  restrictions: {
+    allowedFileTypes: ['image/*', 'video/*', 'audio/*', 'application/pdf', 'application/zip']
+  }
+});
+
+// Restriction alert (keeps your behavior)
+uppy.on('restriction-failed', (file, error) => {
+  alert(`❌ File not allowed: ${file?.name}\nReason: ${error?.message}`);
+});
+
+// 🧩 Upload sources
+uppy.use(Uppy.Url, {
+  companionUrl: 'https://companion.uppy.io', // replace with your Companion in prod
+  // allowedHosts: ['*'],
+});
+
+uppy.use(Uppy.GoogleDrive, {
+  companionUrl: 'https://companion.uppy.io', // replace with your Companion in prod
+  // allowedHosts: ['*'],
+});
+
+uppy.use(Uppy.Dropbox, {
+  companionUrl: 'https://companion.uppy.io', // replace with your Companion in prod
+  // allowedHosts: ['*'],
+});
+
+uppy.use(Uppy.Webcam, {
+  modes: ['picture', 'video-audio'],
+  mirror: true,
+  preferredFacingMode: 'environment',
+  showVideoSourceDropdown: true
+});
+
+// 🖥️ Dashboard (modal)
+uppy.use(Uppy.Dashboard, {
+  inline: false,
+  trigger: '#openUploader',
+  closeAfterFinish: true, // we also programmatically close on complete
+  showProgressDetails: true,
+  proudlyDisplayPoweredByUppy: false,
+  plugins: ['Url', 'Webcam']
+});
+
+
+// 🔄 Start clean on OPEN and CLOSE
+const hardClear = () => {
+  try {
+    uppy.cancelAll(); // stop any inflight
+    uppy.reset();     // reset state
+    uppy.clear();     // clear file list
+  } catch (_) {}
+};
+uppy.on('dashboard:modal-open', hardClear);
+uppy.on('dashboard:modal-closed', hardClear);
+
+// 🔎 Connection-aware base tuning
+function pickTuning(size) {
+  const conn = (navigator.connection && navigator.connection.effectiveType) || 'unknown';
+
+  // Fast defaults
+  let partSize = 32 * 1024 * 1024; // 32 MB
+  let limit    = 12;               // 12 parallel parts
+
+  // Slow networks → smaller parts & fewer in-flight requests
+  if (conn === '3g' || conn === '2g' || conn === 'slow-2g') {
+    partSize = 8 * 1024 * 1024;
+    limit    = 3;
+  } else if (conn === '4g') {
+    // keep fast defaults
+  }
+
+  // Also adapt by file size
+  if (size >= 2 * 1024 * 1024 * 1024) {       // ≥ 2 GB
+    partSize = Math.max(partSize, 64 * 1024 * 1024); // 64 MB
+    limit    = Math.min(limit, 12);
+  } else if (size < 100 * 1024 * 1024) {      // < 100 MB
+    partSize = Math.min(partSize, 8 * 1024 * 1024);  // 8 MB
+    limit    = Math.min(limit, 6);
+  }
+
+  return { partSize, limit };
+}
+
+// ✅ Multipart for ALL files — fast defaults (will be overridden per-file)
+uppy.use(Uppy.AwsS3Multipart, {
+  partSize: 32 * 1024 * 1024,                  // default 32MB chunks
+  limit: 12,                                   // default 12 parallel parts
+  retryDelays: [0, 2000, 5000, 15000, 30000],  // resilient retries
+
+  // 1) Start
+  createMultipartUpload: async (file) => {
+    console.time(`[${file.name}] total`);
+    const idToken = localStorage.getItem('id_token');
+    if (!idToken) throw new Error('Not authenticated');
+    const creatorSub = JSON.parse(atob(idToken.split('.')[1]))?.sub;
+    const fileType = file.meta?.fileType || detectFileType(file.name);
+
+    const res = await fetch(`${MEDIALIBRARY_API}/media/multipart/start`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
+      body: JSON.stringify({ filename: file.name, fileType, mimeType: file.type, creatorSub })
+    });
+    if (!res.ok) {
+      const t = await res.text();
+      console.error('start failed:', res.status, t);
+      throw new Error(`Start failed: ${res.status}`);
+    }
+    const json = await res.json();
+
+    // Save assetId so we can PATCH after success
+    if (json.assetId) {
+      uppy.setFileMeta(file.id, { ...file.meta, assetId: json.assetId });
+    }
+
+    // Uppy expects these keys
+    return { uploadId: json.uploadId || json.UploadId, key: json.s3Key || json.key };
+  },
+
+  // 2) Sign each part (ideally an s3-accelerate URL)
+signPart: async (file, { uploadId, partNumber, key }) => {
+  const idToken = localStorage.getItem('id_token');
+
+  // ✅ Client-side guard: never send bad inputs
+  const pn = Number(partNumber);
+  if (!uploadId || !key || !Number.isFinite(pn) || pn < 1) {
+    console.error('signPart invalid args:', { uploadId, partNumber, key });
+    throw new Error('signPart: invalid uploadId/partNumber/key');
+  }
+
+  const payload = { uploadId, partNumber: pn, s3Key: key };
+  let res;
+  try {
+    res = await fetch(`${MEDIALIBRARY_API}/media/multipart/sign`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
+      body: JSON.stringify(payload)
+    });
+  } catch (netErr) {
+    console.error('sign fetch failed (network):', netErr);
+    throw new Error('Sign failed: network error');
+  }
+
+  if (!res.ok) {
+    const t = await res.text().catch(() => '');
+    console.error('sign failed:', res.status, t);
+    // Surface server hint if present
+    throw new Error(`Sign failed: ${res.status}${t ? ` ${t}` : ''}`);
+  }
+
+  let json;
+  try {
+    json = await res.json();
+  } catch (parseErr) {
+    console.error('sign: bad JSON', parseErr);
+    throw new Error('Sign failed: invalid JSON');
+  }
+
+  const { signedUrl } = json || {};
+  if (!signedUrl) {
+    console.error('sign: response missing signedUrl', json);
+    throw new Error('Sign failed: missing signedUrl');
+  }
+
+  // ⚠️ Diagnostic: verify acceleration host
+  try {
+    const host = new URL(signedUrl).host;
+    if (!/s3-accelerate\.amazonaws\.com$/i.test(host)) {
+      console.warn('Signed URL is NOT using S3 Transfer Acceleration:', host);
+    }
+  } catch {}
+
+  return { url: signedUrl };
+},
+
+  // 3) Complete
+  completeMultipartUpload: async (file, { uploadId, key, parts }) => {
+    const idToken = localStorage.getItem('id_token');
+    const assetId = file.meta?.assetId;
+    const res = await fetch(`${MEDIALIBRARY_API}/media/multipart/complete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
+      body: JSON.stringify({
+        uploadId,
+        s3Key: key,
+        parts: parts.map(p => ({ PartNumber: p.PartNumber, ETag: p.ETag })),
+        assetId
+      })
+    });
+    if (!res.ok) {
+      const t = await res.text();
+      console.error('complete failed:', res.status, t);
+      throw new Error(`Complete failed: ${res.status}`);
+    }
+    return res.json().catch(() => ({}));
+  },
+
+  // (Optional) Abort
+  abortMultipartUpload: async (file, { uploadId, key }) => {
+    const idToken = localStorage.getItem('id_token');
+    await fetch(`${MEDIALIBRARY_API}/media/multipart/abort`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
+      body: JSON.stringify({ uploadId, s3Key: key })
+    });
+  }
+});
+
+// ⚡ Per-file tuning + adaptive throughput control
+uppy.on('file-added', (file) => {
+  const { partSize, limit } = pickTuning(file.size || 0);
+  const s3mp = uppy.getPlugin('AwsS3Multipart');
+  if (s3mp) s3mp.setOptions({ partSize, limit });
+
+  // Speedometer
+  file.__t0 = Date.now();
+  file.__lastTs = file.__t0;
+  file.__loadedPrev = 0;
+  file.__emaMbps = 0;      // exponential moving average Mbps
+  file.__adapted = false;  // mark if we already adapted up/down
+});
+
+uppy.on('upload-progress', (file, progress) => {
+  if (!progress || !progress.bytesUploaded) return;
+  const now = Date.now();
+  const dt  = (now - (file.__lastTs || file.__t0)) / 1000;
+  const dB  = progress.bytesUploaded - (file.__loadedPrev || 0);
+
+  if (dt > 0 && dB >= 0) {
+    const instMbps = (dB * 8) / (dt * 1024 * 1024);
+    file.__emaMbps = file.__emaMbps ? (0.7 * file.__emaMbps + 0.3 * instMbps) : instMbps;
+
+    // Log current estimates
+    const s3mp = uppy.getPlugin('AwsS3Multipart');
+    if (s3mp) {
+      const ps = (s3mp.opts.partSize / 1024 / 1024) | 0;
+      const lm = s3mp.opts.limit;
+      console.debug(`[${file.name}] ~${file.__emaMbps.toFixed(2)} Mbps (partSize=${ps}MB limit=${lm})`);
+    }
+
+    // After ~10s, adapt settings for remaining parts (one-time)
+    const elapsed = (now - file.__t0) / 1000;
+    if (!file.__adapted && elapsed > 10) {
+      const s3mp = uppy.getPlugin('AwsS3Multipart');
+      if (s3mp) {
+        if (file.__emaMbps < 2) {
+          // Slow link → smaller parts, fewer parallel requests
+          s3mp.setOptions({ partSize: 8 * 1024 * 1024, limit: 3 });
+          console.warn(`[${file.name}] Adapting DOWN: 8MB parts, limit=3 (EMA ~${file.__emaMbps.toFixed(2)} Mbps)`);
+          file.__adapted = true;
+        } else if (file.__emaMbps > 40) {
+          // Fast link → push harder (cap at safe values)
+          s3mp.setOptions({ partSize: Math.max(s3mp.opts.partSize, 64 * 1024 * 1024), limit: Math.min(12, s3mp.opts.limit) });
+          console.warn(`[${file.name}] Adapting UP: 64MB parts, limit=12 (EMA ~${file.__emaMbps.toFixed(2)} Mbps)`);
+          file.__adapted = true;
+        }
+      }
+    }
+  }
+
+  file.__lastTs = now;
+  file.__loadedPrev = progress.bytesUploaded;
+});
+
+// 🟢 After each file finishes: finalize (your logic)
+uppy.on('upload-success', async (file) => {
+  try {
+    const idToken = localStorage.getItem('id_token');
+    const assetId = file.meta?.assetId;
+    if (idToken && assetId) {
+      await markAsUploaded(assetId, idToken);
+    } else {
+      console.warn('Missing idToken or assetId; skipping finalize');
+    }
+  } catch (e) {
+    console.error('markAsUploaded failed:', e);
+    uppy.info('Uploaded, but finalize failed—please retry finalize.', 'error', 8000);
+  } finally {
+    console.timeEnd(`[${file.name}] total`);
+  }
+});
+
+// ✅ When ALL files complete: notify, refresh, auto-close, hard reset (your UX)
+uppy.on('complete', () => {
+  alert('✅ All uploads complete. Processing has begun.');
+  if (typeof listUploadedMedia === 'function') listUploadedMedia();
+
+  const dashboard = uppy.getPlugin('Dashboard');
+  setTimeout(() => {
+    try {
+      if (dashboard && typeof dashboard.closeModal === 'function') dashboard.closeModal();
+    } finally {
+      hardClear();
+    }
+  }, 0);
+});
+
+// ─────────────────────────────────────────────────────────────
+// Helpers (unchanged)
+// ─────────────────────────────────────────────────────────────
+function detectFileType(fileName) {
+  const ext = (fileName.split('.').pop() || '').toLowerCase();
+  if (["mp4", "mov"].includes(ext)) return "video";
+  if (["mp3", "wav", "m4a"].includes(ext)) return "audio";
+  if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) return "image";
+  if (ext === "pdf") return "pdf";
+  if (ext === "zip") return "zip";
+  return "other";
+}
+
+async function markAsUploaded(assetId, idToken) {
+  const body = JSON.stringify({ assetId, uploaded: true });
+  try {
+    const res = await fetch(`${MEDIALIBRARY_API}/media/upload/${assetId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${idToken}` },
+      body,
+    });
+    const text = await res.text();
+    if (!res.ok) throw new Error(`Failed to mark as uploaded: ${res.status}`);
+    return text;
+  } catch (err) {
+    console.error("❌ [markAsUploaded] Upload failed:", err);
+    throw err;
+  }
+}
+
+    document.addEventListener('DOMContentLoaded', () => {
+      videojs('modalVideoPlayer');
+
+      const sortDropdown = document.getElementById('mediaSort');
+      const filterDropdown = document.getElementById('mediaType');
+      const searchInput = document.getElementById('mediaSearch');
+
+      function debounce(func, delay) {
+      let timeout;
+      return (...args) => {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), delay);
+        };
+      }
+
+      const refreshMediaGrid = () => {
+        const sortValue = sortDropdown?.value || 'modified-desc';
+        const filterValue = filterDropdown?.value || 'all';
+        const searchTerm = searchInput?.value || '';
+        listUploadedMedia(sortValue, filterValue, searchTerm);
+      };
+
+      if (sortDropdown) sortDropdown.addEventListener('change', refreshMediaGrid);
+      if (filterDropdown) filterDropdown.addEventListener('change', refreshMediaGrid);
+      if (searchInput) searchInput.addEventListener('input', debounce(refreshMediaGrid, 250));
+    });
+
+// Media Library Code Ending
+
+// Account Settings Code Beginning
+  // ✅ Fetch full user info when opening settings
+  async function fetchUserInfo() {
+    const idToken = localStorage.getItem('id_token');
+    if (!idToken) return;
+
+    try {
+      const res = await fetch(`${SIGNIN_API}/userinfo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_token: idToken })
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        document.getElementById('displayName').textContent = data.displayName || 'N/A';
+        document.getElementById('email').textContent = data.email || 'N/A';
+        document.getElementById('mode').textContent = data.mode || 'N/A';
+        //document.getElementById('access').textContent = Array.isArray(data.access) ? data.access.join(', ') : data.access;
+
+        if (data.creatorAvatar?.hd) {
+        const hd = data.creatorAvatar.hd;
+        const avatarHD = document.getElementById('avatarHD');
+        if (avatarHD) {
+        avatarHD.src = hd;
+        avatarHD.classList.remove('hidden');
+        }
+    }
+
+        if (data.creatorbio) {
+          const bioInput = document.getElementById('creatorBioInput');
+          if (bioInput) bioInput.value = data.creatorbio;
+        }
+      } else {
+        console.error('UserInfo error:', data.error);
+      }
+    } catch (err) {
+      console.error('Fetch failed:', err);
+    }
+  }
+
+  async function saveCreatorBio() {
+    const bio = document.getElementById('creatorBioInput').value;
+    const idToken = localStorage.getItem('id_token');
+    if (!idToken) return alert("Not authenticated");
+
+    try {
+      const res = await fetch(`${SIGNIN_API}/update-bio`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_token: idToken, creatorbio: bio })
+      });
+      if (res.ok) {
+        document.getElementById('bioSavedMessage').classList.remove('hidden');
+        setTimeout(() => {
+          document.getElementById('bioSavedMessage').classList.add('hidden');
+        }, 3000);
+      } else {
+        alert("❌ Failed to save bio.");
+      }
+    } catch (err) {
+      console.error("Bio save failed:", err);
+      alert("❌ Something went wrong.");
+    }
+  }
+
+  async function uploadAvatar() {
+    const file = document.getElementById('avatarInput').files[0];
+    const idToken = localStorage.getItem('id_token');
+    if (!file || !idToken) return alert("Please select an image and be authenticated.");
+
+    try {
+      const presignRes = await fetch(`${MEDIA_API}/get-upload-url`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_token: idToken })
+      });
+      const { uploadUrl, key } = await presignRes.json();
+
+      await fetch(uploadUrl, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
+
+      await fetch(`${MEDIA_API}/process-avatar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_token: idToken, key })
+      });
+
+      alert("✅ Upload successful! Your avatar will refresh shortly.");
+      location.reload();
+    } catch (err) {
+      console.error("Upload failed:", err);
+      alert("❌ Something went wrong during upload.");
+    }
+  }
+// Account Settings Code Ending
+
+// ───────────── Brands: helpers & UI ─────────────
+function slugify(s = '') {
+  return String(s)
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')           // spaces → dashes
+    .replace(/[^a-z0-9-]/g, '-')    // non alnum → dash
+    .replace(/-+/g, '-')            // collapse dashes
+    .replace(/^-|-$/g, '');         // trim ends
+}
+
+function toggleBrandModal(open) {
+  var modal = document.getElementById('modalCreateBrand');
+  var openBtn = document.getElementById('btnCreateBrand');
+  if (!modal || !openBtn) return;
+
+  if (open) {
+    openBtn.classList.add('hidden');       // requirement: hide button when modal shown
+    modal.classList.remove('hidden');
+  } else {
+    modal.classList.add('hidden');
+    openBtn.classList.remove('hidden');
+    var f = document.getElementById('formCreateBrand');
+    if (f && typeof f.reset === 'function') f.reset();
+  }
+}
+
+async function loadBrands() {
+  var token = getAuthToken();
+  if (!token) return;
+
+  var sub = (typeof getUserSub === 'function') ? getUserSub() : null;
+  var url = sub ? apiJoin(BRAND_API, 'brand?owner=' + encodeURIComponent(sub))
+                : apiJoin(BRAND_API, 'brand');
+
+  try {
+    var res = await fetch(url, { headers: { 'Authorization': 'Bearer ' + token } });
+
+    if (!res.ok) {
+      // Don’t throw—render empty and log for diagnostics
+      var rawErr = '';
+      try { rawErr = await res.text(); } catch (_) {}
+      console.error('loadBrands: non-OK', res.status, rawErr);
+      renderBrandList([]);
+      return;
+    }
+
+    // Be tolerant of empty bodies or wrong content-type
+    var raw = '';
+    try { raw = await res.text(); } catch (_) {}
+    var items = [];
+    if (raw && raw.trim().length) {
+      try { items = JSON.parse(raw); }
+      catch (e) {
+        console.error('loadBrands: JSON parse error', e, raw);
+        items = [];
+      }
+    }
+    if (!Array.isArray(items)) items = [];
+    renderBrandList(items);
+  } catch (e) {
+    console.error('loadBrands error:', e);
+    renderBrandList([]);
+  }
+}
+
+function renderBrandList(items) {
+  var grid = document.getElementById('brandList');
+  var empty = document.getElementById('brandEmptyState');
+  if (!grid || !empty) return;
+
+  if (!Array.isArray(items) || items.length === 0) {
+    grid.innerHTML = '';
+    empty.classList.remove('hidden');
+    return;
+  }
+  empty.classList.add('hidden');
+
+  grid.innerHTML = items.map(function(b) {
+    var name = (b.displayName || b.slug || '').toString();
+    var slug = (b.slug || '').toString();
+    var status = (b.status || 'draft').toString();
+    var domain = (b.customDomain || b.domain || '').toString();
+
+    var safeName = (typeof escapeHtml === 'function') ? escapeHtml(name) : name;
+    var safeSlug = (typeof escapeHtml === 'function') ? escapeHtml(slug) : slug;
+    var safeStatus = (typeof escapeHtml === 'function') ? escapeHtml(status) : status;
+    var safeDomain = (typeof escapeHtml === 'function') ? escapeHtml(domain) : domain;
+
+    return (
+      '<div class="bg-gray-800 p-4 rounded-xl shadow flex flex-col gap-2">' +
+        '<div class="flex items-center justify-between">' +
+          '<div class="font-semibold text-blue-300 truncate">' + safeName + '</div>' +
+          '<span class="text-xs px-2 py-1 rounded bg-gray-700">' + safeStatus + '</span>' +
+        '</div>' +
+        '<div class="text-sm text-gray-400 break-words">' +
+          '<div><span class="text-gray-500">slug:</span> ' + safeSlug + '</div>' +
+          (domain ? '<div><span class="text-gray-500">domain:</span> ' + safeDomain + '</div>' : '') +
+        '</div>' +
+        '<!-- Future: quick actions (edit, open, delete) -->' +
+      '</div>'
+    );
+  }).join('');
+}
+
+// Wire UI events after DOM is ready
+document.addEventListener('DOMContentLoaded', function () {
+  // Open button
+  var btnOpen = document.getElementById('btnCreateBrand');
+  if (btnOpen) {
+    btnOpen.addEventListener('click', function () { toggleBrandModal(true); });
+  }
+
+  // Close actions
+  var closeEls = document.querySelectorAll('[data-close-brand-modal]');
+  if (closeEls && typeof closeEls.forEach === 'function') {
+    closeEls.forEach(function (el) {
+      el.addEventListener('click', function () { toggleBrandModal(false); });
+    });
+  }
+
+  // Form submit
+  var form = document.getElementById('formCreateBrand');
+  var submitBtn = document.getElementById('btnSubmitCreateBrand');
+
+  if (form) {
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      var token = getAuthToken();
+      if (!token) { alert('Please sign in'); return; }
+
+      // Collect minimal payload
+      var fd = new FormData(form);
+      var displayName = (fd.get('displayName') || '').toString().trim();
+      var slugRaw = (fd.get('slug') || '').toString().trim();
+      var description = (fd.get('description') || '').toString();
+      var isPublicInput = form.querySelector('input[name="isPublic"]');
+      var isPublic = !!(isPublicInput && isPublicInput.checked);
+      var visibilityLevel = (fd.get('visibilityLevel') || 'public').toString();
+
+      if (!displayName) { alert('Display Name is required.'); return; }
+      var slug = slugify(slugRaw || displayName);
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Creating...';
+      }
+
+      try {
+        var createUrl = apiJoin(BRAND_API, 'brand');
+        var res = await fetch(createUrl, {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            displayName: displayName,
+            slug: slug,
+            description: description,
+            isPublic: isPublic,
+            visibilityLevel: visibilityLevel
+            // Add more fields later: brandLogo, tags, config, mediaConfig, etc.
+          })
+        });
+
+        if (!res.ok) {
+          var t = '';
+          try { t = await res.text(); } catch (_) {}
+          if (res.status === 409) {
+            alert('❌ Slug already exists. Please choose another.');
+          } else {
+            alert('❌ Create failed (' + res.status + ') ' + t);
+          }
+          return;
+        }
+
+        // Success (don’t let a list-refresh blip mask success)
+        toggleBrandModal(false);
+        try { await loadBrands(); } catch (e2) { console.warn('post-create loadBrands failed', e2); }
+        alert('✅ Brand created!');
+      } catch (err) {
+        console.error('create brand error:', err);
+        alert('❌ Something went wrong creating your brand.');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Create';
+        }
+      }
+    });
+  } else {
+    // Form not present on this page state; avoid runtime error
+    console.warn('Brand form (#formCreateBrand) not found at DOMContentLoaded.');
+  }
+});
+
+// Hook into your existing showSection flow (like you did for Media Library)
+var __originalShowSectionBrands = showSection;
+showSection = function (sectionId) {
+  __originalShowSectionBrands(sectionId);
+  if (sectionId === 'brands') {
+    loadBrands();
+  }
+};
+// ───────────── Brands: helpers & UI  End────────────
+
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Generate Invite Token</title>
+</head>
+<body>
+  <h2>Generate Invite</h2>
+  <form id="inviteForm">
+    <label>Email: <input type="email" id="email" required /></label><br><br>
+    <label>Role: 
+      <select id="role" required>
+        <option value="brandadmin">Brand Admin</option>
+        <option value="platformadmin">Platform Admin</option>
+      </select>
+    </label><br><br>
+    <label>Invited By (sub): <input type="text" id="invitedBy" required /></label><br><br>
+    <button type="submit">Generate</button>
+  </form>
+  <pre id="output"></pre>
+
+  <script>
+    const API_URL = "https://oota4kc6c6.execute-api.us-east-2.amazonaws.com/dev/generate/invite";
+
+    document.getElementById("inviteForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const payload = {
+        email: document.getElementById("email").value,
+        role: document.getElementById("role").value,
+        invitedBy: document.getElementById("invitedBy").value
+      };
+      const response = await fetch(API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const data = await response.json();
+      document.getElementById("output").textContent = JSON.stringify(data, null, 2);
+    });
+  </script>
+</body>
+</html>

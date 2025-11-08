@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Creator Admin Signup – PlayCre8te</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center px-4">
+  <div class="max-w-md w-full bg-white p-8 rounded-2xl shadow-xl">
+    <h1 class="text-2xl font-bold mb-6 text-center text-indigo-700">Creator Admin Signup</h1>
+
+    <form id="creator-signup-form" class="space-y-5">
+      <div>
+        <label for="firstName" class="block font-medium mb-1">First Name</label>
+        <input type="text" id="firstName" name="firstName" required
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+
+      <div>
+        <label for="lastName" class="block font-medium mb-1">Last Name</label>
+        <input type="text" id="lastName" name="lastName" required
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+
+      <div>
+        <label for="email" class="block font-medium mb-1">Email</label>
+        <input type="email" id="email" name="email" required
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+
+      <div>
+        <label for="password" class="block font-medium mb-1">Password</label>
+        <input type="password" id="password" name="password" required
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+
+      <div>
+        <label for="confirmPassword" class="block font-medium mb-1">Confirm Password</label>
+        <input type="password" id="confirmPassword" name="confirmPassword" required
+          class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+      </div>
+
+      <button type="submit"
+        class="w-full bg-indigo-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-indigo-700 transition">
+        Sign Up
+      </button>
+    </form>
+
+    <!-- Signin Link -->
+    <p class="mt-6 text-sm text-center text-gray-700">
+      Already have an account?
+      <a href="https://signin.playcre8te.com?role=creator&origin=https://studio.playcre8te.com"
+         class="text-indigo-600 hover:underline font-semibold">
+        Sign in here
+      </a>
+    </p>
+
+    <p id="message" class="text-sm mt-4 text-center font-medium"></p>
+  </div>
+
+  <script>
+    document.getElementById('creator-signup-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+
+      const firstName = document.getElementById('firstName').value;
+      const lastName = document.getElementById('lastName').value;
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      const messageEl = document.getElementById('message');
+      messageEl.className = "text-sm mt-4 text-center font-medium text-red-600";
+
+      if (password !== confirmPassword) {
+        messageEl.innerText = "Passwords do not match.";
+        return;
+      }
+
+      const payload = { firstName, lastName, email, password };
+
+      try {
+        const response = await fetch('https://kzmrmhey75.execute-api.us-east-2.amazonaws.com/prod/signup/creator', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          messageEl.className = "text-sm mt-4 text-center font-medium text-green-600";
+          messageEl.innerText = data.message || 'Signup complete. Please check your email to confirm your account.';
+        } else {
+          messageEl.innerText = 'Error: ' + (data.message || 'Signup failed.');
+        }
+      } catch (error) {
+        messageEl.innerText = 'Signup failed: ' + error;
+      }
+    });
+  </script>
+</body>
+</html>

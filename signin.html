@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign In - PlayCre8te</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-50 flex items-center justify-center min-h-screen">
+    <div class="w-full max-w-md bg-white p-8 rounded-xl shadow-md">
+      <h2 class="text-2xl font-bold mb-6 text-center">Sign In to PlayCre8te</h2>
+
+      <form id="signinForm" class="space-y-4">
+        <input
+          id="email"
+          type="email"
+          placeholder="Email"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
+          required
+        />
+        <input
+          id="password"
+          type="password"
+          placeholder="Password"
+          class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring"
+          required
+        />
+        <button
+          type="submit"
+          class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700"
+        >
+          Sign In
+        </button>
+      </form>
+
+      <p id="errorMessage" class="mt-4 text-red-600 text-sm text-center hidden"></p>
+    </div>
+
+    <script>
+      const SIGNIN_API = "https://hozj26o2e4.execute-api.us-east-2.amazonaws.com/prod/signin";
+
+      document.getElementById("signinForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value.trim();
+        const password = document.getElementById("password").value.trim();
+        const errorEl = document.getElementById("errorMessage");
+        errorEl.classList.add("hidden");
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const role = urlParams.get("role");
+        const redirectUri = urlParams.get("redirect_uri");
+
+        const CLIENT_IDS = {
+          fan: "1q24im607c34oun31uqregmrnp",
+          creator: "2d5keue65atoit9m38j3532kdu",
+          brandadmin: "6oopq66210ah8iv9apfjdnjbsb",
+          platformadmin: "5p8shdoq64o1vda4vj29to015s",
+        };
+
+        const clientId = CLIENT_IDS[role];
+        if (!clientId || !redirectUri) {
+          errorEl.textContent = "Missing role or redirect_uri in URL.";
+          errorEl.classList.remove("hidden");
+          return;
+        }
+
+        try {
+          const signinRes = await fetch(SIGNIN_API, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password, clientId }),
+          });
+
+          const signinData = await signinRes.json();
+          if (!signinData?.id_token) {
+            throw new Error(signinData?.error || "Login failed: No token returned");
+          }
+
+          const idToken = signinData.id_token;
+          localStorage.setItem("id_token", idToken);
+
+          const state = {
+            role,
+            origin: urlParams.get("origin") || window.location.origin,
+          };
+
+          // ✅ Redirect with token + state in fragment
+          window.location.href = `${redirectUri}#id_token=${encodeURIComponent(idToken)}&state=${encodeURIComponent(JSON.stringify(state))}`;
+        } catch (err) {
+          console.error("❌ Sign-in error:", err);
+          const message =
+            err?.message === "Unconfirmed user"
+              ? "Your account is not confirmed. Please check your email."
+              : err?.message || "Login failed. Please check your credentials.";
+          errorEl.textContent = message;
+          errorEl.classList.remove("hidden");
+        }
+      });
+    </script>
+  </body>
+</html>
+

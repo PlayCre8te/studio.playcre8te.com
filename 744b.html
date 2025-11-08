@@ -1,0 +1,1398 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shows UI</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#E50000',
+              card: '#1A1A1A',
+              line: '#262626',
+              line2: '#1F1F1F',
+              panel: '#0F0F0F',
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Manrope font -->
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    html { background: #0B0B0B; }
+    body { font-family: 'Manrope', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+  </style>
+</head>
+<body class="text-white">
+
+  <!-- ==================== HEADER (NAVBAR) ==================== -->
+  <!-- NAVBAR -->
+  <header class="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-black/30 bg-black/50">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between">
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-3 group">
+          <span class="inline-flex h-9 w-9 items-center justify-center rounded-md bg-brand.red">
+            <!-- Simple play icon -->
+            <span class="block h-4 w-3 bg-white [clip-path:polygon(0_0,100%_50%,0_100%)]"></span>
+          </span>
+          <span class="h-5 w-32 rounded bg-white/90 group-hover:bg-white transition-colors"></span>
+          <!-- Replace span above with your SVG/IMG wordmark -->
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex items-center gap-2 rounded-xl bg-brand.panel/70 ring-1 ring-brand.line2 p-1">
+          <a href="#" class="px-4 py-2 rounded-lg bg-brand.card text-white font-medium">Home</a>
+          <a href="#" class="px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5">Explore Media</a>
+          <a href="#" class="px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5">Support</a>
+          <a href="#" class="px-4 py-2 rounded-lg text-gray-300 hover:bg-white/5">Subscriptions</a>
+        </nav>
+
+        <!-- Actions -->
+        <div class="hidden md:flex items-center gap-3">
+          <button class="inline-flex h-9 w-9 items-center justify-center rounded-lg ring-1 ring-white/20 hover:bg-white/10">
+            <span class="sr-only">Search</span>
+            <span class="block h-5 w-5 rounded-full ring-2 ring-white/90"></span>
+          </button>
+          <button class="inline-flex h-9 w-9 items-center justify-center rounded-lg ring-1 ring-white/20 hover:bg-white/10">
+            <span class="sr-only">Profile</span>
+            <span class="block h-5 w-5 border-2 border-white/90 rounded-sm"></span>
+          </button>
+        </div>
+
+        <!-- Mobile menu button -->
+        <button id="menuBtn" class="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg ring-1 ring-white/20 hover:bg-white/10">
+          <span class="sr-only">Open Menu</span>
+          <span class="block h-[2px] w-5 bg-white mb-[6px]"></span>
+          <span class="block h-[2px] w-5 bg-white mb-[6px]"></span>
+          <span class="block h-[2px] w-5 bg-white"></span>
+        </button>
+      </div>
+
+      <!-- Mobile Drawer -->
+      <div id="mobileNav" class="hidden md:hidden pb-4">
+        <nav class="mt-3 rounded-xl bg-black/50 ring-1 ring-brand.line2 p-2 flex flex-col">
+          <a href="#" class="px-4 py-3 rounded-lg bg-brand.card text-white font-medium">Home</a>
+          <a href="#" class="px-4 py-3 rounded-lg text-gray-300 hover:bg-white/5">Movies &amp; Shows</a>
+          <a href="#" class="px-4 py-3 rounded-lg text-gray-300 hover:bg-white/5">Support</a>
+          <a href="#" class="px-4 py-3 rounded-lg text-gray-300 hover:bg-white/5">Subscriptions</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <!-- ==================== PAGE CONTENT ==================== -->
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 space-y-16">
+
+ <!-- ==================== PART 1 (Hero + Search + Quick Lists) ==================== -->
+  
+<!-- Hero / Featured -->
+<section class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] overflow-hidden">
+  <div class="flex flex-col">
+    <!-- Image on top -->
+    <div class="relative">
+      <img src="https://placehold.co/1200x520" class="w-full h-72 sm:h-96 lg:h-full object-cover" alt="Featured" />
+      <div class="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent"></div>
+    </div>
+
+    <!-- Info Card (Below the Image) -->
+    <div class="p-6 sm:p-8 flex flex-col justify-between">
+      <div class="space-y-3">
+        <span class="inline-flex items-center gap-2 rounded-full bg-[#141414] ring-1 ring-[#262626] px-3 py-1.5 text-xs text-gray-300">
+          <span class="inline-block size-2.5 rounded-full bg-[#E50000]"></span>
+          This Week's Spotlight
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold">The Big Highlight</h2>
+        <p class="text-gray-300 leading-relaxed">
+          Catch the latest hit series everyone’s talking about. Action-packed, character-driven, and binge-ready.
+        </p>
+      </div>
+      <div class="mt-6 flex flex-wrap items-center gap-3">
+        <button class="rounded-lg bg-[#E50000] px-4 py-2 text-sm font-semibold">Play</button>
+        <button class="rounded-lg bg-[#1A1A1A] ring-1 ring-[#2A2A2A] px-4 py-2 text-sm">Add to Watchlist</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+    <!-- ==================== PART 2 (Sections) ==================== -->
+  
+<!-- Trending Shows Now — Pro CoverFlow (Darker Overlay + Views Pill + Smaller Icons) -->
+<section class="space-y-6 select-none">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <h2 class="text-3xl font-extrabold leading-tight">Trending Media Now</h2>
+  </div>
+
+  <!-- Viewport with perspective -->
+  <div id="cfViewport"
+       class="relative w-full overflow-hidden px-4 md:px-6 py-12 cursor-grab active:cursor-grabbing"
+       style="perspective: 1200px;">
+    <div id="cfStage" class="relative mx-auto" style="height: 460px;"></div>
+  </div>
+
+  <!-- Slide Template -->
+  <template id="cfSlideTpl">
+    <article class="cf-slide absolute top-1/2 left-1/2
+                    rounded-xl ring-1 ring-[#262626] bg-[#1A1A1A] overflow-hidden
+                    shadow-[0_12px_28px_-10px_rgba(0,0,0,.6)]"
+             style="height: 444px; transform-origin: center center;">
+      <div class="relative w-full h-full">
+        <img class="cf-img absolute inset-0 w-full h-full object-cover" src="" alt="" draggable="false">
+
+        <!-- Taller, darker bottom gradient overlay -->
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-48
+                    bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
+
+        <!-- Title + Icons on top of gradient -->
+        <div class="absolute left-0 right-0 bottom-0 p-5">
+          <!-- Title: single-line, truncated -->
+          <h3 class="cf-title text-white font-semibold text-base sm:text-lg md:text-xl leading-tight
+                     whitespace-nowrap overflow-hidden text-ellipsis pr-2"></h3>
+
+          <!-- Icons row: views pill (white), other icons red, slightly smaller -->
+          <div class="mt-2 flex items-center gap-3 md:gap-4 flex-nowrap">
+            <!-- Views pill (grouped eye + number, white) -->
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/40 ring-1 ring-white/20 text-white text-xs sm:text-sm whitespace-nowrap">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z"
+                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+              <span class="cf-views">0</span>
+            </span>
+
+            <!-- Lock (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+
+            <!-- Play (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+              </svg>
+            </span>
+
+            <!-- Info (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    (function() {
+      // ---------- Config ----------
+      const OVERLAP = 0.22;      // ~22% cover
+      const RANGE   = 2;         // 5 visible total
+      const DUR     = 480;       // ms transition
+      const AUTO_MS = 3600;      // autoplay
+
+      const MAX_TILT = 26;
+      const MAX_Z    = 170;
+      const SCALE_C  = 1.06;
+      const SCALE_S  = 0.86;
+      const OVAL_Y   = 14;
+      const STACK_NUDGE = 6;
+
+      // ---------- Data ----------
+      const data = [
+        { img: 'https://placehold.co/640x900?text=1', title: 'Night Runner',           views: '128K' },
+        { img: 'https://placehold.co/640x900?text=2', title: 'Hidden Courts',         views: '92K'  },
+        { img: 'https://placehold.co/640x900?text=3', title: 'Slam Dunk Space',       views: '66K'  },
+        { img: 'https://placehold.co/640x900?text=4', title: 'See No Evil',           views: '54K'  },
+        { img: 'https://placehold.co/640x900?text=5', title: 'Behind the Clock',      views: '41K'  },
+        { img: 'https://placehold.co/640x900?text=6', title: 'Jack and Any',          views: '37K'  },
+        { img: 'https://placehold.co/640x900?text=7', title: 'Head Hunters: Revival', views: '31K'  },
+      ];
+
+      // ---------- Elements ----------
+      const viewport = document.getElementById('cfViewport');
+      const stage    = document.getElementById('cfStage');
+      const tpl      = document.getElementById('cfSlideTpl');
+
+      // ---------- Build slides ----------
+      const slides = data.map(d => {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.querySelector('.cf-img').src = d.img;
+        node.querySelector('.cf-title').textContent = d.title;
+        node.querySelector('.cf-views').textContent = d.views;
+        stage.appendChild(node);
+        return node;
+      });
+
+      const N = slides.length;
+      let center = 0;
+      let locked = false;
+      let autoTimer = null;
+
+      function visibleTarget() { return (window.innerWidth >= 1024) ? 5 : 3; }
+
+      function computeGeometry() {
+        const W = viewport.clientWidth;
+        const vis = visibleTarget();
+        const usable = W * 0.92;
+        const denom  = (vis - OVERLAP * (vis - 1));
+        let slideW   = usable / denom;
+        slideW = Math.max(230, Math.min(340, slideW));
+        stage.style.width  = W + 'px';
+        stage.style.height = '444px';
+        const step   = slideW * (1 - OVERLAP);
+        return { slideW, step };
+      }
+
+      function wrap(i) { return (i % N + N) % N; }
+      function shortestDelta(from, to) {
+        const raw = (to - from) % N;
+        const a = (raw + N) % N;
+        return (a > N/2) ? a - N : a;
+      }
+
+      function placeSlides(animate = true) {
+        const { slideW, step } = computeGeometry();
+        slides.forEach((slide, i) => {
+          const d  = shortestDelta(center, i);
+          const ad = Math.abs(d);
+          const side = Math.sign(d);
+          const clamped = Math.min(ad, RANGE);
+          const isCenter = (d === 0);
+
+          let x = (clamped * side) * step;
+          if (ad > RANGE) {
+            const overflow = ad - RANGE;
+            x += side * overflow * STACK_NUDGE;
+          }
+
+          const z = MAX_Z * (1 - clamped / (RANGE + 0.8));
+          const tilt = side * -MAX_TILT * (clamped / (RANGE + 0.2));
+          const scale = isCenter ? SCALE_C : (SCALE_S + (1 - clamped / (RANGE + 0.8)) * 0.12);
+          const y = OVAL_Y * (clamped / RANGE) - OVAL_Y * 0.5;
+
+          const baseOpacity = 1 - (clamped * 0.18);
+          const opacity = Math.max(0.30, baseOpacity);
+
+          const zBase = 1000 - clamped * 10 + (isCenter ? 1000 : 0);
+          const zTweak = side < 0 ? -1 : 1;
+          slide.style.zIndex = String(zBase + zTweak);
+
+          slide.style.width = slideW + 'px';
+          slide.style.opacity = opacity.toFixed(3);
+          slide.style.transition = animate
+            ? `transform ${DUR}ms cubic-bezier(.22,.61,.36,1), opacity ${DUR}ms ease`
+            : 'none';
+          slide.style.transform = `
+            translate(-50%, -50%)
+            translateX(${x}px)
+            translateY(${y}px)
+            translateZ(${z}px)
+            rotateY(${tilt}deg)
+            scale(${scale})
+          `;
+        });
+      }
+
+      function goto(targetCenter) {
+        if (locked) return;
+        locked = true;
+        center = wrap(targetCenter);
+        placeSlides(true);
+        clearTimeout(goto._t);
+        goto._t = setTimeout(() => { locked = false; }, DUR + 20);
+      }
+      function next() { goto(center + 1); }
+      function prev() { goto(center - 1); }
+
+      // Click-to-focus
+      stage.addEventListener('click', (e) => {
+        if (locked) return;
+        const card = e.target.closest('.cf-slide');
+        if (!card) return;
+        const idx = slides.indexOf(card);
+        if (idx === -1) return;
+        const delta = shortestDelta(center, idx);
+        if (delta !== 0) goto(center + delta);
+      });
+
+      // Drag/swipe
+      let startX = 0, dragging = false;
+      viewport.addEventListener('pointerdown', (e) => {
+        if (locked) return;
+        dragging = true; startX = e.clientX;
+        viewport.setPointerCapture(e.pointerId);
+      });
+      viewport.addEventListener('pointermove', (e) => {
+        if (!dragging || locked) return;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 48) {
+          if (dx < 0) next(); else prev();
+          dragging = false;
+        }
+      });
+      window.addEventListener('pointerup', () => { dragging = false; });
+
+      // Wheel / trackpad
+      let wheelCooldown = false;
+      viewport.addEventListener('wheel', (e) => {
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (Math.abs(delta) < 12) return;
+        e.preventDefault();
+        if (wheelCooldown || locked) return;
+        wheelCooldown = true;
+        if (delta > 0) next(); else prev();
+        setTimeout(() => { wheelCooldown = false; }, DUR + 60);
+      }, { passive: false });
+
+      // Keyboard
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') next();
+        if (e.key === 'ArrowLeft')  prev();
+      });
+
+      // Autoplay
+      function startAuto() { stopAuto(); autoTimer = setInterval(next, AUTO_MS); }
+      function stopAuto()  { if (autoTimer) clearInterval(autoTimer), (autoTimer = null); }
+      viewport.addEventListener('mouseenter', stopAuto);
+      viewport.addEventListener('mouseleave', startAuto);
+      viewport.addEventListener('touchstart', stopAuto, { passive: true });
+      viewport.addEventListener('touchend',   startAuto, { passive: true });
+
+      // Init
+      function init() {
+        center = 0;
+        placeSlides(false);
+        requestAnimationFrame(() => placeSlides(false));
+        startAuto();
+      }
+      window.addEventListener('resize', () => placeSlides(false));
+      init();
+    })();
+  </script>
+</section>
+
+    <!-- New Released Shows -->
+<!-- New Releases — Pro CoverFlow (Darker Overlay + Views Pill + Smaller Icons) -->
+<section class="space-y-6 select-none">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <h2 class="text-3xl font-extrabold leading-tight">New Released Media</h2>
+  </div>
+
+  <!-- Viewport with perspective (IDs are unique to avoid collisions) -->
+  <div id="cfViewportNR"
+       class="relative w-full overflow-hidden px-4 md:px-6 py-12 cursor-grab active:cursor-grabbing"
+       style="perspective: 1200px;">
+    <div id="cfStageNR" class="relative mx-auto" style="height: 460px;"></div>
+  </div>
+
+  <!-- Slide Template (unique ID) -->
+  <template id="cfSlideTplNR">
+    <article class="cf-slide absolute top-1/2 left-1/2
+                    rounded-xl ring-1 ring-[#262626] bg-[#1A1A1A] overflow-hidden
+                    shadow-[0_12px_28px_-10px_rgba(0,0,0,.6)]"
+             style="height: 444px; transform-origin: center center;">
+      <div class="relative w-full h-full">
+        <img class="cf-img absolute inset-0 w-full h-full object-cover" src="" alt="" draggable="false">
+
+        <!-- Taller, darker bottom gradient overlay -->
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-48
+                    bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
+
+        <!-- Title + Icons on top of gradient -->
+        <div class="absolute left-0 right-0 bottom-0 p-5">
+          <!-- Title: single-line, truncated -->
+          <h3 class="cf-title text-white font-semibold text-base sm:text-lg md:text-xl leading-tight
+                     whitespace-nowrap overflow-hidden text-ellipsis pr-2"></h3>
+
+          <!-- Icons row: views pill (white), other icons red, slightly smaller -->
+          <div class="mt-2 flex items-center gap-3 md:gap-4 flex-nowrap">
+            <!-- Views pill (grouped eye + number, white) -->
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/40 ring-1 ring-white/20 text-white text-xs sm:text-sm whitespace-nowrap">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z"
+                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+              <span class="cf-views">0</span>
+            </span>
+
+            <!-- Lock (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+
+            <!-- Play (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+              </svg>
+            </span>
+
+            <!-- Info (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    (function() {
+      // ---------- Config ----------
+      const OVERLAP = 0.22;      // ~22% cover
+      const RANGE   = 2;         // 5 visible total
+      const DUR     = 480;       // ms transition
+      const AUTO_MS = 3600;      // autoplay
+
+      const MAX_TILT = 26;
+      const MAX_Z    = 170;
+      const SCALE_C  = 1.06;
+      const SCALE_S  = 0.86;
+      const OVAL_Y   = 14;
+      const STACK_NUDGE = 6;
+
+      // ---------- Data (New Releases) ----------
+      const data = [
+        { img: 'https://placehold.co/640x900?text=A', title: 'Echoes of Tomorrow',      views: '213K' },
+        { img: 'https://placehold.co/640x900?text=B', title: 'Neon Harbor',             views: '178K' },
+        { img: 'https://placehold.co/640x900?text=C', title: 'Midnight Arcade',         views: '149K' },
+        { img: 'https://placehold.co/640x900?text=D', title: 'Glass District',          views: '121K' },
+        { img: 'https://placehold.co/640x900?text=E', title: 'Windswept Ridge',         views: '96K'  },
+        { img: 'https://placehold.co/640x900?text=F', title: 'Quantum Letters',         views: '84K'  },
+        { img: 'https://placehold.co/640x900?text=G', title: 'Atlas of the Dark',       views: '71K'  },
+      ];
+
+      // ---------- Elements ----------
+      const viewport = document.getElementById('cfViewportNR');
+      const stage    = document.getElementById('cfStageNR');
+      const tpl      = document.getElementById('cfSlideTplNR');
+
+      // ---------- Build slides ----------
+      const slides = data.map(d => {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.querySelector('.cf-img').src = d.img;
+        node.querySelector('.cf-title').textContent = d.title;
+        node.querySelector('.cf-views').textContent = d.views;
+        stage.appendChild(node);
+        return node;
+      });
+
+      const N = slides.length;
+      let center = 0;
+      let locked = false;
+      let autoTimer = null;
+
+      function visibleTarget() { return (window.innerWidth >= 1024) ? 5 : 3; }
+
+      function computeGeometry() {
+        const W = viewport.clientWidth;
+        const vis = visibleTarget();
+        const usable = W * 0.92;
+        const denom  = (vis - OVERLAP * (vis - 1));
+        let slideW   = usable / denom;
+        slideW = Math.max(230, Math.min(340, slideW));
+        stage.style.width  = W + 'px';
+        stage.style.height = '444px';
+        const step   = slideW * (1 - OVERLAP);
+        return { slideW, step };
+      }
+
+      function wrap(i) { return (i % N + N) % N; }
+      function shortestDelta(from, to) {
+        const raw = (to - from) % N;
+        const a = (raw + N) % N;
+        return (a > N/2) ? a - N : a;
+      }
+
+      function placeSlides(animate = true) {
+        const { slideW, step } = computeGeometry();
+        slides.forEach((slide, i) => {
+          const d  = shortestDelta(center, i);
+          const ad = Math.abs(d);
+          const side = Math.sign(d);
+          const clamped = Math.min(ad, RANGE);
+          const isCenter = (d === 0);
+
+          let x = (clamped * side) * step;
+          if (ad > RANGE) {
+            const overflow = ad - RANGE;
+            x += side * overflow * STACK_NUDGE;
+          }
+
+          const z = MAX_Z * (1 - clamped / (RANGE + 0.8));
+          const tilt = side * -MAX_TILT * (clamped / (RANGE + 0.2));
+          const scale = isCenter ? SCALE_C : (SCALE_S + (1 - clamped / (RANGE + 0.8)) * 0.12);
+          const y = OVAL_Y * (clamped / RANGE) - OVAL_Y * 0.5;
+
+          const baseOpacity = 1 - (clamped * 0.18);
+          const opacity = Math.max(0.30, baseOpacity);
+
+          const zBase = 1000 - clamped * 10 + (isCenter ? 1000 : 0);
+          const zTweak = side < 0 ? -1 : 1;
+          slide.style.zIndex = String(zBase + zTweak);
+
+          slide.style.width = slideW + 'px';
+          slide.style.opacity = opacity.toFixed(3);
+          slide.style.transition = animate
+            ? `transform ${DUR}ms cubic-bezier(.22,.61,.36,1), opacity ${DUR}ms ease`
+            : 'none';
+          slide.style.transform = `
+            translate(-50%, -50%)
+            translateX(${x}px)
+            translateY(${y}px)
+            translateZ(${z}px)
+            rotateY(${tilt}deg)
+            scale(${scale})
+          `;
+        });
+      }
+
+      function goto(targetCenter) {
+        if (locked) return;
+        locked = true;
+        center = wrap(targetCenter);
+        placeSlides(true);
+        clearTimeout(goto._t);
+        goto._t = setTimeout(() => { locked = false; }, DUR + 20);
+      }
+      function next() { goto(center + 1); }
+      function prev() { goto(center - 1); }
+
+      // Click-to-focus
+      stage.addEventListener('click', (e) => {
+        if (locked) return;
+        const card = e.target.closest('.cf-slide');
+        if (!card) return;
+        const idx = slides.indexOf(card);
+        if (idx === -1) return;
+        const delta = shortestDelta(center, idx);
+        if (delta !== 0) goto(center + delta);
+      });
+
+      // Drag/swipe
+      let startX = 0, dragging = false;
+      viewport.addEventListener('pointerdown', (e) => {
+        if (locked) return;
+        dragging = true; startX = e.clientX;
+        viewport.setPointerCapture(e.pointerId);
+      });
+      viewport.addEventListener('pointermove', (e) => {
+        if (!dragging || locked) return;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 48) {
+          if (dx < 0) next(); else prev();
+          dragging = false;
+        }
+      });
+      window.addEventListener('pointerup', () => { dragging = false; });
+
+      // Wheel / trackpad
+      let wheelCooldown = false;
+      viewport.addEventListener('wheel', (e) => {
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (Math.abs(delta) < 12) return;
+        e.preventDefault();
+        if (wheelCooldown || locked) return;
+        wheelCooldown = true;
+        if (delta > 0) next(); else prev();
+        setTimeout(() => { wheelCooldown = false; }, DUR + 60);
+      }, { passive: false });
+
+      // Keyboard
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') next();
+        if (e.key === 'ArrowLeft')  prev();
+      });
+
+      // Autoplay (scoped timer var so it doesn't clash elsewhere)
+      let autoTimerNR;
+      function startAuto() { stopAuto(); autoTimerNR = setInterval(next, AUTO_MS); }
+      function stopAuto()  { if (autoTimerNR) clearInterval(autoTimerNR), (autoTimerNR = null); }
+      viewport.addEventListener('mouseenter', stopAuto);
+      viewport.addEventListener('mouseleave', startAuto);
+      viewport.addEventListener('touchstart', stopAuto, { passive: true });
+      viewport.addEventListener('touchend',   startAuto, { passive: true });
+
+      // Init
+      function init() {
+        center = 0; // start with the first card in center
+        placeSlides(false);
+        requestAnimationFrame(() => placeSlides(false));
+        startAuto();
+      }
+      window.addEventListener('resize', () => placeSlides(false));
+      init();
+    })();
+  </script>
+</section>
+
+
+    <!-- Must - Watch Shows -->
+   <!-- Must-Watch Media — Pro CoverFlow (Darker Overlay + Views Pill + Smaller Icons) -->
+<section class="space-y-6 select-none">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+    <h2 class="text-3xl font-extrabold leading-tight">Must-Watch Media</h2>
+  </div>
+
+  <!-- Viewport with perspective (unique IDs) -->
+  <div id="cfViewportMW"
+       class="relative w-full overflow-hidden px-4 md:px-6 py-12 cursor-grab active:cursor-grabbing"
+       style="perspective: 1200px;">
+    <div id="cfStageMW" class="relative mx-auto" style="height: 460px;"></div>
+  </div>
+
+  <!-- Slide Template (unique ID) -->
+  <template id="cfSlideTplMW">
+    <article class="cf-slide absolute top-1/2 left-1/2
+                    rounded-xl ring-1 ring-[#262626] bg-[#1A1A1A] overflow-hidden
+                    shadow-[0_12px_28px_-10px_rgba(0,0,0,.6)]"
+             style="height: 444px; transform-origin: center center;">
+      <div class="relative w-full h-full">
+        <img class="cf-img absolute inset-0 w-full h-full object-cover" src="" alt="" draggable="false">
+
+        <!-- Taller, darker bottom gradient overlay -->
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-48
+                    bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
+
+        <!-- Title + Icons on top of gradient -->
+        <div class="absolute left-0 right-0 bottom-0 p-5">
+          <!-- Title: single-line, truncated -->
+          <h3 class="cf-title text-white font-semibold text-base sm:text-lg md:text-xl leading-tight
+                     whitespace-nowrap overflow-hidden text-ellipsis pr-2"></h3>
+
+          <!-- Icons row: views pill (white), other icons red, slightly smaller -->
+          <div class="mt-2 flex items-center gap-3 md:gap-4 flex-nowrap">
+            <!-- Views pill (grouped eye + number, white) -->
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/40 ring-1 ring-white/20 text-white text-xs sm:text-sm whitespace-nowrap">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z"
+                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+              <span class="cf-views">0</span>
+            </span>
+
+            <!-- Lock (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+
+            <!-- Play (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+              </svg>
+            </span>
+
+            <!-- Info (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    (function() {
+      // ---------- Config ----------
+      const OVERLAP = 0.22;      // ~22% cover
+      const RANGE   = 2;         // 5 visible total
+      const DUR     = 480;       // ms transition
+      const AUTO_MS = 3600;      // autoplay
+
+      const MAX_TILT = 26;
+      const MAX_Z    = 170;
+      const SCALE_C  = 1.06;
+      const SCALE_S  = 0.86;
+      const OVAL_Y   = 14;
+      const STACK_NUDGE = 6;
+
+      // ---------- Data (Must-Watch Media) ----------
+      const data = [
+        { img: 'https://placehold.co/640x900?text=MW1', title: 'Crimson Dunes',       views: '231K' },
+        { img: 'https://placehold.co/640x900?text=MW2', title: 'Violet Signal',       views: '187K' },
+        { img: 'https://placehold.co/640x900?text=MW3', title: 'Iron Orchard',        views: '164K' },
+        { img: 'https://placehold.co/640x900?text=MW4', title: 'Sable Horizon',       views: '138K' },
+        { img: 'https://placehold.co/640x900?text=MW5', title: 'Paper Moons',         views: '119K' },
+        { img: 'https://placehold.co/640x900?text=MW6', title: 'Static Bloom',        views: '102K' },
+        { img: 'https://placehold.co/640x900?text=MW7', title: 'Cinder Alley',        views: '89K'  },
+      ];
+
+      // ---------- Elements ----------
+      const viewport = document.getElementById('cfViewportMW');
+      const stage    = document.getElementById('cfStageMW');
+      const tpl      = document.getElementById('cfSlideTplMW');
+
+      // ---------- Build slides ----------
+      const slides = data.map(d => {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.querySelector('.cf-img').src = d.img;
+        node.querySelector('.cf-title').textContent = d.title;
+        node.querySelector('.cf-views').textContent = d.views;
+        stage.appendChild(node);
+        return node;
+      });
+
+      const N = slides.length;
+      let center = 0;
+      let locked = false;
+      let autoTimerMW = null;
+
+      function visibleTarget() { return (window.innerWidth >= 1024) ? 5 : 3; }
+
+      function computeGeometry() {
+        const W = viewport.clientWidth;
+        const vis = visibleTarget();
+        const usable = W * 0.92;
+        const denom  = (vis - OVERLAP * (vis - 1));
+        let slideW   = usable / denom;
+        slideW = Math.max(230, Math.min(340, slideW));
+        stage.style.width  = W + 'px';
+        stage.style.height = '444px';
+        const step   = slideW * (1 - OVERLAP);
+        return { slideW, step };
+      }
+
+      function wrap(i) { return (i % N + N) % N; }
+      function shortestDelta(from, to) {
+        const raw = (to - from) % N;
+        const a = (raw + N) % N;
+        return (a > N/2) ? a - N : a;
+      }
+
+      function placeSlides(animate = true) {
+        const { slideW, step } = computeGeometry();
+        slides.forEach((slide, i) => {
+          const d  = shortestDelta(center, i);
+          const ad = Math.abs(d);
+          const side = Math.sign(d);
+          const clamped = Math.min(ad, RANGE);
+          const isCenter = (d === 0);
+
+          let x = (clamped * side) * step;
+          if (ad > RANGE) {
+            const overflow = ad - RANGE;
+            x += side * overflow * STACK_NUDGE;
+          }
+
+          const z = MAX_Z * (1 - clamped / (RANGE + 0.8));
+          const tilt = side * -MAX_TILT * (clamped / (RANGE + 0.2));
+          const scale = isCenter ? SCALE_C : (SCALE_S + (1 - clamped / (RANGE + 0.8)) * 0.12);
+          const y = OVAL_Y * (clamped / RANGE) - OVAL_Y * 0.5;
+
+          const baseOpacity = 1 - (clamped * 0.18);
+          const opacity = Math.max(0.30, baseOpacity);
+
+          const zBase = 1000 - clamped * 10 + (isCenter ? 1000 : 0);
+          const zTweak = side < 0 ? -1 : 1;
+          slide.style.zIndex = String(zBase + zTweak);
+
+          slide.style.width = slideW + 'px';
+          slide.style.opacity = opacity.toFixed(3);
+          slide.style.transition = animate
+            ? `transform ${DUR}ms cubic-bezier(.22,.61,.36,1), opacity ${DUR}ms ease`
+            : 'none';
+          slide.style.transform = `
+            translate(-50%, -50%)
+            translateX(${x}px)
+            translateY(${y}px)
+            translateZ(${z}px)
+            rotateY(${tilt}deg)
+            scale(${scale})
+          `;
+        });
+      }
+
+      function goto(targetCenter) {
+        if (locked) return;
+        locked = true;
+        center = wrap(targetCenter);
+        placeSlides(true);
+        clearTimeout(goto._t);
+        goto._t = setTimeout(() => { locked = false; }, DUR + 20);
+      }
+      function next() { goto(center + 1); }
+      function prev() { goto(center - 1); }
+
+      // Click-to-focus
+      stage.addEventListener('click', (e) => {
+        if (locked) return;
+        const card = e.target.closest('.cf-slide');
+        if (!card) return;
+        const idx = slides.indexOf(card);
+        if (idx === -1) return;
+        const delta = shortestDelta(center, idx);
+        if (delta !== 0) goto(center + delta);
+      });
+
+      // Drag/swipe
+      let startX = 0, dragging = false;
+      viewport.addEventListener('pointerdown', (e) => {
+        if (locked) return;
+        dragging = true; startX = e.clientX;
+        viewport.setPointerCapture(e.pointerId);
+      });
+      viewport.addEventListener('pointermove', (e) => {
+        if (!dragging || locked) return;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 48) {
+          if (dx < 0) next(); else prev();
+          dragging = false;
+        }
+      });
+      window.addEventListener('pointerup', () => { dragging = false; });
+
+      // Wheel / trackpad
+      let wheelCooldown = false;
+      viewport.addEventListener('wheel', (e) => {
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (Math.abs(delta) < 12) return;
+        e.preventDefault();
+        if (wheelCooldown || locked) return;
+        wheelCooldown = true;
+        if (delta > 0) next(); else prev();
+        setTimeout(() => { wheelCooldown = false; }, DUR + 60);
+      }, { passive: false });
+
+      // Keyboard
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') next();
+        if (e.key === 'ArrowLeft')  prev();
+      });
+
+      // Autoplay (unique timer var)
+      function startAuto() { stopAuto(); autoTimerMW = setInterval(next, AUTO_MS); }
+      function stopAuto()  { if (autoTimerMW) clearInterval(autoTimerMW), (autoTimerMW = null); }
+      viewport.addEventListener('mouseenter', stopAuto);
+      viewport.addEventListener('mouseleave', startAuto);
+      viewport.addEventListener('touchstart', stopAuto, { passive: true });
+      viewport.addEventListener('touchend',   startAuto, { passive: true });
+
+      // Init
+      function init() {
+        center = 0; // start with the first card in center
+        placeSlides(false);
+        requestAnimationFrame(() => placeSlides(false));
+        startAuto();
+      }
+      window.addEventListener('resize', () => placeSlides(false));
+      init();
+    })();
+  </script>
+</section>
+
+      <!-- Media Collections (Two Side-by-Side Cards) -->
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <!-- Card 1 -->
+  <div class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] overflow-hidden flex flex-col">
+    <div class="relative">
+      <img src="https://placehold.co/600x300" class="w-full h-48 sm:h-60 object-cover" alt="Featured" />
+      <div class="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent"></div>
+    </div>
+    <div class="p-6 flex flex-col justify-between flex-1">
+      <div class="space-y-3">
+        <span class="inline-flex items-center gap-2 rounded-full bg-[#141414] ring-1 ring-[#262626] px-3 py-1.5 text-xs text-gray-300">
+          <span class="inline-block size-2.5 rounded-full bg-[#E50000]"></span>
+          Featured This Week
+        </span>
+        <h2 class="text-xl sm:text-2xl font-extrabold">The Big Highlight</h2>
+        <p class="text-gray-300 leading-relaxed text-sm">
+          Catch the latest hit series everyone’s talking about. Action-packed, character-driven, and binge-ready.
+        </p>
+      </div>
+      <div class="mt-4 flex flex-wrap items-center gap-3">
+        <button class="rounded-lg bg-[#E50000] px-3 py-2 text-xs sm:text-sm font-semibold">Play</button>
+        <button class="rounded-lg bg-[#1A1A1A] ring-1 ring-[#2A2A2A] px-3 py-2 text-xs sm:text-sm">Add to Watchlist</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2 -->
+  <div class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] overflow-hidden flex flex-col">
+    <div class="relative">
+      <img src="https://placehold.co/600x300" class="w-full h-48 sm:h-60 object-cover" alt="Featured" />
+      <div class="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent"></div>
+    </div>
+    <div class="p-6 flex flex-col justify-between flex-1">
+      <div class="space-y-3">
+        <span class="inline-flex items-center gap-2 rounded-full bg-[#141414] ring-1 ring-[#262626] px-3 py-1.5 text-xs text-gray-300">
+          <span class="inline-block size-2.5 rounded-full bg-[#E50000]"></span>
+          Editor’s Pick
+        </span>
+        <h2 class="text-xl sm:text-2xl font-extrabold">Must-See Drama</h2>
+        <p class="text-gray-300 leading-relaxed text-sm">
+          Dive into gripping storytelling that will keep you on the edge of your seat. Don’t miss this top-rated series.
+        </p>
+      </div>
+      <div class="mt-4 flex flex-wrap items-center gap-3">
+        <button class="rounded-lg bg-[#E50000] px-3 py-2 text-xs sm:text-sm font-semibold">Play</button>
+        <button class="rounded-lg bg-[#1A1A1A] ring-1 ring-[#2A2A2A] px-3 py-2 text-xs sm:text-sm">Add to Watchlist</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+  <!-- Popular Collections -->
+<section class="space-y-8">
+  <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+    <h2 class="text-3xl font-extrabold leading-tight">Popular Collections</h2>
+    <div class="flex items-center gap-4 rounded-xl bg-[#0F0F0F] ring-1 ring-[#1F1F1F] p-4">
+      <button class="p-3 rounded-lg bg-[#1A1A1A] ring-1 ring-[#1F1F1F]">
+        <svg class="size-7" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="flex items-center gap-1.5 w-20">
+        <span class="h-1 rounded-full bg-[#E50000] w-1/3"></span>
+        <span class="h-1 rounded-full bg-[#333] flex-1"></span>
+        <span class="h-1 rounded-full bg-[#333] flex-1"></span>
+        <span class="h-1 rounded-full bg-[#333] flex-1"></span>
+      </div>
+      <button class="p-3 rounded-lg bg-[#1A1A1A] ring-1 ring-[#1F1F1F]">
+        <svg class="size-7" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- 3 cards instead of 4; inside each card the preview area shows TWO portrait thumbs side-by-side -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Action -->
+    <article class="flex flex-col gap-5 bg-[#1A1A1A] ring-1 ring-[#262626] rounded-xl p-6 h-[378px]">
+      <div class="relative flex-1 rounded-lg overflow-hidden bg-gradient-to-b from-transparent to-[#1A1A1A]">
+        <div class="flex gap-3 h-full">
+          <img src="https://placehold.co/121x141" class="w-1/2 h-full rounded object-cover" />
+          <img src="https://placehold.co/121x141" class="w-1/2 h-full rounded object-cover" />
+        </div>
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-[#1A1A1A]"></div>
+      </div>
+      <div class="flex items-center gap-5">
+        <div class="flex-1 space-y-1">
+          <span class="inline-block rounded-md bg-[#E50000] px-3 py-2 text-sm font-semibold">See More</span>
+          <h3 class="text-xl font-semibold">Night Before Dawn</h3>
+        </div>
+        <div class="size-7 flex items-center justify-center overflow-hidden">
+          <svg viewBox="0 0 24 24" fill="none" class="size-5"><path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </article>
+
+    <!-- Adventure -->
+    <article class="flex flex-col gap-5 bg-[#1A1A1A] ring-1 ring-[#262626] rounded-xl p-6 h-[378px]">
+      <div class="relative flex-1 rounded-lg overflow-hidden bg-gradient-to-b from-transparent to-[#1A1A1A]">
+        <div class="flex gap-3 h-full">
+          <img src="https://placehold.co/121x141" class="w-1/2 h-full rounded object-cover" />
+          <img src="https://placehold.co/121x141" class="w-1/2 h-full rounded object-cover" />
+        </div>
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-[#1A1A1A]"></div>
+      </div>
+      <div class="flex items-center gap-5">
+        <div class="flex-1 space-y-1">
+          <span class="inline-block rounded-md bg-[#E50000] px-3 py-2 text-sm font-semibold">See More</span>
+          <h3 class="text-xl font-semibold">The Biggest Catch</h3>
+        </div>
+        <div class="size-7 flex items-center justify-center overflow-hidden">
+          <svg viewBox="0 0 24 24" fill="none" class="size-5"><path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </article>
+
+    <!-- Comedy -->
+    <article class="flex flex-col gap-5 bg-[#1A1A1A] ring-1 ring-[#262626] rounded-xl p-6 h-[378px]">
+      <div class="relative flex-1 rounded-lg overflow-hidden bg-gradient-to-b from-transparent to-[#1A1A1A]">
+        <div class="flex gap-3 h-full">
+          <img src="https://placehold.co/121x141" class="w-1/2 h-full rounded object-cover" />
+          <img src="https://placehold.co/121x141" class="w-1/2 h-full rounded object-cover" />
+        </div>
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-[#1A1A1A]"></div>
+      </div>
+      <div class="flex items-center gap-5">
+        <div class="flex-1 space-y-1">
+          <span class="inline-block rounded-md bg-[#E50000] px-3 py-2 text-sm font-semibold">See More</span>
+          <h3 class="text-xl font-semibold">Run Until Daylight</h3>
+        </div>
+        <div class="size-7 flex items-center justify-center overflow-hidden">
+          <svg viewBox="0 0 24 24" fill="none" class="size-5"><path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+
+        <!-- Media Categories -->
+    <section class="space-y-8">
+      <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+        <h2 class="text-3xl font-extrabold leading-tight">Media Categories</h2>
+        <div class="flex items-center gap-4 rounded-xl bg-[#0F0F0F] ring-1 ring-[#1F1F1F] p-4">
+          <button class="p-3 rounded-lg bg-[#1A1A1A] ring-1 ring-[#1F1F1F]">
+            <svg class="size-7" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <div class="flex items-center gap-1.5 w-20">
+            <span class="h-1 rounded-full bg-[#E50000] w-1/3"></span>
+            <span class="h-1 rounded-full bg-[#333] flex-1"></span>
+            <span class="h-1 rounded-full bg-[#333] flex-1"></span>
+            <span class="h-1 rounded-full bg-[#333] flex-1"></span>
+          </div>
+          <button class="p-3 rounded-lg bg-[#1A1A1A] ring-1 ring-[#1F1F1F]">
+            <svg class="size-7" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Action -->
+        <article class="flex flex-col gap-5 bg-[#1A1A1A] ring-1 ring-[#262626] rounded-xl p-6 h-[378px]">
+          <div class="relative flex-1 rounded-lg overflow-hidden space-y-2 bg-gradient-to-b from-transparent to-[#1A1A1A]">
+            <div class="flex gap-2 h-1/2">
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+            </div>
+            <div class="flex gap-2 h-1/2">
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+            </div>
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-[#1A1A1A]"></div>
+          </div>
+          <div class="flex items-center gap-5">
+            <div class="flex-1 space-y-1">
+              <span class="inline-block rounded-md bg-[#E50000] px-3 py-2 text-sm font-semibold">See More</span>
+              <h3 class="text-xl font-semibold">Action</h3>
+            </div>
+            <div class="size-7 flex items-center justify-center overflow-hidden">
+              <svg viewBox="0 0 24 24" fill="none" class="size-5"><path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </article>
+
+        <!-- Adventure -->
+        <article class="flex flex-col gap-5 bg-[#1A1A1A] ring-1 ring-[#262626] rounded-xl p-6 h-[378px]">
+          <div class="relative flex-1 rounded-lg overflow-hidden space-y-2 bg-gradient-to-b from-transparent to-[#1A1A1A]">
+            <div class="flex gap-2 h-1/2">
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+            </div>
+            <div class="flex gap-2 h-1/2">
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+            </div>
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-[#1A1A1A]"></div>
+          </div>
+          <div class="flex items-center gap-5">
+            <div class="flex-1 space-y-1">
+              <span class="inline-block rounded-md bg-[#E50000] px-3 py-2 text-sm font-semibold">See More</span>
+              <h3 class="text-xl font-semibold">Adventure</h3>
+            </div>
+            <div class="size-7 flex items-center justify-center overflow-hidden">
+              <svg viewBox="0 0 24 24" fill="none" class="size-5"><path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </article>
+
+        <!-- Comedy -->
+        <article class="flex flex-col gap-5 bg-[#1A1A1A] ring-1 ring-[#262626] rounded-xl p-6 h-[378px]">
+          <div class="relative flex-1 rounded-lg overflow-hidden space-y-2 bg-gradient-to-b from-transparent to-[#1A1A1A]">
+            <div class="flex gap-2 h-1/2">
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+            </div>
+            <div class="flex gap-2 h-1/2">
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+            </div>
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-[#1A1A1A]"></div>
+          </div>
+          <div class="flex items-center gap-5">
+            <div class="flex-1 space-y-1">
+              <span class="inline-block rounded-md bg-[#E50000] px-3 py-2 text-sm font-semibold">See More</span>
+              <h3 class="text-xl font-semibold">Comedy</h3>
+            </div>
+            <div class="size-7 flex items-center justify-center overflow-hidden">
+              <svg viewBox="0 0 24 24" fill="none" class="size-5"><path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </article>
+
+        <!-- Drama -->
+        <article class="flex flex-col gap-5 bg-[#1A1A1A] ring-1 ring-[#262626] rounded-xl p-6 h-[378px]">
+          <div class="relative flex-1 rounded-lg overflow-hidden space-y-2 bg-gradient-to-b from-transparent to-[#1A1A1A]">
+            <div class="flex gap-2 h-1/2">
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+            </div>
+            <div class="flex gap-2 h-1/2">
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+              <img src="https://placehold.co/141x121" class="w-1/2 rounded object-cover" />
+            </div>
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-[#1A1A1A]"></div>
+          </div>
+          <div class="flex items-center gap-5">
+            <div class="flex-1 space-y-1">
+              <span class="inline-block rounded-md bg-[#E50000] px-3 py-2 text-sm font-semibold">See More</span>
+              <h3 class="text-xl font-semibold">Drama</h3>
+            </div>
+            <div class="size-7 flex items-center justify-center overflow-hidden">
+              <svg viewBox="0 0 24 24" fill="none" class="size-5"><path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+      <!-- Catalogue Full-Width Row -->
+    <section class="w-full">
+      <div class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] p-6">
+        <!-- Header -->
+        <div class="flex items-center gap-3 mb-4">
+          <span class="inline-block h-2 w-8 rounded-full bg-[#E50000]"></span>
+          <h3 class="text-xl font-semibold">Catalogue</h3>
+        </div>
+
+        <!-- Thumbnails Grid -->
+        <div class="grid grid-cols-7 grid-rows-2 gap-2">
+          <!-- Row 1 -->
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+
+          <!-- Row 2 -->
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+          <img src="https://placehold.co/300x200" class="w-full aspect-[3/2] rounded-md object-cover ring-1 ring-[#262626] hover:ring-[#E50000]" alt="">
+        </div>
+      </div>
+    </section>
+
+    <!-- Personalization -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+  <!-- Continue Watching -->
+  <aside class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] p-6 space-y-4">
+    <h3 class="text-xl font-semibold">Continue Watching</h3>
+    <div class="space-y-4">
+      <div class="flex gap-3">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1">
+          <p class="font-medium">See No Evil</p>
+          <div class="h-1.5 bg-[#1E1E1E] rounded-full mt-2">
+            <div class="h-1.5 bg-[#E50000] rounded-full w-2/3"></div>
+          </div>
+        </div>
+      </div>
+      <div class="flex gap-3">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1">
+          <p class="font-medium">Slam Dunk Space</p>
+          <div class="h-1.5 bg-[#1E1E1E] rounded-full mt-2">
+            <div class="h-1.5 bg-[#E50000] rounded-full w-1/3"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Media List -->
+  <aside class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] p-6 space-y-4">
+    <h3 class="text-xl font-semibold">Media List</h3>
+    <div class="space-y-4">
+      <div class="flex items-center gap-3 h-16">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1 flex flex-col justify-center h-full">
+          <p class="font-medium text-sm leading-tight">Night Runner</p>
+          <button class="mt-1 px-2 py-1 rounded bg-[#E50000] text-white text-xs font-semibold hover:bg-[#D40000] w-fit">
+            See More
+          </button>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 h-16">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1 flex flex-col justify-center h-full">
+          <p class="font-medium text-sm leading-tight">Hidden Courts</p>
+          <button class="mt-1 px-2 py-1 rounded bg-[#E50000] text-white text-xs font-semibold hover:bg-[#D40000] w-fit">
+            See More
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Favorites -->
+  <aside class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] p-6 space-y-4">
+    <h3 class="text-xl font-semibold">Favorites</h3>
+    <div class="space-y-4">
+      <div class="flex items-center gap-3 h-16">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1 flex flex-col justify-center h-full">
+          <p class="font-medium text-sm leading-tight">Head Hunters</p>
+          <button class="mt-1 px-2 py-1 rounded bg-[#E50000] text-white text-xs font-semibold hover:bg-[#D40000] w-fit">
+            See More
+          </button>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 h-16">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1 flex flex-col justify-center h-full">
+          <p class="font-medium text-sm leading-tight">In the Court of Law</p>
+          <button class="mt-1 px-2 py-1 rounded bg-[#E50000] text-white text-xs font-semibold hover:bg-[#D40000] w-fit">
+            See More
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- My Purchases -->
+  <aside class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] p-6 space-y-4">
+    <h3 class="text-xl font-semibold">My Purchases</h3>
+    <div class="space-y-4">
+      <div class="flex items-center gap-3 h-16">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1 flex flex-col justify-center h-full">
+          <p class="font-medium text-sm leading-tight">Jack and Any</p>
+          <button class="mt-1 px-2 py-1 rounded bg-[#E50000] text-white text-xs font-semibold hover:bg-[#D40000] w-fit">
+            See More
+          </button>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 h-16">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1 flex flex-col justify-center h-full">
+          <p class="font-medium text-sm leading-tight">Behind the Clock</p>
+          <button class="mt-1 px-2 py-1 rounded bg-[#E50000] text-white text-xs font-semibold hover:bg-[#D40000] w-fit">
+            See More
+          </button>
+        </div>
+      </div>
+    </div>
+  </aside>
+</section>
+
+  </div>
+
+  <!-- ==================== FOOTER ==================== -->
+  <!-- FOOTER (bg set to #0F0F0F via Tailwind class) -->
+  <footer class="bg-[#0F0F0F]">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16">
+      <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-6">
+        <div>
+          <h4 class="text-lg font-semibold">Home</h4>
+          <ul class="mt-4 space-y-2 text-gray-300">
+            <li><a href="#" class="hover:text-white">Categories</a></li>
+            <li><a href="#" class="hover:text-white">Devices</a></li>
+            <li><a href="#" class="hover:text-white">Pricing</a></li>
+            <li><a href="#" class="hover:text-white">FAQ</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-semibold">Movies</h4>
+          <ul class="mt-4 space-y-2 text-gray-300">
+            <li><a href="#" class="hover:text-white">Genres</a></li>
+            <li><a href="#" class="hover:text-white">Trending</a></li>
+            <li><a href="#" class="hover:text-white">New Releases</a></li>
+            <li><a href="#" class="hover:text-white">Popular</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-semibold">Shows</h4>
+          <ul class="mt-4 space-y-2 text-gray-300">
+            <li><a href="#" class="hover:text-white">Genres</a></li>
+            <li><a href="#" class="hover:text-white">Trending</a></li>
+            <li><a href="#" class="hover:text-white">New Releases</a></li>
+            <li><a href="#" class="hover:text-white">Popular</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-semibold">Support</h4>
+          <ul class="mt-4 space-y-2 text-gray-300">
+            <li><a href="#contact" class="hover:text-white">Contact Us</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-semibold">Subscription</h4>
+          <ul class="mt-4 space-y-2 text-gray-300">
+            <li><a href="#" class="hover:text-white">Plans</a></li>
+            <li><a href="#" class="hover:text-white">Features</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-lg font-semibold">Connect With Us</h4>
+          <div class="mt-4 flex items-center gap-3">
+            <a href="#" class="p-3 rounded-lg bg-brand.card ring-1 ring-brand.line hover:bg-white/5" aria-label="Twitter">
+              <span class="block h-5 w-5 bg-white rounded"></span>
+            </a>
+            <a href="#" class="p-3 rounded-lg bg-brand.card ring-1 ring-brand.line hover:bg-white/5" aria-label="YouTube">
+              <span class="block h-4 w-6 bg-white rounded"></span>
+            </a>
+            <a href="#" class="p-3 rounded-lg bg-brand.card ring-1 ring-brand.line hover:bg-white/5" aria-label="Instagram">
+              <span class="block h-5 w-5 bg-white rounded-full"></span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-10 border-t border-brand.line pt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-gray-400 text-sm">© 2025 PlayCre8te. All rights reserved.</p>
+        <div class="flex items-center gap-4 text-gray-400 text-sm">
+          <a href="#" class="hover:text-white">Terms of Use</a>
+          <span class="h-4 w-px bg-brand.line"></span>
+          <a href="#" class="hover:text-white">Privacy Policy</a>
+          <span class="h-4 w-px bg-brand.line"></span>
+          <a href="#" class="hover:text-white">Cookie Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Mobile menu toggle -->
+  <script>
+    const btn = document.getElementById('menuBtn');
+    const nav = document.getElementById('mobileNav');
+    if (btn && nav) {
+      btn.addEventListener('click', () => {
+        nav.classList.toggle('hidden');
+      });
+    }
+  </script>
+</body>
+</html>

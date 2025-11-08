@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>PlayCre8te Creator Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+    <!-- 🔁 Token extract and store BEFORE auth check -->
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("id_token");
+    if (token) {
+      localStorage.setItem("id_token", token);
+      const cleanUrl = new URL(window.location.href);
+      cleanUrl.searchParams.delete("id_token");
+      window.history.replaceState({}, document.title, cleanUrl.toString());
+    }
+  </script>
+
+  <!-- 🔒 Auth check: redirect if not authenticated -->
+  <script>
+    const tokenInStorage = localStorage.getItem("id_token");
+    if (!tokenInStorage) {
+      window.location.href = "/index.html";
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top left, #0f172a, #1e293b);
+      z-index: -1;
+    }
+
+    /* 🖤 Modern Dark Uppy Theme */
+.uppy-Dashboard-inner {
+  background-color: #0f172a !important; /* slate-900 */
+  color: #f1f5f9 !important;           /* slate-100 */
+  border-radius: 1rem !important;      /* 2xl rounded */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+.uppy-DashboardTab-btn {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f1f5f9 !important;
+  border-radius: 0.5rem !important;
+  transition: all 0.2s ease-in-out;
+}
+.uppy-DashboardTab-btn:hover {
+  background-color: #334155 !important; /* slate-700 */
+}
+
+.uppy-Dashboard-AddFiles-title,
+.uppy-DashboardContent-bar,
+.uppy-StatusBar-statusPrimary,
+.uppy-StatusBar-statusSecondary {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #e2e8f0 !important;            /* slate-200 */
+}
+
+.uppy-StatusBar.is-waiting,
+.uppy-StatusBar.is-processing,
+.uppy-StatusBar.is-complete {
+  background-color: #0f172a !important; /* slate-900 */
+  color: #34d399 !important;            /* emerald-400 */
+}
+
+.uppy-Dashboard-input {
+  background-color: #1e293b !important; /* slate-800 */
+  color: #f1f5f9 !important;
+  border: 1px solid #334155 !important; /* slate-700 */
+  border-radius: 0.375rem;
+}
+
+.uppy-DashboardItem-preview {
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.uppy-ProviderBrowser {
+  background-color: #0f172a !important;
+  color: #e2e8f0 !important;
+}
+
+.uppy-Provider-auth {
+  background-color: #1e40af !important; /* blue-800 */
+  color: white !important;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+}
+
+.uppy-Dashboard-AddFiles {
+  background-color: #0f172a !important;
+  border: 2px dashed #334155 !important;
+  border-radius: 0.75rem;
+  transition: border-color 0.2s;
+}
+.uppy-Dashboard-AddFiles:hover {
+  border-color: #38bdf8 !important; /* sky-400 */
+}
+
+/* 📊 Progress Bar */
+.uppy-StatusBar-progress {
+  background-color: #10b981 !important; /* emerald-500 */
+  border-radius: 0.375rem;
+}
+
+/* 🎨 File Info and Size */
+.uppy-DashboardItem-name {
+  color: #f8fafc !important; /* slate-50 */
+}
+.uppy-DashboardItem-statusSize {
+  color: #94a3b8 !important; /* slate-400 */
+}
+
+  </style>
+  <!-- Uppy CSS + JS -->
+<link href="https://releases.transloadit.com/uppy/v3.26.0/uppy.min.css" rel="stylesheet">
+<script src="https://releases.transloadit.com/uppy/v3.26.0/uppy.min.js"></script>
+
+</head>
+<body class="text-white bg-gray-900 min-h-screen">
+
+  <!-- ✅ Mobile Top Navbar -->
+<div class="md:hidden flex justify-between items-center bg-gray-800 px-4 py-3">
+  <img src="./playcrea8telogo.png" alt="Logo" class="h-8 w-auto" />
+  <button onclick="toggleMobileMenu()" class="text-white focus:outline-none">
+    ☰
+  </button>
+</div>
+
+<!-- ✅ Mobile Menu (initially hidden) -->
+<div id="mobileMenu" class="md:hidden hidden bg-gray-800 px-4 py-4 space-y-3">
+  <a href="#" onclick="showSection('dashboard'); toggleMobileMenu()" class="block text-white hover:text-blue-400">📊 Dashboard</a>
+  <a href="#" onclick="showSection('media'); toggleMobileMenu()" class="block text-white hover:text-blue-400">🎥 Media Library</a>
+  <a href="#" onclick="showSection('brands'); toggleMobileMenu()" class="block text-white hover:text-blue-400">🏷️ My Brands</a>
+  <a href="#" onclick="showSection('products'); toggleMobileMenu()" class="block text-white hover:text-blue-400">🛍️ Products</a>
+  <a href="#" onclick="showSection('subscribers'); toggleMobileMenu()" class="block text-white hover:text-blue-400">👥 Subscribers</a>
+  <a href="#" onclick="showSection('analytics'); toggleMobileMenu()" class="block text-white hover:text-blue-400">📈 Analytics</a>
+  <a href="#" onclick="showSection('earnings'); toggleMobileMenu()" class="block text-white hover:text-blue-400">💰 Earnings</a>
+  <a href="#" onclick="showSection('addons'); toggleMobileMenu()" class="block text-white hover:text-blue-400">🧩 Add-Ons & Upgrades</a>
+  <a href="#" onclick="showSection('billing'); toggleMobileMenu()" class="block text-white hover:text-blue-400">💳 Account Billing</a>
+  <a href="#" onclick="showSection('settings'); toggleMobileMenu()" class="block text-white hover:text-blue-400">⚙️ Account Settings</a>
+  <a href="#" onclick="showSection('help'); toggleMobileMenu()" class="block text-white hover:text-blue-400">❓ Need Help?</a>
+</div>
+
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="w-64 bg-gray-800 p-6 hidden md:block">
+      <img src="./playcrea8telogo.png" alt="Logo" class="h-10 w-auto mb-8" />
+      <nav class="space-y-4">
+        <a href="#" onclick="showSection('dashboard')" class="block text-white font-medium hover:text-blue-400">📊 Dashboard</a>
+        <a href="#" onclick="showSection('media')" class="block text-white hover:text-blue-400">🎥 Media Library</a>
+        <a href="#" onclick="showSection('brands')" class="block text-white hover:text-blue-400">🏷️ My Brands</a>
+        <a href="#" onclick="showSection('products')" class="block text-white hover:text-blue-400">🛍️ Products</a>
+        <a href="#" onclick="showSection('subscribers')" class="block text-white hover:text-blue-400">👥 Subscribers</a>
+        <a href="#" onclick="showSection('analytics')" class="block text-white hover:text-blue-400">📈 Analytics</a>
+        <a href="#" onclick="showSection('earnings')" class="block text-white hover:text-blue-400">💰 Earnings</a>
+        <a href="#" onclick="showSection('addons')" class="block text-white hover:text-blue-400">🧩 Add-Ons & Upgrades</a>
+        <a href="#" onclick="showSection('billing')" class="block text-white hover:text-blue-400">💳 Account Billing</a>
+        <a href="#" onclick="showSection('settings')" class="block text-white hover:text-blue-400">⚙️ Account Settings</a>
+        <a href="#" onclick="showSection('help')" class="block text-white hover:text-blue-400">❓ Need Help?</a>
+      </nav>
+    </aside>
+
+
+      <!-- Main Content -->
+<main class="flex-1 p-6">
+  <!-- Header -->
+  <div class="flex justify-between items-center mb-6">
+    <h2 id="mainHeading" class="text-3xl font-semibold">Dashboard</h2>
+    <div class="flex items-center space-x-4">
+      <button 
+        class="bg-blue-600 px-3 py-2 rounded hover:bg-blue-500 text-sm md:text-base whitespace-nowrap" 
+        onclick="showSection('media')"
+      >
+        Upload Media
+      </button>
+      <img id="avatarHDThumb" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-blue-500" />
+    </div>
+  </div>
+
+
+<!-- ✅ Responsive Dashboard Section -->
+<div id="dashboardSection" class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8">
+
+  <!-- Summary Cards -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+    <div class="bg-gray-800 p-4 rounded">
+      <p class="text-sm text-gray-400">Total Earnings</p>
+      <h3 class="text-xl font-semibold">$2,940</h3>
+    </div>
+    <div class="bg-gray-800 p-4 rounded">
+      <p class="text-sm text-gray-400">Subscribers</p>
+      <h3 class="text-xl font-semibold">320</h3>
+    </div>
+    <div class="bg-gray-800 p-4 rounded">
+      <p class="text-sm text-gray-400">Products Sold</p>
+      <h3 class="text-xl font-semibold">146</h3>
+    </div>
+    <div class="bg-gray-800 p-4 rounded">
+      <p class="text-sm text-gray-400">Media Views</p>
+      <h3 class="text-xl font-semibold">14.2K</h3>
+    </div>
+  </div>
+
+  <!-- Recent Uploads + Earnings by Brand -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+    <div class="bg-gray-800 p-6 rounded">
+      <h4 class="text-lg font-semibold mb-4">Recent Uploads</h4>
+      <ul class="space-y-3 text-sm">
+        <li class="flex justify-between"><span>🎬 Morning Flow Ep1</span><span class="text-gray-400">2 days ago</span></li>
+        <li class="flex justify-between"><span>📘 Wellness Guide PDF</span><span class="text-gray-400">4 days ago</span></li>
+        <li class="flex justify-between"><span>🎧 Sound Meditation Vol.2</span><span class="text-gray-400">1 week ago</span></li>
+      </ul>
+    </div>
+
+    <div class="bg-gray-800 p-6 rounded">
+      <h4 class="text-lg font-semibold mb-4">Earnings by Brand</h4>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="text-left text-gray-400">
+            <tr>
+              <th class="pb-2">Brand</th>
+              <th class="pb-2">30d Earnings</th>
+              <th class="pb-2">Top Product</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="border-t border-gray-700">
+              <td class="py-2 break-words">MyFitnessShow.tv</td>
+              <td>$840</td>
+              <td>Meal Plan Series</td>
+            </tr>
+            <tr class="border-t border-gray-700">
+              <td class="py-2 break-words">DanceWithMiko.com</td>
+              <td>$560</td>
+              <td>Live Class Replays</td>
+            </tr>
+            <tr class="border-t border-gray-700">
+              <td class="py-2 break-words">StudioSeven.tv</td>
+              <td>$320</td>
+              <td>7-Day Challenge</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Top Performing Media -->
+  <div class="bg-gray-800 p-6 rounded mb-10">
+    <h4 class="text-lg font-semibold mb-4">Top Performing Media</h4>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-sm">
+      <div class="bg-gray-700 p-4 rounded">
+        <p class="text-white font-medium mb-1">🎬 Morning Flow Ep1</p>
+        <p class="text-gray-400">Views: 1,250 | Likes: 90</p>
+      </div>
+      <div class="bg-gray-700 p-4 rounded">
+        <p class="text-white font-medium mb-1">🎧 Motivation Mix</p>
+        <p class="text-gray-400">Views: 880 | Likes: 52</p>
+      </div>
+      <div class="bg-gray-700 p-4 rounded">
+        <p class="text-white font-medium mb-1">📘 Recipe eBook</p>
+        <p class="text-gray-400">Views: 620 | Likes: 42</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<!-- Media Library Section -->
+<div id="mediaSection" class="hidden">
+  <div class="bg-gray-800 p-6 rounded-xl max-w-5xl mx-auto text-center mb-6">
+    <h2 class="text-2xl font-semibold mb-4">🎥 Media Library</h2>
+    <p class="text-gray-300 mb-4">Upload and manage all your videos, audio files, images, documents, and other media assets.</p>
+
+
+    <!-- Uppy Upload Button -->
+<div class="bg-gray-700 p-4 rounded mb-6">
+  <button id="openUploader" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold">
+    📤 Upload Media
+  </button>
+</div>
+<div id="uploadProgressContainer" class="space-y-2 mb-4"></div>
+
+
+    <!-- Media Grid -->
+    <div id="mediaGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-sm text-left"></div>
+  </div>
+</div>
+
+
+    <!-- My Brands Section -->
+      <div id="brandsSection" class="hidden">
+      <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+      <h2 class="text-2xl font-semibold mb-4">🏷️ My Brands</h2>
+      <p class="text-gray-300">Create and customize your personal brands. Set themes, descriptions, domains, and manage brand-specific content.</p>
+    </div>
+  </div>
+
+  <!-- Products Section -->
+  <div id="productsSection" class="hidden">
+  <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+    <h2 class="text-2xl font-semibold mb-4">🛍️ Products</h2>
+    <p class="text-gray-300">Build and manage your digital products, including videos, courses, subscriptions, and exclusive bundles for your audience.</p>
+  </div>
+</div>
+
+    <!-- Subscribers Section -->
+<div id="subscribersSection" class="hidden">
+  <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+    <h2 class="text-2xl font-semibold mb-4">👥 Subscribers</h2>
+    <p class="text-gray-300">View and manage your current subscribers. Track growth, engagement, and subscriber profiles.</p>
+  </div>
+</div>
+
+<!-- Analytics Section -->
+<div id="analyticsSection" class="hidden">
+  <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+    <h2 class="text-2xl font-semibold mb-4">📈 Analytics</h2>
+    <p class="text-gray-300">Monitor your content performance. Track views, clicks, conversions, and revenue trends across your media and brands.</p>
+  </div>
+</div>
+
+<!-- Earnings Section -->
+<div id="earningsSection" class="hidden">
+  <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+    <h2 class="text-2xl font-semibold mb-4">💰 Earnings</h2>
+    <p class="text-gray-300">See your real-time earnings, breakdowns by brand and product, and transaction history. Withdraw funds or update payment settings.</p>
+  </div>
+</div>
+
+      <!-- Add-Ons Section -->
+      <div id="addonsSection" class="hidden">
+      <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+      <h2 class="text-2xl font-semibold mb-4">🧩 Add-Ons & Upgrades</h2>
+      <p class="text-gray-300">Browse available upgrades like more storage, branded domains, and live streaming features.</p>
+    </div>
+  </div>
+
+      <!-- Billing Section -->
+      <div id="billingSection" class="hidden">
+      <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+      <h2 class="text-2xl font-semibold mb-4">💳 Account Billing</h2>
+      <p class="text-gray-300">Manage your subscription, view invoices, and update payment methods.</p>
+    </div>
+  </div>
+
+<!-- Settings Section -->
+<div id="settingsSection" class="hidden">
+  <div class="max-w-2xl w-full bg-gray-900/90 backdrop-blur-sm p-8 rounded-2xl shadow-xl text-center mx-auto">
+    <img src="./playcrea8telogo.png" alt="PlayCre8te Logo" class="mx-auto mb-6 w-40" />
+
+    <!-- ✅ Only show HD avatar -->
+    <img id="avatarHD" src="" alt="Avatar HD" class="mx-auto mb-6 w-[128px] h-[128px] rounded-full object-cover border-4 border-blue-500 shadow-lg hidden" />
+
+    <div id="userInfo" class="mt-2 space-y-2 text-sm text-gray-300 mb-6">
+      <div><strong>Username:</strong> <span id="displayName">Loading...</span></div>
+      <div><strong>Email:</strong> <span id="email">Loading...</span></div>
+      <div><strong>Mode:</strong> <span id="mode">Loading...</span></div>
+    </div>
+
+    <div id="creatorBio" class="w-full max-w-xl mx-auto mb-6 text-left">
+      <label for="creatorBioInput" class="block mb-1 font-semibold text-blue-300">Creator Bio</label>
+      <textarea id="creatorBioInput" rows="4" class="w-full p-3 rounded text-sm text-gray-900" placeholder="Add your bio here..."></textarea>
+      <button onclick="saveCreatorBio()" class="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold">Save Bio</button>
+      <p id="bioSavedMessage" class="text-green-400 text-sm mt-2 hidden">✅ Bio saved!</p>
+    </div>
+
+    <div class="bg-white text-gray-800 p-6 rounded-xl shadow-md w-full max-w-md mx-auto mb-6">
+      <h2 class="text-center text-lg font-semibold mb-4">Upload Your Avatar Here</h2>
+      <button onclick="uploadAvatar()" class="w-full mb-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded">Upload Avatar</button>
+      <input id="avatarInput" type="file" accept="image/*" class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700" />
+    </div>
+
+    <button onclick="logout()" class="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white font-semibold">Sign Out</button>
+  </div>
+</div>
+
+<!-- Help Section -->
+<div id="helpSection" class="hidden">
+  <div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+    <h2 class="text-2xl font-semibold mb-4">❓ Need Help?</h2>
+    <p class="text-gray-300">We're here to assist you with anything related to your creator account. Explore FAQs, reach out to our support team, or request a walkthrough of platform features.</p>
+    <div class="mt-6 space-y-4 text-left text-sm text-blue-300">
+      <p>📘 <a href="#">Visit our Help Center</a></p>
+      <p>📨 <a href="mailto:support@playcre8te.com">Email Support: support@playcre8te.com</a></p>
+      <p>🧑‍💻 <a href="#">Book a Live Support Session</a></p>
+    </div>
+  </div>
+</div>
+
+    </main>
+  </div>
+
+  <!-- 📦 Modal that pops up when clicking info icon -->
+<div id="mediaInfoModal" class="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 hidden">
+  <div class="bg-gray-900 text-white p-6 rounded-xl shadow-lg max-w-md w-full relative">
+    <button id="closeModalBtn" class="absolute top-2 right-3 text-gray-300 hover:text-white text-xl">&times;</button>
+    <div id="modalContent" class="space-y-2 text-sm text-gray-200"></div>
+  </div>
+</div>
+
+ <!-- You can Add content that will show on all pages here -->
+
+  <!-- JS Logic -->
+  <script>
+  const SIGNIN_API = 'https://hozj26o2e4.execute-api.us-east-2.amazonaws.com/prod';
+  const MEDIA_API = 'https://l7kt5ga8jk.execute-api.us-east-2.amazonaws.com/prod';
+  const MEDIALIBRARY_API = 'https://rs30cqq30m.execute-api.us-east-2.amazonaws.com/prod';
+
+function showSection(sectionId) {
+  document.querySelectorAll('[id$="Section"]').forEach(div => div.classList.add('hidden'));
+
+  const section = document.getElementById(sectionId + 'Section');
+  if (section) section.classList.remove('hidden');
+
+  const heading = document.getElementById('mainHeading');
+  if (heading) {
+    const titles = {
+      dashboard: 'Dashboard',
+      media: 'Media Library',
+      brands: 'My Brands',
+      products: 'Products',
+      subscribers: 'Subscribers',
+      analytics: 'Analytics',
+      earnings: 'Earnings',
+      addons: 'Add-Ons & Upgrades',
+      billing: 'Account Billing',
+      settings: 'Account Settings',
+      help: 'Need Help?'
+    };
+    heading.textContent = titles[sectionId] || 'Dashboard';
+  }
+
+  if (sectionId === 'settings') {
+    fetchUserInfo();
+  }
+}
+
+  function logout() {
+    localStorage.removeItem('id_token');
+    document.cookie = 'id_token=; Max-Age=0; path=/; domain=.playcre8te.com';
+    window.location.href = '/index.html';
+  }
+
+  function getSize(label) {
+    return { xs: 32, sm: 64, md: 128, lg: 256 }[label] || 64;
+  }
+
+  async function loadTopAvatarOnly() {
+    const idToken = localStorage.getItem('id_token');
+    if (!idToken) return;
+
+    try {
+      const res = await fetch(`${SIGNIN_API}/userinfo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_token: idToken })
+      });
+      const data = await res.json();
+
+      if (res.ok && data.creatorAvatar?.hd) {
+        const avatarHDThumb = document.getElementById('avatarHDThumb');
+        if (avatarHDThumb) avatarHDThumb.src = data.creatorAvatar.hd;
+      }
+    } catch (err) {
+      console.error('Top avatar fetch failed:', err);
+    }
+  }
+
+  async function fetchUserInfo() {
+    const idToken = localStorage.getItem('id_token');
+    if (!idToken) return;
+
+    try {
+      const res = await fetch(`${SIGNIN_API}/userinfo`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_token: idToken })
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        document.getElementById('displayName').textContent = data.displayName || 'N/A';
+        document.getElementById('email').textContent = data.email || 'N/A';
+        document.getElementById('mode').textContent = data.mode || 'N/A';
+        //document.getElementById('access').textContent = Array.isArray(data.access) ? data.access.join(', ') : data.access;
+
+        if (data.creatorAvatar?.hd) {
+        const hd = data.creatorAvatar.hd;
+        const avatarHD = document.getElementById('avatarHD');
+        if (avatarHD) {
+        avatarHD.src = hd;
+        avatarHD.classList.remove('hidden');
+        }
+    }
+
+        if (data.creatorbio) {
+          const bioInput = document.getElementById('creatorBioInput');
+          if (bioInput) bioInput.value = data.creatorbio;
+        }
+      } else {
+        console.error('UserInfo error:', data.error);
+      }
+    } catch (err) {
+      console.error('Fetch failed:', err);
+    }
+  }
+
+  async function saveCreatorBio() {
+    const bio = document.getElementById('creatorBioInput').value;
+    const idToken = localStorage.getItem('id_token');
+    if (!idToken) return alert("Not authenticated");
+
+    try {
+      const res = await fetch(`${SIGNIN_API}/update-bio`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_token: idToken, creatorbio: bio })
+      });
+      if (res.ok) {
+        document.getElementById('bioSavedMessage').classList.remove('hidden');
+        setTimeout(() => {
+          document.getElementById('bioSavedMessage').classList.add('hidden');
+        }, 3000);
+      } else {
+        alert("❌ Failed to save bio.");
+      }
+    } catch (err) {
+      console.error("Bio save failed:", err);
+      alert("❌ Something went wrong.");
+    }
+  }
+
+  async function uploadAvatar() {
+    const file = document.getElementById('avatarInput').files[0];
+    const idToken = localStorage.getItem('id_token');
+    if (!file || !idToken) return alert("Please select an image and be authenticated.");
+
+    try {
+      const presignRes = await fetch(`${MEDIA_API}/get-upload-url`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_token: idToken })
+      });
+      const { uploadUrl, key } = await presignRes.json();
+
+      await fetch(uploadUrl, { method: 'PUT', headers: { 'Content-Type': file.type }, body: file });
+
+      await fetch(`${MEDIA_API}/process-avatar`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id_token: idToken, key })
+      });
+
+      alert("✅ Upload successful! Your avatar will refresh shortly.");
+      location.reload();
+    } catch (err) {
+      console.error("Upload failed:", err);
+      alert("❌ Something went wrong during upload.");
+    }
+  }
+
+  // ✅ Run this immediately on page load
+    loadTopAvatarOnly();
+
+  function toggleMobileMenu() {
+  const menu = document.getElementById('mobileMenu');
+  menu.classList.toggle('hidden');
+}
+
+
+async function listUploadedMedia() {
+  const idToken = localStorage.getItem('id_token');
+  if (!idToken) return;
+
+  try {
+    const res = await fetch(`${MEDIALIBRARY_API}/media`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${idToken}`
+      }
+    });
+
+    if (!res.ok) {
+      console.error("API response error:", await res.text());
+      return;
+    }
+
+    const items = await res.json();
+    const grid = document.getElementById('mediaGrid');
+    grid.innerHTML = '';
+
+    items.forEach(item => {
+      const title = item.title || item.fileName || 'Untitled';
+      const type = item.fileType || item.mediaType || 'unknown';
+      const status = item.status || 'unknown';
+
+      // ✅ Thumbnail selection logic
+      let thumbnailUrl = '';
+      if (type === 'video') {
+        const thumbs = item.mediaUrl?.video?.primary?.thumbnails;
+        thumbnailUrl = thumbs?.rendition3 || thumbs?.rendition2 || thumbs?.rendition1 || '';
+        if (!thumbnailUrl) console.warn(`🟡 No video thumbnail for: ${title}`);
+      } else if (type === 'image') {
+        const artwork = item.mediaUrl?.artwork?.primary;
+        thumbnailUrl = artwork?.standard || artwork?.landscape || artwork?.portrait || '';
+        if (!thumbnailUrl) console.warn(`🟡 No image thumbnail for: ${title}`);
+      } else if (type === 'audio') {
+        thumbnailUrl = '/icons/audio.PNG';
+      } else {
+        console.warn(`❓ Unknown fileType (${type}) for asset:`, item);
+      }
+
+      // ✅ Card wrapper
+      const card = document.createElement('div');
+      card.className = 'bg-gray-800 p-4 rounded-xl shadow text-white overflow-hidden relative';
+
+      const iconHtml = (() => {
+        if (type === 'video') {
+          return `
+            <div class="absolute top-2 left-2 flex space-x-1 z-10">
+              <img src="/icons/play.PNG" alt="Play Icon" class="w-5 h-5 opacity-80" />
+              <img src="/icons/image.PNG" alt="Image Icon" class="w-5 h-5 opacity-80" />
+            </div>
+          `;
+        } else if (type === 'audio') {
+          return `
+            <div class="absolute top-2 left-2 flex space-x-1 z-10">
+              <img src="/icons/play.PNG" alt="Play Icon" class="w-5 h-5 opacity-80" />
+            </div>
+          `;
+        } else if (type === 'image') {
+          return `
+            <div class="absolute top-2 left-2 z-10">
+              <img src="/icons/image.PNG" alt="Image Icon" class="w-5 h-5 opacity-80" />
+            </div>
+          `;
+        } else {
+          return '';
+        }
+      })();
+
+      card.innerHTML = `
+        <div class="mb-2 text-blue-300 font-semibold text-center truncate">${title}</div>
+        <div class="relative">
+          ${iconHtml}
+          ${thumbnailUrl
+            ? `<img src="${thumbnailUrl}" alt="${title}" class="rounded w-full h-40 object-cover mb-2" />`
+            : `<div class="h-40 mb-2 flex items-center justify-center text-gray-500 italic bg-gray-700 rounded">Processing Content...</div>`
+          }
+        </div>
+        <div class="flex justify-between items-center">
+          <div class="text-xs text-gray-400">Type: ${type}</div>
+          <div class="flex space-x-2 action-icons flex-row-reverse"></div>
+        </div>
+        <div class="text-xs ${status === 'processed' ? 'text-green-400' : 'text-yellow-400'}">
+          Status: ${status}
+        </div>
+      `;
+
+      // ✅ Action icons
+      const actions = card.querySelector('.action-icons');
+
+      // Edit
+      const editIcon = document.createElement('img');
+      editIcon.src = "/icons/edit.png";
+      editIcon.alt = "Edit";
+      editIcon.className = "w-4 h-4 cursor-pointer opacity-80 hover:opacity-100";
+      actions.appendChild(editIcon);
+
+      // Info
+      const infoIcon = document.createElement('img');
+      infoIcon.src = "/icons/info.png";
+      infoIcon.alt = "Info";
+      infoIcon.className = "w-4 h-4 cursor-pointer opacity-80 hover:opacity-100";
+      infoIcon.addEventListener('click', () => showMediaInfo(item));
+      actions.appendChild(infoIcon);
+
+      // Folder
+      const folderIcon = document.createElement('img');
+      folderIcon.src = "/icons/folder.png";
+      folderIcon.alt = "Folder";
+      folderIcon.className = "w-4 h-4 cursor-pointer opacity-80 hover:opacity-100";
+      actions.appendChild(folderIcon);
+
+      // Brand
+      const brandIcon = document.createElement('img');
+      brandIcon.src = "/icons/brand.png";
+      brandIcon.alt = "Brand";
+      brandIcon.className = "w-4 h-4 cursor-pointer opacity-80 hover:opacity-100";
+      actions.appendChild(brandIcon);
+
+      // Image
+      const imageIcon = document.createElement('img');
+      imageIcon.src = "/icons/image.PNG";
+      imageIcon.alt = "Artwork";
+      imageIcon.className = "w-4 h-4 cursor-pointer opacity-80 hover:opacity-100";
+      actions.appendChild(imageIcon);
+
+      // Play (only if video or audio)
+      if (type === 'video' || type === 'audio') {
+        const playIcon = document.createElement('img');
+        playIcon.src = "/icons/play.PNG";
+        playIcon.alt = "Play";
+        playIcon.className = "w-4 h-4 cursor-pointer opacity-80 hover:opacity-100";
+        actions.appendChild(playIcon);
+      }
+
+      grid.appendChild(card);
+    });
+  } catch (err) {
+    console.error("Failed to list media:", err);
+    alert("❌ Error listing media files.");
+  }
+}
+
+// Auto-load media when section is shown
+const originalShowSection = showSection;
+showSection = function (sectionId) {
+  originalShowSection(sectionId);
+  if (sectionId === 'media') listUploadedMedia();
+};
+
+// ✅ Modal display logic
+function showMediaInfo(item) {
+  const modal = document.getElementById('mediaInfoModal');
+  const modalContent = document.getElementById('modalContent');
+
+const formatBytes = (bytes) => {
+  if (!bytes || isNaN(bytes)) return 'N/A';
+
+  const kb = bytes / 1024;
+  const mb = kb / 1024;
+  const gb = mb / 1024;
+
+  if (gb >= 1) return `${gb.toFixed(2)} GB`;
+  if (mb >= 1) return `${mb.toFixed(2)} MB`;
+  if (kb >= 1) return `${kb.toFixed(2)} KB`;
+  return `${bytes} B`;
+};
+
+
+  const formatDuration = (seconds) => {
+    if (!seconds || isNaN(seconds)) return '';
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}m ${secs}s`;
+  };
+
+  const formatDateTime = (timestamp) => {
+  if (!timestamp) return 'N/A';
+  const date = new Date(timestamp);
+  return date.toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',    // Jul
+    day: 'numeric',    // 22
+    hour: 'numeric',   // 2
+    minute: '2-digit', // 45
+    hour12: true       // PM
+  });
+};
+
+
+  const fields = [
+  { label: 'File Name', value: item.fileName },
+  { label: 'Created', value: formatDateTime(item.createdAt) },
+  { label: 'Modified', value: formatDateTime(item.updatedAt) },
+  { label: 'Size', value: formatBytes(item.size) },
+  { label: 'Duration', value: (item.fileType === 'video' || item.fileType === 'audio') ? formatDuration(item.duration) : null },
+];
+
+
+  modalContent.innerHTML = fields
+    .filter(f => f.value)
+    .map(f => `<div><strong>${f.label}:</strong> ${f.value}</div>`)
+    .join('');
+
+  modal.classList.remove('hidden');
+}
+
+// ✅ Modal close button
+document.getElementById('closeModalBtn').addEventListener('click', () => {
+  document.getElementById('mediaInfoModal').classList.add('hidden');
+});
+
+
+
+// ✅ Uppy Setup
+const uppy = new Uppy.Uppy({
+  autoProceed: false,
+  restrictions: {
+    allowedFileTypes: ['image/*', 'video/*', 'audio/*']
+  }
+});
+
+// ❌ Restriction alert for unsupported files
+uppy.on('restriction-failed', (file, error) => {
+  alert(`❌ File not allowed: ${file.name}\nReason: ${error.message}`);
+});
+
+// 🔌 Add cloud source plugins
+// uppy.use(Uppy.GoogleDrive, { companionUrl: 'https://companion.uppy.io' });
+// uppy.use(Uppy.Dropbox, { companionUrl: 'https://companion.uppy.io' });
+
+// 🖥️ Dashboard trigger modal
+uppy.use(Uppy.Dashboard, {
+  inline: false,
+  trigger: '#openUploader',
+  closeAfterFinish: true,
+  showProgressDetails: true,
+  proudlyDisplayPoweredByUppy: false,
+  // plugins: ['GoogleDrive', 'Dropbox']
+});
+
+// ✅ Clear modal file list when closed
+uppy.on('dashboard:close-modal', () => {
+  uppy.cancelAll();
+});
+
+function fadeOutAndRemoveBar(fileId) {
+  const bar = document.getElementById(`progress-${fileId}`);
+  if (!bar) return;
+
+  // ✅ Turn bar green
+  bar.classList.remove('bg-blue-500');
+  bar.classList.add('bg-green-500');
+
+  const wrapper = bar.closest('.w-full.bg-gray-700.rounded.h-2\\.5')?.parentElement;
+
+  if (wrapper) {
+    // ✅ Wait 2 seconds, then fade out
+    setTimeout(() => {
+      wrapper.style.transition = 'opacity 0.5s ease';
+      wrapper.style.opacity = '0';
+      setTimeout(() => wrapper.remove(), 500);
+    }, 2000);
+  }
+}
+
+// ✅ Upload Logic
+uppy.on('complete', async () => {
+  const idToken = localStorage.getItem('id_token');
+  if (!idToken) return alert("Not authenticated.");
+  const creatorSub = JSON.parse(atob(idToken.split('.')[1])).sub;
+  const progressContainer = document.getElementById('uploadProgressContainer');
+  progressContainer.innerHTML = '';
+
+  for (const file of uppy.getFiles()) {
+    const fileSize = file.size;
+    const mimeType = file.type;
+    const fileType = detectFileType(file.name);
+
+    const fileRow = document.createElement('div');
+    fileRow.innerHTML = `
+      <div class="text-sm text-white font-medium mb-1">${file.name}</div>
+      <div class="w-full bg-gray-700 rounded h-2.5">
+        <div id="progress-${file.id}" class="bg-blue-500 h-2.5 rounded" style="width: 0%"></div>
+      </div>
+    `;
+    progressContainer.appendChild(fileRow);
+
+    try {
+      if (fileSize > 100 * 1024 * 1024) {
+        await multipartUpload(file, fileType, mimeType, idToken, creatorSub, file.id);
+      } else {
+        await standardPresignedUpload(file, fileType, mimeType, idToken, creatorSub, file.id);
+      }
+
+      // ✅ Fade out bar on success
+      fadeOutAndRemoveBar(file.id);
+
+    } catch (err) {
+      console.error(`❌ Upload failed for ${file.name}:`, err);
+      alert(`Upload failed for ${file.name}`);
+    }
+  }
+
+  uppy.cancelAll();
+  alert("✅ All uploads complete. Processing has begun.");
+  listUploadedMedia();
+});
+
+function detectFileType(fileName) {
+  const ext = fileName.split('.').pop().toLowerCase();
+  if (["mp4", "mov"].includes(ext)) return "video";
+  if (["mp3", "wav", "m4a"].includes(ext)) return "audio";
+  if (["jpg", "jpeg", "png", "gif", "webp"].includes(ext)) return "image";
+  if (["pdf"].includes(ext)) return "pdf";
+  if (["zip"].includes(ext)) return "zip";
+  return "other";
+}
+
+async function standardPresignedUpload(file, fileType, mimeType, idToken, creatorSub, fileId) {
+  const presignRes = await fetch(`${MEDIALIBRARY_API}/media/upload-url`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${idToken}`
+    },
+    body: JSON.stringify({
+      fileName: file.name,
+      fileType,
+      mimeType,
+      creatorSub
+    })
+  });
+
+  let uploadUrl, assetId;
+
+  try {
+    const json = await presignRes.json();
+    uploadUrl = json.uploadUrl;
+    assetId = json.assetId;
+    console.log("🪪 [standardPresignedUpload] Got assetId:", assetId);
+  } catch (err) {
+    const text = await presignRes.text();
+    console.error("❌ Failed to parse JSON from presignRes. Raw response:", text);
+    return;
+  }
+
+  if (!assetId || !uploadUrl) {
+    console.error("❌ Missing assetId or uploadUrl from presigned URL response");
+    return;
+  }
+
+  const xhr = new XMLHttpRequest();
+  xhr.open('PUT', uploadUrl, true);
+  xhr.setRequestHeader('Content-Type', mimeType);
+  xhr.upload.onprogress = (e) => {
+    if (e.lengthComputable) {
+      const percent = Math.round((e.loaded / e.total) * 100);
+      document.getElementById(`progress-${fileId}`).style.width = `${percent}%`;
+    }
+  };
+
+  await new Promise((resolve, reject) => {
+    xhr.onload = () => xhr.status < 400 ? resolve() : reject(new Error('Upload failed'));
+    xhr.onerror = () => reject(new Error('Network error'));
+    xhr.send(file.data);
+  });
+
+  await markAsUploaded(assetId, idToken);
+}
+
+async function multipartUpload(file, fileType, mimeType, idToken, creatorSub, fileId) {
+  const assetId = crypto.randomUUID();
+
+  if (!idToken) {
+    console.error("❌ Missing idToken – cannot upload without authentication.");
+    throw new Error("Authentication token is missing.");
+  }
+
+  console.log("📦 Multipart /start payload", {
+    filename: file.name,
+    fileType,
+    assetId
+  });
+
+  const startRes = await fetch(`${MEDIALIBRARY_API}/media/multipart/start`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${idToken}`
+    },
+    body: JSON.stringify({
+      filename: file.name,
+      fileType,
+      mimeType,
+      creatorSub,
+    }),
+  });
+
+  if (!startRes.ok) {
+    const errorBody = await startRes.text();
+    console.error("❌ /multipart/start failed:", startRes.status, errorBody);
+    throw new Error(`Start failed: ${startRes.status}`);
+  }
+
+  const startJson = await startRes.json();
+  const uploadId = startJson.uploadId || startJson.UploadId;
+  const s3Key = startJson.s3Key;
+
+  const partSize = 5 * 1024 * 1024;
+  const totalParts = Math.ceil(file.size / partSize);
+  const parts = [];
+
+  for (let partNumber = 1; partNumber <= totalParts; partNumber++) {
+    const start = (partNumber - 1) * partSize;
+    const end = Math.min(start + partSize, file.size);
+    const blob = file.data.slice(start, end);
+
+    const signRes = await fetch(`${MEDIALIBRARY_API}/media/multipart/sign`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`
+      },
+      body: JSON.stringify({
+        uploadId,
+        partNumber,
+        s3Key,
+      }),
+    });
+
+    if (!signRes.ok) {
+      const errorBody = await signRes.text();
+      console.error(`❌ /multipart/sign failed for part ${partNumber}:`, signRes.status, errorBody);
+      throw new Error(`Sign failed for part ${partNumber}`);
+    }
+
+    const { signedUrl } = await signRes.json(); // ✅ fixed from `presignedUrl` to `signedUrl`
+
+    await new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', signedUrl, true);
+      xhr.setRequestHeader('Content-Type', 'application/octet-stream');
+
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) {
+          const percent = Math.round(((partNumber - 1 + e.loaded / e.total) / totalParts) * 100);
+          const progressBar = document.getElementById(`progress-${fileId}`);
+          if (progressBar) {
+            progressBar.style.width = `${percent}%`;
+          }
+        }
+      };
+
+      xhr.onload = () => {
+        if (xhr.status < 400) {
+          const eTag = xhr.getResponseHeader('ETag');
+          if (eTag) {
+          parts.push({ PartNumber: partNumber, ETag: eTag.replaceAll('"', '') });
+          } else {
+          console.warn(`⚠️ No ETag returned for part ${partNumber}`);
+          }
+          resolve();
+        } else {
+          console.error(`❌ Upload failed for part ${partNumber}`, xhr.statusText);
+          reject(new Error(`Upload failed for part ${partNumber}`));
+        }
+      };
+
+      xhr.onerror = () => {
+        console.error(`❌ Network error during upload for part ${partNumber}`);
+        reject(new Error('Network error'));
+      };
+
+      xhr.send(blob);
+    });
+  }
+
+  const completeRes = await fetch(`${MEDIALIBRARY_API}/media/multipart/complete`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${idToken}`
+    },
+    body: JSON.stringify({
+      uploadId,
+      s3Key,
+      parts,
+      assetId,
+    }),
+  });
+
+  if (!completeRes.ok) {
+    const errorBody = await completeRes.text();
+    console.error("❌ /multipart/complete failed:", completeRes.status, errorBody);
+    throw new Error(`Complete failed: ${completeRes.status}`);
+  }
+
+  await markAsUploaded(assetId, idToken);
+}
+
+async function markAsUploaded(assetId, idToken) {
+  const body = JSON.stringify({ assetId, uploaded: true });
+
+  console.log("📦 [markAsUploaded] PATCH /media/upload body:", body);
+  console.log("🔐 [markAsUploaded] ID token:", idToken?.slice(0, 20) + '...');
+
+  try {
+    const res = await fetch(`${MEDIALIBRARY_API}/media/upload/${assetId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${idToken}`
+      },
+      body,
+    });
+
+    const text = await res.text();
+    console.log("📬 [markAsUploaded] Response status:", res.status);
+    console.log("📬 [markAsUploaded] Response text:", text);
+
+    if (!res.ok) {
+      throw new Error(`Failed to mark as uploaded: ${res.status}`);
+    }
+
+    return text;
+
+  } catch (err) {
+    console.error("❌ [markAsUploaded] Upload failed:", err);
+    throw err;
+  }
+}
+
+</script>
+
+</body>
+</html>

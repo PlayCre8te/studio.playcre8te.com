@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Authenticating...</title>
+
+  <script>
+    const SIGNIN_API = "https://hozj26o2e4.execute-api.us-east-2.amazonaws.com/prod/signin";
+
+    function parseFragment(fragment) {
+      const params = {};
+      const regex = /([^&=]+)=([^&]*)/g;
+      let match;
+      while ((match = regex.exec(fragment))) {
+        params[decodeURIComponent(match[1])] = decodeURIComponent(match[2]);
+      }
+      return params;
+    }
+
+    function parseQueryString(search) {
+      const params = {};
+      const query = search.substring(1);
+      const regex = /([^&=]+)=([^&]*)/g;
+      let match;
+      while ((match = regex.exec(query))) {
+        params[decodeURIComponent(match[1])] = decodeURIComponent(match[2]);
+      }
+      return params;
+    }
+
+    function redirectByGroup(groups) {
+      const hostname = window.location.hostname;
+      const isPlaycre8teDotCom = hostname === 'playcre8te.com';
+      const isPlaycre8teSub = hostname.endsWith('.playcre8te.com');
+      const isPlaycre8teTV = hostname === 'playcre8te.tv' || hostname.endsWith('.playcre8te.tv');
+      const isCustomDomain = hostname.endsWith('.com') && !isPlaycre8teDotCom && !isPlaycre8teSub;
+      const isPlatformDomain = isPlaycre8teDotCom || isPlaycre8teSub;
+
+      const isFan = groups.includes('fans');
+      const isCreator = groups.includes('creatoradmins');
+      const isBrandAdmin = groups.includes('brandadmins');
+      const isPlatformAdmin = groups.includes('platformadmins');
+      const adminGroupCount = [isCreator, isBrandAdmin, isPlatformAdmin].filter(Boolean).length;
+
+      if (isPlatformDomain) {
+        if (adminGroupCount > 1) {
+          window.location.href = 'https://myhub.playcre8te.com';
+        } else if (isFan && adminGroupCount === 0) {
+          window.location.href = 'https://fans.playcre8te.com/fan.html';
+        } else if (isCreator) {
+          window.location.href = 'https://studio.playcre8te.com/creator.html';
+        } else if (isBrandAdmin) {
+          window.location.href = 'https://studio.playcre8te.com/brandadmin.html';
+        } else if (isPlatformAdmin) {
+          window.location.href = 'https://admin.playcre8te.com/admin.html';
+        } else {
+          window.location.href = 'https://myhub.playcre8te.com';
+        }
+      } else if (isPlaycre8teTV || isCustomDomain) {
+        window.location.href = window.location.origin;
+      } else {
+        window.location.href = 'https://myhub.playcre8te.com';
+      }
+    }
+
+    (async function () {
+      const searchParams = parseQueryString(window.location.search);
+      const fragment = window.location.hash.substring(1);
+      const fragmentParams = parseFragment(fragment);
+
+      const idToken = fragmentParams['id_token'] || searchParams['id_token'];
+      const stateParam = fragmentParams['state'];
+
+      if (searchParams['id_token']) {
+        localStorage.setItem('id_token', searchParams['id_token']);
+        window.history.replaceState({}, document.title, window.location.pathname);
+        try {
+          const res = await fetch(SIGNIN_API, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id_tokens: searchParams['id_token'] })  // ✅ updated
+          });
+
+          if (!res.ok) throw new Error('Signin API failed');
+          const { groups = [] } = await res.json();
+          redirectByGroup(groups);
+        } catch (err) {
+          console.error('Redirect handling failed:', err);
+          window.location.href = 'https://myhub.playcre8te.com';
+        }
+        return;
+      }
+
+      if (!idToken || !stateParam) {
+        console.error('Missing id_token or state');
+        window.location.href = 'https://myhub.playcre8te.com';
+        return;
+      }
+
+      let state;
+      try {
+        state = JSON.parse(decodeURIComponent(stateParam));
+      } catch (e) {
+        console.error('Invalid state');
+        window.location.href = 'https://myhub.playcre8te.com';
+        return;
+      }
+
+      const currentOrigin = window.location.origin;
+      if (state.origin && state.origin !== currentOrigin) {
+        const handoffUrl = `${state.origin}/auth-callback.html?id_token=${encodeURIComponent(idToken)}`;
+        window.location.href = handoffUrl;
+        return;
+      }
+
+      localStorage.setItem('id_token', idToken);
+
+      try {
+        const res = await fetch(SIGNIN_API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id_tokens: idToken })  // ✅ updated
+        });
+
+        if (!res.ok) throw new Error('Signin API error');
+        const { groups = [] } = await res.json();
+        redirectByGroup(groups);
+      } catch (error) {
+        console.error('Error in group redirect:', error);
+        window.location.href = 'https://myhub.playcre8te.com';
+      }
+    })();
+  </script>
+</head>
+<body>
+  <h1>Authenticating...</h1>
+</body>
+</html>

@@ -1,0 +1,3636 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Shows UI</title>
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: '#E50000',
+              card: '#1A1A1A',
+              line: '#262626',
+              line2: '#1F1F1F',
+              panel: '#0F0F0F',
+            },
+          },
+        },
+      },
+    };
+  </script>
+
+  <!-- Manrope font -->
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    html { background: #0B0B0B; }
+    body { font-family: 'Manrope', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; }
+  </style>
+  <style>
+  /* Mobile: force single-line with ellipsis everywhere inside .no-wrap-mobile */
+  @media (max-width: 640px) {
+    .no-wrap-mobile h1,
+    .no-wrap-mobile h2,
+    .no-wrap-mobile h3,
+    .no-wrap-mobile p,
+    .no-wrap-mobile span,
+    .no-wrap-mobile button,
+    .no-wrap-mobile a,
+    .no-wrap-mobile label,
+    .no-wrap-mobile small,
+    .no-wrap-mobile strong,
+    .no-wrap-mobile em {
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      max-width: 100%;
+      display: block;        /* ensures ellipsis works even on inline text */
+    }
+
+    /* Keep inline-flex bits single-line too (badges, pills, icon rows) */
+    .no-wrap-mobile .flex,
+    .no-wrap-mobile .inline-flex {
+      flex-wrap: nowrap !important;
+      min-width: 0;          /* allow children to shrink for ellipsis */
+    }
+
+    /* Titles inside common headings still behave nicely */
+    .no-wrap-mobile [class*="font-extrabold"],
+    .no-wrap-mobile [class*="font-semibold"] {
+      min-width: 0;
+    }
+
+    /* Buttons should shrink and ellipsize rather than wrap */
+    .no-wrap-mobile button {
+      min-width: 0;
+      width: max-content;    /* keeps button as small as its (now single-line) text */
+      max-width: 100%;
+    }
+
+    /* Prevent grid items from forcing text wraps due to min-content */
+    .no-wrap-mobile * {
+      min-width: 0;
+    }
+  }
+</style>
+</head>
+<body class="text-white">
+
+<!-- ==================== HEADER (NAVBAR) ==================== -->
+<!-- Accent + brand tokens (tweak freely) -->
+<style>
+  :root {
+    --brand-red: #E50000;
+    --panel: rgba(17, 17, 17, .72);
+    --line: rgba(255, 255, 255, .08);
+    --line-strong: rgba(255, 255, 255, .14);
+  }
+  /* smooth show/hide for mobile drawer (respects reduced motion) */
+  @media (prefers-reduced-motion: no-preference) {
+    .drawer-enter { opacity: 0; transform: translateY(-6px) scale(.98); }
+    .drawer-enter-active { transition: opacity .16s ease, transform .16s ease; opacity: 1; transform: translateY(0) scale(1); }
+    .drawer-exit { opacity: 1; transform: translateY(0) scale(1); }
+    .drawer-exit-active { transition: opacity .16s ease, transform .16s ease; opacity: 0; transform: translateY(-6px) scale(.98); }
+  }
+  /* sticky shadow only when scrolled */
+  .hdr-shadow { box-shadow: 0 6px 24px -12px rgba(0,0,0,.55); }
+</style>
+
+<!-- ==================== HEADER (NAVBAR) ==================== -->
+<!-- ==================== HEADER (NAVBAR) ==================== -->
+<header id="AppHeader"
+  class="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-black/35 bg-black/55 border-b border-white/10 transition-[box-shadow,background-color] duration-200">
+
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 items-center justify-between">
+      
+      <!-- Logo (placeholder) -->
+      <a href="#" class="group flex items-center gap-3" aria-label="Home">
+        <span class="inline-flex h-9 w-2 items-center justify-center rounded-md bg-[#E50000]"></span>
+        <span class="block h-8 w-28 rounded bg-white/90 group-hover:bg-white transition-colors"></span>
+        <!-- Optional wordmark text -->
+        <span class="hidden sm:block text-white/80 text-sm tracking-wide">Your&nbsp;Brand</span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-1 rounded-xl bg-black/70 ring-1 ring-white/10 p-1">
+        <a href="#" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">Home</a>
+        <a href="#" class="relative px-4 py-2 rounded-lg text-white font-medium bg-white/5">
+          Explore
+          <span class="absolute inset-x-3 -bottom-[2px] h-[2px] rounded-full bg-[#E50000]"></span>
+        </a>
+        <a href="#" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">Support</a>
+        <a href="#" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">More</a>
+        <a href="#" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">Subscribe</a>
+      </nav>
+
+      <!-- Actions (Desktop) -->
+      <div class="hidden md:flex items-center gap-2">
+        <!-- Search -->
+        <button class="inline-flex h-9 w-9 items-center justify-center rounded-lg ring-1 ring-white/20 hover:bg-white/10" aria-label="Search">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="16.65" y1="16.65" x2="21" y2="21" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <!-- Profile -->
+        <button class="inline-flex h-9 w-9 items-center justify-center rounded-lg ring-1 ring-white/20 hover:bg-white/10" aria-label="Profile">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5.5 21c1.5-4 11.5-4 13 0" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Hamburger -->
+      <button id="menuBtn"
+        class="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg ring-1 ring-white/20 hover:bg-white/10"
+        aria-expanded="false" aria-controls="mobileNav">
+        <span class="sr-only">Open Menu</span>
+        <!-- Hamburger icon -->
+        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Drawer (expanded toolbar) -->
+    <div id="mobileNav" class="hidden md:hidden pb-4">
+      <nav class="mt-3 rounded-xl bg-black/70 ring-1 ring-white/10 p-2 flex flex-col">
+        <a href="#" class="px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">Home</a>
+        <a href="#" class="px-4 py-3 rounded-lg bg-white/5 text-white font-medium">Explore</a>
+        <a href="#" class="px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">Support</a>
+        <a href="#" class="px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">More</a>
+        <a href="#" class="px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">Subscribe</a>
+
+        <!-- Quick Actions (UPDATED icons) -->
+        <div class="mt-2 grid grid-cols-2 gap-2">
+          <!-- Search (magnifying glass) -->
+          <button class="flex items-center justify-center gap-2 rounded-lg px-3 py-3 bg-white/5 ring-1 ring-white/10 text-white hover:bg-white/10" aria-label="Search">
+            <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="16.65" y1="16.65" x2="21" y2="21" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="text-sm">Search</span>
+          </button>
+
+          <!-- Profile (user circle) -->
+          <button class="flex items-center justify-center gap-2 rounded-lg px-3 py-3 bg-white/5 ring-1 ring-white/10 text-white hover:bg-white/10" aria-label="Profile">
+            <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5.5 21c1.5-4 11.5-4 13 0" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="text-sm">Profile</span>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<script>
+  (function () {
+    const btn = document.getElementById('menuBtn');
+    const drawer = document.getElementById('mobileNav');
+    if (!btn || !drawer) return;
+
+    let open = false;
+    btn.addEventListener('click', () => {
+      open = !open;
+      drawer.classList.toggle('hidden', !open);
+      btn.setAttribute('aria-expanded', String(open));
+    });
+  })();
+</script>
+
+<!-- ==================== PAGE CONTENT ==================== -->
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 space-y-16 no-wrap-mobile">
+    
+<!-- ==================== HERO CAROUSEL (wraps your 3 unchanged cards) ==================== -->
+<div id="HeroCarousel" class="relative">
+  <!-- Slides wrapper (absolute stack for crossfade) -->
+  <div class="relative">
+    <!-- Slide 1 (UNMODIFIED CARD) -->
+    <div class="hc-slide absolute inset-0 opacity-0 transition-opacity duration-700 ease-out" aria-hidden="true">
+      <!-- Hero / Featured — 1 -->
+      <section class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] overflow-hidden">
+        <div class="flex flex-col">
+          <!-- Image on top -->
+          <div class="relative">
+            <img src="https://placehold.co/1200x520" class="w-full h-72 sm:h-96 lg:h-full object-cover" alt="Featured" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent"></div>
+          </div>
+
+          <!-- Info Card (Below the Image) -->
+          <div class="p-6 sm:p-8 flex flex-col justify-between">
+            <div class="space-y-3">
+              <h2 class="text-2xl sm:text-3xl font-extrabold">The Big Highlight</h2>
+              <p class="text-gray-300 leading-relaxed">
+                Catch the latest hit series everyone’s talking about. Action-packed, character-driven, and binge-ready.
+              </p>
+            </div>
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <button class="rounded-lg bg-[#E50000] px-4 py-2 text-sm font-semibold">Seen More</button>
+              <button class="rounded-lg bg-[#1A1A1A] ring-1 ring-[#2A2A2A] px-4 py-2 text-sm">Add to Medialist</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Slide 2 (UNMODIFIED CARD) -->
+    <div class="hc-slide absolute inset-0 opacity-0 transition-opacity duration-700 ease-out" aria-hidden="true">
+      <!-- Hero / Featured — 2 -->
+      <section class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] overflow-hidden">
+        <div class="flex flex-col">
+          <!-- Image on top -->
+          <div class="relative">
+            <img src="https://placehold.co/1200x520" class="w-full h-72 sm:h-96 lg:h-full object-cover" alt="Featured" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent"></div>
+          </div>
+
+          <!-- Info Card (Below the Image) -->
+          <div class="p-6 sm:p-8 flex flex-col justify-between">
+            <div class="space-y-3">
+              <h2 class="text-2xl sm:text-3xl font-extrabold">The Universal Code</h2>
+              <p class="text-gray-300 leading-relaxed">
+                Catch the latest hit series everyone’s talking about. Action-packed, character-driven, and binge-ready.
+              </p>
+            </div>
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <button class="rounded-lg bg-[#E50000] px-4 py-2 text-sm font-semibold">Seen More</button>
+              <button class="rounded-lg bg-[#1A1A1A] ring-1 ring-[#2A2A2A] px-4 py-2 text-sm">Add to Medialist</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Slide 3 (UNMODIFIED CARD) -->
+    <div class="hc-slide absolute inset-0 opacity-0 transition-opacity duration-700 ease-out" aria-hidden="true">
+      <!-- Hero / Featured — 3 -->
+      <section class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] overflow-hidden">
+        <div class="flex flex-col">
+          <!-- Image on top -->
+          <div class="relative">
+            <img src="https://placehold.co/1200x520" class="w-full h-72 sm:h-96 lg:h-full object-cover" alt="Featured" />
+            <div class="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent"></div>
+          </div>
+
+          <!-- Info Card (Below the Image) -->
+          <div class="p-6 sm:p-8 flex flex-col justify-between">
+            <div class="space-y-3">
+              <h2 class="text-2xl sm:text-3xl font-extrabold">Keep Moving</h2>
+              <p class="text-gray-300 leading-relaxed">
+                Catch the latest hit series everyone’s talking about. Action-packed, character-driven, and binge-ready.
+              </p>
+            </div>
+            <div class="mt-6 flex flex-wrap items-center gap-3">
+              <button class="rounded-lg bg-[#E50000] px-4 py-2 text-sm font-semibold">Seen More</button>
+              <button class="rounded-lg bg-[#1A1A1A] ring-1 ring-[#2A2A2A] px-4 py-2 text-sm">Add to Medialist</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <!-- Pagination Dots (small, subtle, red) -->
+  <div class="hc-dots absolute left-1/2 -translate-x-1/2 bottom-3 flex items-center gap-2 z-10 pt-4">
+    <button class="hc-dot size-1.5 rounded-full bg-[#E50000]/50" aria-label="Go to slide 1"></button>
+    <button class="hc-dot size-1.5 rounded-full bg-[#E50000]/50" aria-label="Go to slide 2"></button>
+    <button class="hc-dot size-1.5 rounded-full bg-[#E50000]/50" aria-label="Go to slide 3"></button>
+  </div>
+</div>
+
+<!-- ==================== CAROUSEL SCRIPT (autoplay + loop + crossfade) ==================== -->
+<script>
+  (function heroCarousel() {
+    const root = document.getElementById('HeroCarousel');
+    if (!root) return;
+
+    const slides = Array.from(root.querySelectorAll('.hc-slide'));
+    const dots = Array.from(root.querySelectorAll('.hc-dot'));
+
+    // Config (tweakable)
+    const AUTOPLAY_MS = 5000;        // rotation interval
+    const FADE_MS = 700;             // should match transition duration
+    let index = 0;
+    let timer = null;
+    let resizing = false;
+
+    // Prepare stacking + show first slide
+    slides.forEach((s, i) => {
+      s.style.transition = `opacity ${FADE_MS}ms ease-out, transform ${FADE_MS}ms ease-out`;
+      s.style.willChange = 'opacity, transform';
+      s.style.transform = 'translateX(0)'; // slide hint (we’ll nudge on entry)
+      if (i === 0) {
+        s.classList.remove('opacity-0');
+        s.setAttribute('aria-hidden', 'false');
+      }
+    });
+    updateDots(0);
+    setContainerHeight();
+
+    function setContainerHeight() {
+      if (resizing) return;
+      resizing = true;
+      // Temporarily ensure current slide is visible to measure
+      const current = slides[index];
+      if (!current) return;
+      // Measure the card inside the slide
+      requestAnimationFrame(() => {
+        const section = current.querySelector('section');
+        const h = section ? section.offsetHeight : current.offsetHeight;
+        root.style.height = h + 'px';
+        // Add top/bottom padding headroom for dots; optional
+        root.style.paddingBottom = '18px';
+        resizing = false;
+      });
+    }
+
+    function goTo(newIndex, { fromAuto = false } = {}) {
+      if (newIndex === index) return;
+
+      const current = slides[index];
+      const next = slides[(newIndex + slides.length) % slides.length];
+
+      // Outgoing
+      current.style.transform = 'translateX(-1%)';
+      current.classList.add('opacity-0');
+      current.setAttribute('aria-hidden', 'true');
+
+      // Incoming
+      next.style.transform = 'translateX(1%)';
+      next.classList.remove('opacity-0');
+      next.setAttribute('aria-hidden', 'false');
+
+      // After transition, settle transforms so resizing is stable
+      setTimeout(() => {
+        slides.forEach(s => { s.style.transform = 'translateX(0)'; });
+        setContainerHeight();
+      }, FADE_MS);
+
+      index = (newIndex + slides.length) % slides.length;
+      updateDots(index);
+
+      if (!fromAuto) restartAutoplay();
+    }
+
+    function next()   { goTo(index + 1, { fromAuto: true }); }
+    function prev()   { goTo(index - 1); }
+
+    function updateDots(activeIdx) {
+      dots.forEach((d, i) => {
+        if (i === activeIdx) {
+          d.classList.remove('bg-[#E50000]/50');
+          d.classList.add('bg-[#E50000]');
+          d.style.width = '8px'; d.style.height = '8px';
+        } else {
+          d.classList.add('bg-[#E50000]/50');
+          d.classList.remove('bg-[#E50000]');
+          d.style.width = '6px'; d.style.height = '6px';
+        }
+      });
+    }
+
+    // Autoplay (infinite loop)
+    function startAutoplay() {
+      if (timer) return;
+      timer = setInterval(next, AUTOPLAY_MS);
+    }
+    function stopAutoplay() {
+      if (!timer) return;
+      clearInterval(timer);
+      timer = null;
+    }
+    function restartAutoplay() {
+      stopAutoplay();
+      startAutoplay();
+    }
+
+    // Pagination dot clicks
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => goTo(i));
+    });
+
+    // Pause on hover/focus (nice for Hero)
+    root.addEventListener('mouseenter', stopAutoplay);
+    root.addEventListener('mouseleave', startAutoplay);
+    root.addEventListener('focusin', stopAutoplay);
+    root.addEventListener('focusout', startAutoplay);
+
+    // Basic swipe (optional but tiny)
+    let touchStartX = 0, touchDX = 0;
+    root.addEventListener('touchstart', (e) => {
+      touchStartX = e.touches[0].clientX;
+      touchDX = 0;
+      stopAutoplay();
+    }, { passive: true });
+    root.addEventListener('touchmove', (e) => {
+      touchDX = e.touches[0].clientX - touchStartX;
+    }, { passive: true });
+    root.addEventListener('touchend', () => {
+      if (Math.abs(touchDX) > 40) {
+        if (touchDX < 0) next(); else prev();
+      } else {
+        startAutoplay();
+      }
+    });
+
+    // Resize handling to keep container height snug
+    window.addEventListener('resize', () => {
+      setContainerHeight();
+    });
+
+    // Kickoff
+    startAutoplay();
+  })();
+</script>
+
+
+    <!-- ==================== PART 2 (Sections) ==================== -->
+  
+<!-- Trending Shows Now — Pro CoverFlow (Darker Overlay + Views Pill + Smaller Icons) -->
+<section class="space-y-6 select-none">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <div class="flex items-baseline gap-2">
+      <h2 class="text-3xl font-extrabold leading-tight">Trending Now</h2>
+      <button class="px-2 py-0.5 text-[10px] font-medium text-white bg-[#E50000] rounded hover:bg-red-700 transition">
+        + See More
+      </button>
+    </div>
+  </div>
+
+  <!-- Viewport with perspective -->
+  <div id="cfViewport"
+       class="relative w-full overflow-hidden px-4 md:px-6 py-12 cursor-grab active:cursor-grabbing"
+       style="perspective: 1200px;">
+    <div id="cfStage" class="relative mx-auto" style="height: 460px;"></div>
+  </div>
+
+  <!-- Slide Template -->
+  <template id="cfSlideTpl">
+    <article class="cf-slide absolute top-1/2 left-1/2
+                    rounded-xl ring-1 ring-[#262626] bg-[#1A1A1A] overflow-hidden
+                    shadow-[0_12px_28px_-10px_rgba(0,0,0,.6)]"
+             style="height: 444px; transform-origin: center center;">
+      <div class="relative w-full h-full">
+        <img class="cf-img absolute inset-0 w-full h-full object-cover" src="" alt="" draggable="false">
+
+        <!-- Taller, darker bottom gradient overlay -->
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-48
+                    bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
+
+        <!-- Title + Icons on top of gradient -->
+        <div class="absolute left-0 right-0 bottom-0 p-5">
+          <!-- Title: single-line, truncated -->
+          <h3 class="cf-title text-white font-semibold text-base sm:text-lg md:text-xl leading-tight
+                     whitespace-nowrap overflow-hidden text-ellipsis pr-2"></h3>
+
+          <!-- Icons row: views pill (white), other icons red, slightly smaller -->
+          <div class="mt-2 flex items-center gap-3 md:gap-4 flex-nowrap">
+            <!-- Views pill (grouped eye + number, white) -->
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/40 ring-1 ring-white/20 text-white text-xs sm:text-sm whitespace-nowrap">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z"
+                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+              <span class="cf-views">0</span>
+            </span>
+
+            <!-- Lock (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+
+            <!-- Play (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+              </svg>
+            </span>
+
+            <!-- Info (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    (function() {
+      // ---------- Config ----------
+      const OVERLAP = 0.22;      // ~22% cover
+      const RANGE   = 2;         // 5 visible total
+      const DUR     = 480;       // ms transition
+      const AUTO_MS = 3600;      // autoplay
+
+      const MAX_TILT = 26;
+      const MAX_Z    = 170;
+      const SCALE_C  = 1.06;
+      const SCALE_S  = 0.86;
+      const OVAL_Y   = 14;
+      const STACK_NUDGE = 6;
+
+      // ---------- Data ----------
+      const data = [
+        { img: 'https://placehold.co/640x900?text=TN1', title: 'Night Runner',          views: '128K' },
+        { img: 'https://placehold.co/640x900?text=TN2', title: 'Hidden Courts',         views: '92K'  },
+        { img: 'https://placehold.co/640x900?text=TN3', title: 'Slam Dunk Space',       views: '66K'  },
+        { img: 'https://placehold.co/640x900?text=TN4', title: 'See No Evil',           views: '54K'  },
+        { img: 'https://placehold.co/640x900?text=TN5', title: 'Behind the Clock',      views: '41K'  },
+        { img: 'https://placehold.co/640x900?text=TN6', title: 'Jack and Any',          views: '37K'  },
+        { img: 'https://placehold.co/640x900?text=TN7', title: 'Head Hunters: Revival', views: '31K'  },
+      ];
+
+      // ---------- Elements ----------
+      const viewport = document.getElementById('cfViewport');
+      const stage    = document.getElementById('cfStage');
+      const tpl      = document.getElementById('cfSlideTpl');
+
+      // ---------- Build slides ----------
+      const slides = data.map(d => {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.querySelector('.cf-img').src = d.img;
+        node.querySelector('.cf-title').textContent = d.title;
+        node.querySelector('.cf-views').textContent = d.views;
+        stage.appendChild(node);
+        return node;
+      });
+
+      const N = slides.length;
+      let center = 0;
+      let locked = false;
+      let autoTimer = null;
+
+      function visibleTarget() { return (window.innerWidth >= 1024) ? 5 : 3; }
+
+      function computeGeometry() {
+        const W = viewport.clientWidth;
+        const vis = visibleTarget();
+        const usable = W * 0.92;
+        const denom  = (vis - OVERLAP * (vis - 1));
+        let slideW   = usable / denom;
+        slideW = Math.max(230, Math.min(340, slideW));
+        stage.style.width  = W + 'px';
+        stage.style.height = '444px';
+        const step   = slideW * (1 - OVERLAP);
+        return { slideW, step };
+      }
+
+      function wrap(i) { return (i % N + N) % N; }
+      function shortestDelta(from, to) {
+        const raw = (to - from) % N;
+        const a = (raw + N) % N;
+        return (a > N/2) ? a - N : a;
+      }
+
+      function placeSlides(animate = true) {
+        const { slideW, step } = computeGeometry();
+        slides.forEach((slide, i) => {
+          const d  = shortestDelta(center, i);
+          const ad = Math.abs(d);
+          const side = Math.sign(d);
+          const clamped = Math.min(ad, RANGE);
+          const isCenter = (d === 0);
+
+          let x = (clamped * side) * step;
+          if (ad > RANGE) {
+            const overflow = ad - RANGE;
+            x += side * overflow * STACK_NUDGE;
+          }
+
+          const z = MAX_Z * (1 - clamped / (RANGE + 0.8));
+          const tilt = side * -MAX_TILT * (clamped / (RANGE + 0.2));
+          const scale = isCenter ? SCALE_C : (SCALE_S + (1 - clamped / (RANGE + 0.8)) * 0.12);
+          const y = OVAL_Y * (clamped / RANGE) - OVAL_Y * 0.5;
+
+          const baseOpacity = 1 - (clamped * 0.18);
+          const opacity = Math.max(0.30, baseOpacity);
+
+          const zBase = 1000 - clamped * 10 + (isCenter ? 1000 : 0);
+          const zTweak = side < 0 ? -1 : 1;
+          slide.style.zIndex = String(zBase + zTweak);
+
+          slide.style.width = slideW + 'px';
+          slide.style.opacity = opacity.toFixed(3);
+          slide.style.transition = animate
+            ? `transform ${DUR}ms cubic-bezier(.22,.61,.36,1), opacity ${DUR}ms ease`
+            : 'none';
+          slide.style.transform = `
+            translate(-50%, -50%)
+            translateX(${x}px)
+            translateY(${y}px)
+            translateZ(${z}px)
+            rotateY(${tilt}deg)
+            scale(${scale})
+          `;
+        });
+      }
+
+      function goto(targetCenter) {
+        if (locked) return;
+        locked = true;
+        center = wrap(targetCenter);
+        placeSlides(true);
+        clearTimeout(goto._t);
+        goto._t = setTimeout(() => { locked = false; }, DUR + 20);
+      }
+      function next() { goto(center + 1); }
+      function prev() { goto(center - 1); }
+
+      // Click-to-focus
+      stage.addEventListener('click', (e) => {
+        if (locked) return;
+        const card = e.target.closest('.cf-slide');
+        if (!card) return;
+        const idx = slides.indexOf(card);
+        if (idx === -1) return;
+        const delta = shortestDelta(center, idx);
+        if (delta !== 0) goto(center + delta);
+      });
+
+      // Drag/swipe
+      let startX = 0, dragging = false;
+      viewport.addEventListener('pointerdown', (e) => {
+        if (locked) return;
+        dragging = true; startX = e.clientX;
+        viewport.setPointerCapture(e.pointerId);
+      });
+      viewport.addEventListener('pointermove', (e) => {
+        if (!dragging || locked) return;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 48) {
+          if (dx < 0) next(); else prev();
+          dragging = false;
+        }
+      });
+      window.addEventListener('pointerup', () => { dragging = false; });
+
+      // Wheel / trackpad
+      let wheelCooldown = false;
+      viewport.addEventListener('wheel', (e) => {
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (Math.abs(delta) < 12) return;
+        e.preventDefault();
+        if (wheelCooldown || locked) return;
+        wheelCooldown = true;
+        if (delta > 0) next(); else prev();
+        setTimeout(() => { wheelCooldown = false; }, DUR + 60);
+      }, { passive: false });
+
+      // Keyboard
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') next();
+        if (e.key === 'ArrowLeft')  prev();
+      });
+
+      // Autoplay
+      function startAuto() { stopAuto(); autoTimer = setInterval(next, AUTO_MS); }
+      function stopAuto()  { if (autoTimer) clearInterval(autoTimer), (autoTimer = null); }
+      viewport.addEventListener('mouseenter', stopAuto);
+      viewport.addEventListener('mouseleave', startAuto);
+      viewport.addEventListener('touchstart', stopAuto, { passive: true });
+      viewport.addEventListener('touchend',   startAuto, { passive: true });
+
+      // Init
+      function init() {
+        center = 0;
+        placeSlides(false);
+        requestAnimationFrame(() => placeSlides(false));
+        startAuto();
+      }
+      window.addEventListener('resize', () => placeSlides(false));
+      init();
+    })();
+  </script>
+</section>
+
+    <!-- New Released Shows -->
+<!-- New Releases — Pro CoverFlow (Darker Overlay + Views Pill + Smaller Icons) -->
+<section class="space-y-6 select-none">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <div class="flex items-baseline gap-2">
+      <h2 class="text-3xl font-extrabold leading-tight">New Releases</h2>
+      <button class="px-2 py-0.5 text-[10px] font-medium text-white bg-[#E50000] rounded hover:bg-red-700 transition">
+        + See More
+      </button>
+    </div>
+  </div>
+
+  <!-- Viewport with perspective (IDs are unique to avoid collisions) -->
+  <div id="cfViewportNR"
+       class="relative w-full overflow-hidden px-4 md:px-6 py-12 cursor-grab active:cursor-grabbing"
+       style="perspective: 1200px;">
+    <div id="cfStageNR" class="relative mx-auto" style="height: 460px;"></div>
+  </div>
+
+  <!-- Slide Template (unique ID) -->
+  <template id="cfSlideTplNR">
+    <article class="cf-slide absolute top-1/2 left-1/2
+                    rounded-xl ring-1 ring-[#262626] bg-[#1A1A1A] overflow-hidden
+                    shadow-[0_12px_28px_-10px_rgba(0,0,0,.6)]"
+             style="height: 444px; transform-origin: center center;">
+      <div class="relative w-full h-full">
+        <img class="cf-img absolute inset-0 w-full h-full object-cover" src="" alt="" draggable="false">
+
+        <!-- Taller, darker bottom gradient overlay -->
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-48
+                    bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
+
+        <!-- Title + Icons on top of gradient -->
+        <div class="absolute left-0 right-0 bottom-0 p-5">
+          <!-- Title: single-line, truncated -->
+          <h3 class="cf-title text-white font-semibold text-base sm:text-lg md:text-xl leading-tight
+                     whitespace-nowrap overflow-hidden text-ellipsis pr-2"></h3>
+
+          <!-- Icons row: views pill (white), other icons red, slightly smaller -->
+          <div class="mt-2 flex items-center gap-3 md:gap-4 flex-nowrap">
+            <!-- Views pill (grouped eye + number, white) -->
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/40 ring-1 ring-white/20 text-white text-xs sm:text-sm whitespace-nowrap">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z"
+                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+              <span class="cf-views">0</span>
+            </span>
+
+            <!-- Lock (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+
+            <!-- Play (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+              </svg>
+            </span>
+
+            <!-- Info (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    (function() {
+      // ---------- Config ----------
+      const OVERLAP = 0.22;      // ~22% cover
+      const RANGE   = 2;         // 5 visible total
+      const DUR     = 480;       // ms transition
+      const AUTO_MS = 3600;      // autoplay
+
+      const MAX_TILT = 26;
+      const MAX_Z    = 170;
+      const SCALE_C  = 1.06;
+      const SCALE_S  = 0.86;
+      const OVAL_Y   = 14;
+      const STACK_NUDGE = 6;
+
+      // ---------- Data (New Releases) ----------
+      const data = [
+        { img: 'https://placehold.co/640x900?text=NR1', title: 'Echoes of Tomorrow',      views: '213K' },
+        { img: 'https://placehold.co/640x900?text=NR2', title: 'Neon Harbor',             views: '178K' },
+        { img: 'https://placehold.co/640x900?text=NR3', title: 'Midnight Arcade',         views: '149K' },
+        { img: 'https://placehold.co/640x900?text=NR4', title: 'Glass District',          views: '121K' },
+        { img: 'https://placehold.co/640x900?text=NR5', title: 'Windswept Ridge',         views: '96K'  },
+        { img: 'https://placehold.co/640x900?text=NR6', title: 'Quantum Letters',         views: '84K'  },
+        { img: 'https://placehold.co/640x900?text=NR7', title: 'Atlas of the Dark',       views: '71K'  },
+      ];
+
+      // ---------- Elements ----------
+      const viewport = document.getElementById('cfViewportNR');
+      const stage    = document.getElementById('cfStageNR');
+      const tpl      = document.getElementById('cfSlideTplNR');
+
+      // ---------- Build slides ----------
+      const slides = data.map(d => {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.querySelector('.cf-img').src = d.img;
+        node.querySelector('.cf-title').textContent = d.title;
+        node.querySelector('.cf-views').textContent = d.views;
+        stage.appendChild(node);
+        return node;
+      });
+
+      const N = slides.length;
+      let center = 0;
+      let locked = false;
+      let autoTimer = null;
+
+      function visibleTarget() { return (window.innerWidth >= 1024) ? 5 : 3; }
+
+      function computeGeometry() {
+        const W = viewport.clientWidth;
+        const vis = visibleTarget();
+        const usable = W * 0.92;
+        const denom  = (vis - OVERLAP * (vis - 1));
+        let slideW   = usable / denom;
+        slideW = Math.max(230, Math.min(340, slideW));
+        stage.style.width  = W + 'px';
+        stage.style.height = '444px';
+        const step   = slideW * (1 - OVERLAP);
+        return { slideW, step };
+      }
+
+      function wrap(i) { return (i % N + N) % N; }
+      function shortestDelta(from, to) {
+        const raw = (to - from) % N;
+        const a = (raw + N) % N;
+        return (a > N/2) ? a - N : a;
+      }
+
+      function placeSlides(animate = true) {
+        const { slideW, step } = computeGeometry();
+        slides.forEach((slide, i) => {
+          const d  = shortestDelta(center, i);
+          const ad = Math.abs(d);
+          const side = Math.sign(d);
+          const clamped = Math.min(ad, RANGE);
+          const isCenter = (d === 0);
+
+          let x = (clamped * side) * step;
+          if (ad > RANGE) {
+            const overflow = ad - RANGE;
+            x += side * overflow * STACK_NUDGE;
+          }
+
+          const z = MAX_Z * (1 - clamped / (RANGE + 0.8));
+          const tilt = side * -MAX_TILT * (clamped / (RANGE + 0.2));
+          const scale = isCenter ? SCALE_C : (SCALE_S + (1 - clamped / (RANGE + 0.8)) * 0.12);
+          const y = OVAL_Y * (clamped / RANGE) - OVAL_Y * 0.5;
+
+          const baseOpacity = 1 - (clamped * 0.18);
+          const opacity = Math.max(0.30, baseOpacity);
+
+          const zBase = 1000 - clamped * 10 + (isCenter ? 1000 : 0);
+          const zTweak = side < 0 ? -1 : 1;
+          slide.style.zIndex = String(zBase + zTweak);
+
+          slide.style.width = slideW + 'px';
+          slide.style.opacity = opacity.toFixed(3);
+          slide.style.transition = animate
+            ? `transform ${DUR}ms cubic-bezier(.22,.61,.36,1), opacity ${DUR}ms ease`
+            : 'none';
+          slide.style.transform = `
+            translate(-50%, -50%)
+            translateX(${x}px)
+            translateY(${y}px)
+            translateZ(${z}px)
+            rotateY(${tilt}deg)
+            scale(${scale})
+          `;
+        });
+      }
+
+      function goto(targetCenter) {
+        if (locked) return;
+        locked = true;
+        center = wrap(targetCenter);
+        placeSlides(true);
+        clearTimeout(goto._t);
+        goto._t = setTimeout(() => { locked = false; }, DUR + 20);
+      }
+      function next() { goto(center + 1); }
+      function prev() { goto(center - 1); }
+
+      // Click-to-focus
+      stage.addEventListener('click', (e) => {
+        if (locked) return;
+        const card = e.target.closest('.cf-slide');
+        if (!card) return;
+        const idx = slides.indexOf(card);
+        if (idx === -1) return;
+        const delta = shortestDelta(center, idx);
+        if (delta !== 0) goto(center + delta);
+      });
+
+      // Drag/swipe
+      let startX = 0, dragging = false;
+      viewport.addEventListener('pointerdown', (e) => {
+        if (locked) return;
+        dragging = true; startX = e.clientX;
+        viewport.setPointerCapture(e.pointerId);
+      });
+      viewport.addEventListener('pointermove', (e) => {
+        if (!dragging || locked) return;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 48) {
+          if (dx < 0) next(); else prev();
+          dragging = false;
+        }
+      });
+      window.addEventListener('pointerup', () => { dragging = false; });
+
+      // Wheel / trackpad
+      let wheelCooldown = false;
+      viewport.addEventListener('wheel', (e) => {
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (Math.abs(delta) < 12) return;
+        e.preventDefault();
+        if (wheelCooldown || locked) return;
+        wheelCooldown = true;
+        if (delta > 0) next(); else prev();
+        setTimeout(() => { wheelCooldown = false; }, DUR + 60);
+      }, { passive: false });
+
+      // Keyboard
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') next();
+        if (e.key === 'ArrowLeft')  prev();
+      });
+
+      // Autoplay (scoped timer var so it doesn't clash elsewhere)
+      let autoTimerNR;
+      function startAuto() { stopAuto(); autoTimerNR = setInterval(next, AUTO_MS); }
+      function stopAuto()  { if (autoTimerNR) clearInterval(autoTimerNR), (autoTimerNR = null); }
+      viewport.addEventListener('mouseenter', stopAuto);
+      viewport.addEventListener('mouseleave', startAuto);
+      viewport.addEventListener('touchstart', stopAuto, { passive: true });
+      viewport.addEventListener('touchend',   startAuto, { passive: true });
+
+      // Init
+      function init() {
+        center = 0; // start with the first card in center
+        placeSlides(false);
+        requestAnimationFrame(() => placeSlides(false));
+        startAuto();
+      }
+      window.addEventListener('resize', () => placeSlides(false));
+      init();
+    })();
+  </script>
+</section>
+
+
+    <!-- Must - Watch Shows -->
+   <!-- Must-Watch Media — Pro CoverFlow (Darker Overlay + Views Pill + Smaller Icons) -->
+<section class="space-y-6 select-none">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <div class="flex items-baseline gap-2">
+      <h2 class="text-3xl font-extrabold leading-tight">Must-Watch Media</h2>
+      <button class="px-2 py-0.5 text-[10px] font-medium text-white bg-[#E50000] rounded hover:bg-red-700 transition">
+        + See More
+      </button>
+    </div>
+  </div>
+
+  <!-- Viewport with perspective (unique IDs) -->
+  <div id="cfViewportMW"
+       class="relative w-full overflow-hidden px-4 md:px-6 py-12 cursor-grab active:cursor-grabbing"
+       style="perspective: 1200px;">
+    <div id="cfStageMW" class="relative mx-auto" style="height: 460px;"></div>
+  </div>
+
+  <!-- Slide Template (unique ID) -->
+  <template id="cfSlideTplMW">
+    <article class="cf-slide absolute top-1/2 left-1/2
+                    rounded-xl ring-1 ring-[#262626] bg-[#1A1A1A] overflow-hidden
+                    shadow-[0_12px_28px_-10px_rgba(0,0,0,.6)]"
+             style="height: 444px; transform-origin: center center;">
+      <div class="relative w-full h-full">
+        <img class="cf-img absolute inset-0 w-full h-full object-cover" src="" alt="" draggable="false">
+
+        <!-- Taller, darker bottom gradient overlay -->
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-48
+                    bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
+
+        <!-- Title + Icons on top of gradient -->
+        <div class="absolute left-0 right-0 bottom-0 p-5">
+          <!-- Title: single-line, truncated -->
+          <h3 class="cf-title text-white font-semibold text-base sm:text-lg md:text-xl leading-tight
+                     whitespace-nowrap overflow-hidden text-ellipsis pr-2"></h3>
+
+          <!-- Icons row: views pill (white), other icons red, slightly smaller -->
+          <div class="mt-2 flex items-center gap-3 md:gap-4 flex-nowrap">
+            <!-- Views pill (grouped eye + number, white) -->
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/40 ring-1 ring-white/20 text-white text-xs sm:text-sm whitespace-nowrap">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z"
+                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+              <span class="cf-views">0</span>
+            </span>
+
+            <!-- Lock (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+
+            <!-- Play (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+              </svg>
+            </span>
+
+            <!-- Info (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    (function() {
+      // ---------- Config ----------
+      const OVERLAP = 0.22;      // ~22% cover
+      const RANGE   = 2;         // 5 visible total
+      const DUR     = 480;       // ms transition
+      const AUTO_MS = 3600;      // autoplay
+
+      const MAX_TILT = 26;
+      const MAX_Z    = 170;
+      const SCALE_C  = 1.06;
+      const SCALE_S  = 0.86;
+      const OVAL_Y   = 14;
+      const STACK_NUDGE = 6;
+
+      // ---------- Data (Must-Watch Media) ----------
+      const data = [
+        { img: 'https://placehold.co/640x900?text=MW1', title: 'Crimson Dunes',       views: '231K' },
+        { img: 'https://placehold.co/640x900?text=MW2', title: 'Violet Signal',       views: '187K' },
+        { img: 'https://placehold.co/640x900?text=MW3', title: 'Iron Orchard',        views: '164K' },
+        { img: 'https://placehold.co/640x900?text=MW4', title: 'Sable Horizon',       views: '138K' },
+        { img: 'https://placehold.co/640x900?text=MW5', title: 'Paper Moons',         views: '119K' },
+        { img: 'https://placehold.co/640x900?text=MW6', title: 'Static Bloom',        views: '102K' },
+        { img: 'https://placehold.co/640x900?text=MW7', title: 'Cinder Alley',        views: '89K'  },
+      ];
+
+      // ---------- Elements ----------
+      const viewport = document.getElementById('cfViewportMW');
+      const stage    = document.getElementById('cfStageMW');
+      const tpl      = document.getElementById('cfSlideTplMW');
+
+      // ---------- Build slides ----------
+      const slides = data.map(d => {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.querySelector('.cf-img').src = d.img;
+        node.querySelector('.cf-title').textContent = d.title;
+        node.querySelector('.cf-views').textContent = d.views;
+        stage.appendChild(node);
+        return node;
+      });
+
+      const N = slides.length;
+      let center = 0;
+      let locked = false;
+      let autoTimerMW = null;
+
+      function visibleTarget() { return (window.innerWidth >= 1024) ? 5 : 3; }
+
+      function computeGeometry() {
+        const W = viewport.clientWidth;
+        const vis = visibleTarget();
+        const usable = W * 0.92;
+        const denom  = (vis - OVERLAP * (vis - 1));
+        let slideW   = usable / denom;
+        slideW = Math.max(230, Math.min(340, slideW));
+        stage.style.width  = W + 'px';
+        stage.style.height = '444px';
+        const step   = slideW * (1 - OVERLAP);
+        return { slideW, step };
+      }
+
+      function wrap(i) { return (i % N + N) % N; }
+      function shortestDelta(from, to) {
+        const raw = (to - from) % N;
+        const a = (raw + N) % N;
+        return (a > N/2) ? a - N : a;
+      }
+
+      function placeSlides(animate = true) {
+        const { slideW, step } = computeGeometry();
+        slides.forEach((slide, i) => {
+          const d  = shortestDelta(center, i);
+          const ad = Math.abs(d);
+          const side = Math.sign(d);
+          const clamped = Math.min(ad, RANGE);
+          const isCenter = (d === 0);
+
+          let x = (clamped * side) * step;
+          if (ad > RANGE) {
+            const overflow = ad - RANGE;
+            x += side * overflow * STACK_NUDGE;
+          }
+
+          const z = MAX_Z * (1 - clamped / (RANGE + 0.8));
+          const tilt = side * -MAX_TILT * (clamped / (RANGE + 0.2));
+          const scale = isCenter ? SCALE_C : (SCALE_S + (1 - clamped / (RANGE + 0.8)) * 0.12);
+          const y = OVAL_Y * (clamped / RANGE) - OVAL_Y * 0.5;
+
+          const baseOpacity = 1 - (clamped * 0.18);
+          const opacity = Math.max(0.30, baseOpacity);
+
+          const zBase = 1000 - clamped * 10 + (isCenter ? 1000 : 0);
+          const zTweak = side < 0 ? -1 : 1;
+          slide.style.zIndex = String(zBase + zTweak);
+
+          slide.style.width = slideW + 'px';
+          slide.style.opacity = opacity.toFixed(3);
+          slide.style.transition = animate
+            ? `transform ${DUR}ms cubic-bezier(.22,.61,.36,1), opacity ${DUR}ms ease`
+            : 'none';
+          slide.style.transform = `
+            translate(-50%, -50%)
+            translateX(${x}px)
+            translateY(${y}px)
+            translateZ(${z}px)
+            rotateY(${tilt}deg)
+            scale(${scale})
+          `;
+        });
+      }
+
+      function goto(targetCenter) {
+        if (locked) return;
+        locked = true;
+        center = wrap(targetCenter);
+        placeSlides(true);
+        clearTimeout(goto._t);
+        goto._t = setTimeout(() => { locked = false; }, DUR + 20);
+      }
+      function next() { goto(center + 1); }
+      function prev() { goto(center - 1); }
+
+      // Click-to-focus
+      stage.addEventListener('click', (e) => {
+        if (locked) return;
+        const card = e.target.closest('.cf-slide');
+        if (!card) return;
+        const idx = slides.indexOf(card);
+        if (idx === -1) return;
+        const delta = shortestDelta(center, idx);
+        if (delta !== 0) goto(center + delta);
+      });
+
+      // Drag/swipe
+      let startX = 0, dragging = false;
+      viewport.addEventListener('pointerdown', (e) => {
+        if (locked) return;
+        dragging = true; startX = e.clientX;
+        viewport.setPointerCapture(e.pointerId);
+      });
+      viewport.addEventListener('pointermove', (e) => {
+        if (!dragging || locked) return;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 48) {
+          if (dx < 0) next(); else prev();
+          dragging = false;
+        }
+      });
+      window.addEventListener('pointerup', () => { dragging = false; });
+
+      // Wheel / trackpad
+      let wheelCooldown = false;
+      viewport.addEventListener('wheel', (e) => {
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (Math.abs(delta) < 12) return;
+        e.preventDefault();
+        if (wheelCooldown || locked) return;
+        wheelCooldown = true;
+        if (delta > 0) next(); else prev();
+        setTimeout(() => { wheelCooldown = false; }, DUR + 60);
+      }, { passive: false });
+
+      // Keyboard
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') next();
+        if (e.key === 'ArrowLeft')  prev();
+      });
+
+      // Autoplay (unique timer var)
+      function startAuto() { stopAuto(); autoTimerMW = setInterval(next, AUTO_MS); }
+      function stopAuto()  { if (autoTimerMW) clearInterval(autoTimerMW), (autoTimerMW = null); }
+      viewport.addEventListener('mouseenter', stopAuto);
+      viewport.addEventListener('mouseleave', startAuto);
+      viewport.addEventListener('touchstart', stopAuto, { passive: true });
+      viewport.addEventListener('touchend',   startAuto, { passive: true });
+
+      // Init
+      function init() {
+        center = 0; // start with the first card in center
+        placeSlides(false);
+        requestAnimationFrame(() => placeSlides(false));
+        startAuto();
+      }
+      window.addEventListener('resize', () => placeSlides(false));
+      init();
+    })();
+  </script>
+</section>
+
+<!-- Free Media — Pro CoverFlow (Darker Overlay + Views Pill + Smaller Icons) -->
+<section class="space-y-6 select-none">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <div class="flex items-baseline gap-2">
+      <h2 class="text-3xl font-extrabold leading-tight">Free Media</h2>
+      <button class="px-2 py-0.5 text-[10px] font-medium text-white bg-[#E50000] rounded hover:bg-red-700 transition">
+        + See More
+      </button>
+    </div>
+  </div>
+
+  <!-- Viewport with perspective (unique IDs to avoid collisions) -->
+  <div id="cfViewportFM"
+       class="relative w-full overflow-hidden px-4 md:px-6 py-12 cursor-grab active:cursor-grabbing"
+       style="perspective: 1200px;">
+    <div id="cfStageFM" class="relative mx-auto" style="height: 460px;"></div>
+  </div>
+
+  <!-- Slide Template (unique ID) -->
+  <template id="cfSlideTplFM">
+    <article class="cf-slide absolute top-1/2 left-1/2
+                    rounded-xl ring-1 ring-[#262626] bg-[#1A1A1A] overflow-hidden
+                    shadow-[0_12px_28px_-10px_rgba(0,0,0,.6)]"
+             style="height: 444px; transform-origin: center center;">
+      <div class="relative w-full h-full">
+        <img class="cf-img absolute inset-0 w-full h-full object-cover" src="" alt="" draggable="false">
+
+        <!-- Taller, darker bottom gradient overlay -->
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-48
+                    bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
+
+        <!-- Title + Icons on top of gradient -->
+        <div class="absolute left-0 right-0 bottom-0 p-5">
+          <!-- Title: single-line, truncated -->
+          <h3 class="cf-title text-white font-semibold text-base sm:text-lg md:text-xl leading-tight
+                     whitespace-nowrap overflow-hidden text-ellipsis pr-2"></h3>
+
+          <!-- Icons row: views pill (white), other icons red, slightly smaller -->
+          <div class="mt-2 flex items-center gap-3 md:gap-4 flex-nowrap">
+            <!-- Views pill (grouped eye + number, white) -->
+            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-black/40 ring-1 ring-white/20 text-white text-xs sm:text-sm whitespace-nowrap">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z"
+                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8" />
+              </svg>
+              <span class="cf-views">0</span>
+            </span>
+
+            <!-- Lock (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+
+            <!-- Play (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+              </svg>
+            </span>
+
+            <!-- Info (red) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    (function() {
+      // ---------- Config ----------
+      const OVERLAP = 0.22;      // ~22% cover
+      const RANGE   = 2;         // 5 visible total (center ±2)
+      const DUR     = 480;       // ms transition
+      const AUTO_MS = 3600;      // autoplay
+
+      const MAX_TILT = 26;
+      const MAX_Z    = 170;
+      const SCALE_C  = 1.06;
+      const SCALE_S  = 0.86;
+      const OVAL_Y   = 14;
+      const STACK_NUDGE = 6;
+
+      // ---------- Data (Free Media) ----------
+      const data = [
+        { img: 'https://placehold.co/640x900?text=FM1', title: 'City Lights, Free Nights', views: '245K' },
+        { img: 'https://placehold.co/640x900?text=FM2', title: 'Open Air Stories',        views: '198K' },
+        { img: 'https://placehold.co/640x900?text=FM3', title: 'Midtown Mosaic',          views: '173K' },
+        { img: 'https://placehold.co/640x900?text=FM4', title: 'Freewave Chronicles',     views: '150K' },
+        { img: 'https://placehold.co/640x900?text=FM5', title: 'Harborline Tales',        views: '132K' },
+        { img: 'https://placehold.co/640x900?text=FM6', title: 'Open Circuit',            views: '119K' },
+        { img: 'https://placehold.co/640x900?text=FM7', title: 'Sunset Commons',          views: '101K' }
+      ];
+
+      // ---------- Elements (unique IDs) ----------
+      const viewport = document.getElementById('cfViewportFM');
+      const stage    = document.getElementById('cfStageFM');
+      const tpl      = document.getElementById('cfSlideTplFM');
+
+      // ---------- Build slides ----------
+      const slides = data.map(d => {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.querySelector('.cf-img').src = d.img;
+        node.querySelector('.cf-title').textContent = d.title;
+        node.querySelector('.cf-views').textContent = d.views;
+        stage.appendChild(node);
+        return node;
+      });
+
+      const N = slides.length;
+      let center = 0;
+      let locked = false;
+
+      function visibleTarget() { return (window.innerWidth >= 1024) ? 5 : 3; }
+
+      function computeGeometry() {
+        const W = viewport.clientWidth;
+        const vis = visibleTarget();
+        const usable = W * 0.92;
+        const denom  = (vis - OVERLAP * (vis - 1));
+        let slideW   = usable / denom;
+        slideW = Math.max(230, Math.min(340, slideW));
+        stage.style.width  = W + 'px';
+        stage.style.height = '444px';
+        const step   = slideW * (1 - OVERLAP);
+        return { slideW, step };
+      }
+
+      function wrap(i) { return (i % N + N) % N; }
+      function shortestDelta(from, to) {
+        const raw = (to - from) % N;
+        const a = (raw + N) % N;
+        return (a > N/2) ? a - N : a;
+      }
+
+      function placeSlides(animate = true) {
+        const { slideW, step } = computeGeometry();
+        slides.forEach((slide, i) => {
+          const d  = shortestDelta(center, i);
+          const ad = Math.abs(d);
+          const side = Math.sign(d);
+          const clamped = Math.min(ad, RANGE);
+          const isCenter = (d === 0);
+
+          let x = (clamped * side) * step;
+          if (ad > RANGE) {
+            const overflow = ad - RANGE;
+            x += side * overflow * STACK_NUDGE;
+          }
+
+          const z = MAX_Z * (1 - clamped / (RANGE + 0.8));
+          const tilt = side * -MAX_TILT * (clamped / (RANGE + 0.2));
+          const scale = isCenter ? SCALE_C : (SCALE_S + (1 - clamped / (RANGE + 0.8)) * 0.12);
+          const y = OVAL_Y * (clamped / RANGE) - OVAL_Y * 0.5;
+
+          const baseOpacity = 1 - (clamped * 0.18);
+          const opacity = Math.max(0.30, baseOpacity);
+
+          const zBase = 1000 - clamped * 10 + (isCenter ? 1000 : 0);
+          const zTweak = side < 0 ? -1 : 1;
+          slide.style.zIndex = String(zBase + zTweak);
+
+          slide.style.width = slideW + 'px';
+          slide.style.opacity = opacity.toFixed(3);
+          slide.style.transition = animate
+            ? `transform ${DUR}ms cubic-bezier(.22,.61,.36,1), opacity ${DUR}ms ease`
+            : 'none';
+          slide.style.transform = `
+            translate(-50%, -50%)
+            translateX(${x}px)
+            translateY(${y}px)
+            translateZ(${z}px)
+            rotateY(${tilt}deg)
+            scale(${scale})
+          `;
+        });
+      }
+
+      function goto(targetCenter) {
+        if (locked) return;
+        locked = true;
+        center = wrap(targetCenter);
+        placeSlides(true);
+        clearTimeout(goto._t);
+        goto._t = setTimeout(() => { locked = false; }, DUR + 20);
+      }
+      function next() { goto(center + 1); }
+      function prev() { goto(center - 1); }
+
+      // Click-to-focus
+      stage.addEventListener('click', (e) => {
+        if (locked) return;
+        const card = e.target.closest('.cf-slide');
+        if (!card) return;
+        const idx = slides.indexOf(card);
+        if (idx === -1) return;
+        const delta = shortestDelta(center, idx);
+        if (delta !== 0) goto(center + delta);
+      });
+
+      // Drag/swipe
+      let startX = 0, dragging = false;
+      viewport.addEventListener('pointerdown', (e) => {
+        if (locked) return;
+        dragging = true; startX = e.clientX;
+        viewport.setPointerCapture(e.pointerId);
+      });
+      viewport.addEventListener('pointermove', (e) => {
+        if (!dragging || locked) return;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 48) {
+          if (dx < 0) next(); else prev();
+          dragging = false;
+        }
+      });
+      window.addEventListener('pointerup', () => { dragging = false; });
+
+      // Wheel / trackpad
+      let wheelCooldown = false;
+      viewport.addEventListener('wheel', (e) => {
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (Math.abs(delta) < 12) return;
+        e.preventDefault();
+        if (wheelCooldown || locked) return;
+        wheelCooldown = true;
+        if (delta > 0) next(); else prev();
+        setTimeout(() => { wheelCooldown = false; }, DUR + 60);
+      }, { passive: false });
+
+      // Keyboard
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') next();
+        if (e.key === 'ArrowLeft')  prev();
+      });
+
+      // Autoplay (scoped timer var so it doesn't clash elsewhere)
+      let autoTimerFM;
+      function startAuto() { stopAuto(); autoTimerFM = setInterval(next, AUTO_MS); }
+      function stopAuto()  { if (autoTimerFM) clearInterval(autoTimerFM), (autoTimerFM = null); }
+      viewport.addEventListener('mouseenter', stopAuto);
+      viewport.addEventListener('mouseleave', startAuto);
+      viewport.addEventListener('touchstart', stopAuto, { passive: true });
+      viewport.addEventListener('touchend',   startAuto, { passive: true });
+
+      // Init
+      function init() {
+        center = 0; // start with the first card centered
+        placeSlides(false);
+        requestAnimationFrame(() => placeSlides(false));
+        startAuto();
+      }
+      window.addEventListener('resize', () => placeSlides(false));
+      init();
+    })();
+  </script>
+</section>
+
+<!-- ==================== LIVE EVENTS — Classic Infinite Carousel (8 cards, 2 square thumbs/card, swipe + red dots, no arrows) ==================== -->
+<section class="space-y-6 select-none">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <div class="flex items-baseline gap-2">
+      <h2 class="text-3xl font-extrabold leading-tight">Live Events</h2>
+      <button class="px-2 py-0.5 text-[10px] font-medium text-white bg-[#E50000] rounded hover:bg-red-700 transition">
+        + See More
+      </button>
+    </div>
+  </div>
+
+  <!-- Viewport (IDs for this carousel) -->
+  <div id="leViewport" class="relative overflow-hidden touch-pan-y">
+    <!-- Track -->
+    <div id="leTrack" class="flex items-stretch gap-6 will-change-transform"></div>
+  </div>
+
+  <!-- Pagination Dots -->
+  <div id="leDots" class="mt-3 flex justify-center gap-2"></div>
+
+  <!-- Slide Template (UNCHANGED THUMBNAILS; card now “hugs” content) -->
+  <template id="leSlideTpl">
+    <!-- Removed fixed height & extra stretch so the card hugs the thumbnails/content -->
+    <article class="le-slide flex-shrink-0 flex flex-col gap-4 bg-[#1A1A1A] ring-1 ring-[#262626] rounded-xl p-5">
+      <!-- Removed flex-1 so this block takes only what it needs; thumbnails remain SQUARE -->
+      <div class="relative rounded-lg overflow-hidden bg-gradient-to-b from-transparent to-[#1A1A1A]">
+        <!-- Two square thumbnails (unchanged) -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="relative w-full [aspect-ratio:1/1] rounded overflow-hidden ring-1 ring-[#1F1F1F] bg-[#111]">
+            <img src="https://placehold.co/400x400" class="absolute inset-0 w-full h-full object-cover" alt="">
+          </div>
+          <div class="relative w-full [aspect-ratio:1/1] rounded overflow-hidden ring-1 ring-[#1F1F1F] bg-[#111]">
+            <img src="https://placehold.co/400x400" class="absolute inset-0 w-full h-full object-cover" alt="">
+          </div>
+        </div>
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-[#1A1A1A]"></div>
+      </div>
+
+      <!-- Tighten spacing below to “hug” thumbnails -->
+      <div class="flex items-center gap-4">
+        <div class="flex-1 space-y-1">
+          <button class="rounded-lg bg-[#E50000] px-4 py-2 text-sm font-semibold">See More</button>
+          <h3 class="le-title text-xl font-semibold"></h3>
+        </div>
+        <div class="size-7 flex items-center justify-center overflow-hidden">
+          <svg viewBox="0 0 24 24" fill="none" class="size-5" aria-hidden="true">
+            <path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    (function () {
+      // ------- Data (8 cards with required titles) -------
+      const titles = [
+        'Upcoming',
+        'Live Now',
+        'Past Events',
+        'New Events',
+        'Popular Events',
+        'Featured Events',
+        'Exclusive VIP',
+        'Recommended'
+      ];
+
+      // ------- Elements -------
+      const viewport = document.getElementById('leViewport');
+      const track    = document.getElementById('leTrack');
+      const tpl      = document.getElementById('leSlideTpl');
+      const dotsWrap = document.getElementById('leDots');
+
+      // ------- Build slides (thumbnails unchanged; card spacing adjusted to hug content) -------
+      const slides = titles.map((t) => {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.querySelector('.le-title').textContent = t;
+        const imgs = node.querySelectorAll('img');
+        imgs[0].src = `https://placehold.co/400x400?text=${encodeURIComponent(t)}+A`;
+        imgs[1].src = `https://placehold.co/400x400?text=${encodeURIComponent(t)}+B`;
+        return node;
+      });
+
+      // ------- State -------
+      let perView = 3;
+      let slideW  = 0;
+      const gap   = 24; // Tailwind gap-6
+      let index   = 0;  // virtual index (includes clones)
+
+      // ------- Dots -------
+      function buildDots() {
+        dotsWrap.innerHTML = '';
+        slides.forEach((_, i) => {
+          const dot = document.createElement('span');
+          dot.className = 'h-2 w-2 rounded-full bg-white/15 transition-colors';
+          dot.setAttribute('data-dot', i);
+          dotsWrap.appendChild(dot);
+        });
+      }
+      function setActiveDot(realIdx) {
+        const dots = dotsWrap.querySelectorAll('span');
+        dots.forEach((d, i) => {
+          d.className = 'h-2 w-2 rounded-full transition-colors ' + (i === realIdx ? 'bg-[#E50000]/60' : 'bg-white/15');
+        });
+      }
+      function realIndex() {
+        const total = slides.length;
+        return ((index - perView) % total + total) % total;
+      }
+
+      // ------- Helpers -------
+      function computePerView() {
+        if (window.innerWidth >= 1280) return 4;
+        if (window.innerWidth >= 1024) return 3;
+        if (window.innerWidth >= 768)  return 2;
+        return 1;
+      }
+
+      function layout() {
+        track.innerHTML = '';
+        perView = computePerView();
+
+        // Clone edges for seamless loop
+        const total = slides.length;
+        const headClones = slides.slice(0, perView).map(n => n.cloneNode(true));
+        const tailClones = slides.slice(-perView).map(n => n.cloneNode(true));
+
+        // Append: tail clones, originals, head clones
+        tailClones.forEach(n => track.appendChild(n));
+        slides.forEach(n => track.appendChild(n));
+        headClones.forEach(n => track.appendChild(n));
+
+        // Width per slide
+        slideW = (viewport.clientWidth - gap * (perView - 1)) / perView;
+
+        // Apply width
+        [...track.children].forEach(el => {
+          el.style.width = slideW + 'px';
+          el.style.flex  = `0 0 ${slideW}px`;
+        });
+
+        buildDots();
+        index = perView;          // start on first real slide
+        setTranslate(false);
+        setActiveDot(realIndex());
+      }
+
+      function setTranslate(withAnim = true) {
+        const x = -index * (slideW + gap);
+        track.style.transition = withAnim ? 'transform 420ms cubic-bezier(.22,.61,.36,1)' : 'none';
+        track.style.transform  = `translateX(${x}px)`;
+      }
+
+      function jumpIfNeeded() {
+        const total = slides.length;
+        const maxIndex = perView + total - 1;
+        if (index > maxIndex) { index = perView; setTranslate(false); }
+        if (index < perView)  { index = perView + total - 1; setTranslate(false); }
+        setActiveDot(realIndex());
+      }
+
+      function next() { index += 1; setTranslate(true); }
+      function prev() { index -= 1; setTranslate(true); }
+
+      // ------- Swipe / Drag -------
+      let dragging = false, startX = 0, lastX = 0, startT = 0;
+      viewport.style.touchAction = 'pan-y';
+
+      viewport.addEventListener('pointerdown', (e) => {
+        dragging = true; startX = lastX = e.clientX; startT = performance.now();
+        viewport.setPointerCapture(e.pointerId);
+        track.style.transition = 'none';
+      });
+
+      viewport.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        lastX = e.clientX;
+        const dx = lastX - startX;
+        const currentX = -index * (slideW + gap) + dx;
+        track.style.transform = `translateX(${currentX}px)`;
+      });
+
+      viewport.addEventListener('pointerup', () => {
+        if (!dragging) return;
+        dragging = false;
+        const totalDx = lastX - startX;
+        const dt = Math.max(1, performance.now() - startT);
+        const velocity = totalDx / dt;
+
+        const distanceOK = Math.abs(totalDx) > slideW * 0.22;
+        const flickOK    = Math.abs(velocity) > 0.65;
+
+        if (distanceOK || flickOK) {
+          if (totalDx < 0) next(); else prev();
+        } else {
+          setTranslate(true);
+        }
+      });
+
+      // ------- Wheel / trackpad -------
+      let wheelLock = false;
+      viewport.addEventListener('wheel', (e) => {
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (Math.abs(delta) < 10 || wheelLock) return;
+        e.preventDefault();
+        wheelLock = true;
+        if (delta > 0) next(); else prev();
+        setTimeout(() => { wheelLock = false; }, 420);
+      }, { passive: false });
+
+      // ------- Dots click -------
+      dotsWrap.addEventListener('click', (e) => {
+        const dot = e.target.closest('span[data-dot]');
+        if (!dot) return;
+        const target = Number(dot.getAttribute('data-dot'));
+        const step = target - realIndex();
+        if (step !== 0) { index += step; setTranslate(true); }
+      });
+
+      track.addEventListener('transitionend', jumpIfNeeded);
+      window.addEventListener('resize', layout);
+
+      // Init
+      layout();
+    })();
+  </script>
+</section>
+
+
+<!-- ==================== TWO-UP RESPONSIVE (STATIC on sm+, CAROUSEL on mobile) ==================== -->
+<style>
+  /* --- Mobile carousel styles --- */
+  .mcar { position: relative; width: 100%; }
+  .mcar-viewport {
+    overflow: hidden;
+    width: 100%;
+    touch-action: pan-y; /* vertical page scroll remains natural; we handle only horizontal gestures */
+  }
+  .mcar-track {
+    display: flex;
+    gap: 12px; /* visual spacing between slides */
+    will-change: transform;
+  }
+  .mcar-slide { flex: 0 0 100%; } /* one card per view on mobile */
+
+  /* Dots: subtle red */
+  .mcar-dots {
+    display:flex; gap:.375rem; justify-content:center; align-items:center;
+    margin-top:.5rem;
+  }
+  .mcar-dot {
+    width:6px; height:6px; border-radius:9999px;
+    background: rgba(229,0,0,.45);
+  }
+  .mcar-dot.is-active { background:#E50000; width:8px; height:8px; }
+
+  /* Optional desktop grab cursor (not used on mobile view but harmless) */
+  @media (hover:hover) and (pointer:fine) {
+    .mcar-viewport { cursor: grab; }
+    .mcar-viewport.dragging { cursor: grabbing; }
+  }
+
+  /* --- Force two columns on tablet/desktop without touching your card markup --- */
+  @media (min-width: 640px) { /* sm and up */
+    .two-up-static section.grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+  }
+</style>
+
+<!-- ===== Desktop/Tablet STATIC (shows original two cards side-by-side). No changes inside. ===== -->
+<div class="two-up-static hidden sm:block">
+  <!-- Your EXACT original block (unchanged) -->
+  <!-- Secondary Spotlights (Two Side-by-Side Cards) -->
+  <section id="TwoUpSource" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <!-- Card 1 -->
+    <div class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] overflow-hidden flex flex-col">
+      <div class="relative">
+        <img src="https://placehold.co/600x300" class="w-full h-48 sm:h-60 object-cover" alt="Featured" />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent"></div>
+      </div>
+      <div class="p-6 flex flex-col justify-between flex-1">
+        <div class="space-y-3">
+          <h2 class="text-xl sm:text-2xl font-extrabold">The Big Highlight</h2>
+          <p class="text-gray-300 leading-relaxed text-sm">
+            Catch the latest hit series everyone’s talking about. Action-packed, character-driven, and binge-ready.
+          </p>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <button class="rounded-lg bg-[#E50000] px-3 py-2 text-xs sm:text-sm font-semibold">See More</button>
+          <button class="rounded-lg bg-[#1A1A1A] ring-1 ring-[#2A2A2A] px-3 py-2 text-xs sm:text-sm">Add to Watchlist</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] overflow-hidden flex flex-col">
+      <div class="relative">
+        <img src="https://placehold.co/600x300" class="w-full h-48 sm:h-60 object-cover" alt="Featured" />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0B0B0B] via-transparent to-transparent"></div>
+      </div>
+      <div class="p-6 flex flex-col justify-between flex-1">
+        <div class="space-y-3">
+          <h2 class="text-xl sm:text-2xl font-extrabold">Must-See Drama</h2>
+          <p class="text-gray-300 leading-relaxed text-sm">
+            Dive into gripping storytelling that will keep you on the edge of your seat. Don’t miss this top-rated series.
+          </p>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center gap-3">
+          <button class="rounded-lg bg-[#E50000] px-3 py-2 text-xs sm:text-sm font-semibold">See More</button>
+          <button class="rounded-lg bg-[#1A1A1A] ring-1 ring-[#2A2A2A] px-3 py-2 text-xs sm:text-sm">Add to Watchlist</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== Mobile CAROUSEL (clones the same two cards). Visible only on mobile. ===== -->
+<div id="TwoUpMobile" class="mcar sm:hidden" aria-roledescription="carousel">
+  <div class="mcar-viewport">
+    <div class="mcar-track" aria-live="polite"></div>
+  </div>
+  <div class="mcar-dots" aria-hidden="true"></div>
+</div>
+
+<script>
+(() => {
+  // Only need JS for the mobile carousel (desktop/tablet shows original grid).
+  const isMobile = () => window.matchMedia('(max-width: 639.98px)').matches;
+
+  const mobileRoot = document.getElementById('TwoUpMobile');
+  const viewport = mobileRoot.querySelector('.mcar-viewport');
+  const track = mobileRoot.querySelector('.mcar-track');
+  const dotsWrap = mobileRoot.querySelector('.mcar-dots');
+
+  const source = document.getElementById('TwoUpSource'); // your original two-card section
+  if (!source) return;
+
+  let slides = [];     // array of slide elements
+  let index = 0;       // current slide index (0..n-1)
+  let animating = false;
+  const ease = 'cubic-bezier(.22,.61,.36,1)';
+  const dur = 360; // ms
+  const GAP = 12;  // must match CSS .mcar-track gap
+
+  function clearMobile() {
+    track.innerHTML = '';
+    dotsWrap.innerHTML = '';
+    slides = [];
+  }
+
+  function buildMobile() {
+    clearMobile();
+
+    // Clone each card (direct children of the section) as a slide
+    const cards = Array.from(source.children).filter(n => n.matches('div.rounded-2xl'));
+    if (!cards.length) return;
+
+    cards.forEach(card => {
+      const slide = document.createElement('div');
+      slide.className = 'mcar-slide';
+      slide.appendChild(card.cloneNode(true)); // exact clone; no changes inside
+      track.appendChild(slide);
+      slides.push(slide);
+    });
+
+    // Build dots
+    if (slides.length > 1) {
+      slides.forEach((_s, i) => {
+        const d = document.createElement('button');
+        d.className = 'mcar-dot';
+        d.addEventListener('click', () => goTo(i));
+        dotsWrap.appendChild(d);
+      });
+    }
+    updateDots();
+    snapTo(index, false);
+  }
+
+  function slideWidth() {
+    // width of a single slide is viewport width minus half gaps on sides
+    return viewport.clientWidth; // since each slide is 100% width
+  }
+
+  function setX(x, animate = true) {
+    track.style.transition = animate ? `transform ${dur}ms ${ease}` : 'none';
+    track.style.transform = `translate3d(${x}px,0,0)`;
+  }
+
+  function translateFor(i) {
+    // position includes inter-slide gaps
+    const w = slideWidth();
+    return -(i * (w + GAP));
+  }
+
+  function snapTo(i, animate = true) {
+    index = Math.max(0, Math.min(slides.length - 1, i));
+    setX(translateFor(index), animate);
+    if (animate) {
+      animating = true;
+      track.addEventListener('transitionend', () => { animating = false; updateDots(); }, { once: true });
+    } else {
+      updateDots();
+    }
+  }
+
+  function next() { if (!animating) snapTo(index + 1); }
+  function prev() { if (!animating) snapTo(index - 1); }
+
+  function updateDots() {
+    const dots = Array.from(dotsWrap.children);
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === index));
+    dotsWrap.style.display = dots.length > 1 ? 'flex' : 'none';
+  }
+
+  // Pointer drag with velocity-aware snap; ignore vertical scroll
+  let isDown = false, startX = 0, startTime = 0, startOffsetX = 0, dx = 0;
+
+  function currentOffset() {
+    const style = getComputedStyle(track).transform;
+    let tx = 0;
+    if (style && style !== 'none') {
+      const m = style.includes('matrix3d') ? style.match(/matrix3d\((.+)\)/)[1].split(',') : style.match(/matrix\((.+)\)/)[1].split(',');
+      tx = parseFloat(m[12] || m[4] || 0);
+    }
+    return tx;
+  }
+
+  viewport.addEventListener('pointerdown', (e) => {
+    if (!isMobile()) return; // only active on mobile
+    isDown = true;
+    viewport.classList.add('dragging');
+    startX = e.clientX;
+    startTime = performance.now();
+    startOffsetX = currentOffset();
+    track.style.transition = 'none';
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!isDown) return;
+    dx = e.clientX - startX;
+    track.style.transform = `translate3d(${startOffsetX + dx}px,0,0)`;
+  });
+  window.addEventListener('pointerup', () => {
+    if (!isDown) return;
+    isDown = false;
+    viewport.classList.remove('dragging');
+
+    const dt = Math.max(1, performance.now() - startTime);
+    const v = dx / dt; // px per ms
+    const momentum = Math.sign(v) * Math.min(2, Math.abs(v) * 12);
+    const w = slideWidth();
+    const movedSlides = Math.round((-(dx + momentum * w * 0.35)) / (w + GAP));
+
+    dx = 0;
+    snapTo(index + movedSlides);
+  });
+
+  // Wheel: only act on horizontal intent on mobile; let vertical scroll pass
+  viewport.addEventListener('wheel', (e) => {
+    if (!isMobile()) return;
+    const horizIntent = Math.abs(e.deltaX) > Math.abs(e.deltaY) * 1.2 || e.shiftKey;
+    if (!horizIntent || Math.abs(e.deltaX) < 6) return;
+    e.preventDefault();
+    e.deltaX > 0 ? next() : prev();
+  }, { passive: false });
+
+  // Resize: toggle build/destroy based on breakpoint and keep position
+  let resizeTimer = null;
+  function onResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (isMobile()) {
+        if (!track.children.length) {
+          buildMobile();
+        } else {
+          // re-snap to current index with new width
+          snapTo(index, false);
+        }
+      } else {
+        // on sm+, mobile carousel can be kept idle; no action needed
+      }
+    }, 120);
+  }
+  window.addEventListener('resize', onResize);
+  window.addEventListener('orientationchange', onResize);
+
+  // Initial mount (only build on mobile to avoid duplicate content for AT/SEO)
+  if (isMobile()) buildMobile();
+})();
+</script>
+
+
+
+
+<!-- Purchase's & Rentals — Classic Infinite Carousel (landscape, swipe, dots) -->
+<section class="space-y-6 select-none">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <div class="flex items-baseline gap-2">
+      <h2 class="text-3xl font-extrabold leading-tight">Purchase Media</h2>
+      <button class="px-2 py-0.5 text-[10px] font-medium text-white bg-[#E50000] rounded hover:bg-red-700 transition">
+        + See More
+      </button>
+    </div>
+  </div>
+
+  <!-- Viewport -->
+  <div id="rentViewport" class="relative overflow-hidden touch-pan-y">
+    <!-- Track -->
+    <div id="rentTrack" class="flex items-stretch gap-6 will-change-transform"></div>
+  </div>
+
+  <!-- Pagination Dots -->
+  <div id="rentDots" class="mt-3 flex justify-center gap-2"></div>
+
+  <!-- Slide Template (single landscape thumbnail) -->
+  <template id="rentSlideTpl">
+    <article class="rent-slide flex-shrink-0 flex flex-col gap-5 bg-[#1A1A1A] ring-1 ring-[#262626] rounded-xl p-6 h-[320px]">
+      <div class="relative flex-1 rounded-lg overflow-hidden bg-[#111] ring-1 ring-[#1F1F1F]">
+        <!-- Landscape ~16:9 -->
+        <img src="https://placehold.co/640x360" alt="" class="absolute inset-0 w-full h-full object-cover">
+      </div>
+      <div class="flex items-center gap-5">
+        <div class="flex-1 space-y-1">
+          <button class="rounded-lg bg-[#E50000] px-4 py-2 text-sm font-semibold">Seen More</button>
+          <h3 class="rent-title text-xl font-semibold leading-tight whitespace-nowrap overflow-hidden text-ellipsis"></h3>
+        </div>
+        <div class="size-7 flex items-center justify-center overflow-hidden">
+          <svg viewBox="0 0 24 24" fill="none" class="size-5" aria-hidden="true">
+            <path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    (function () {
+      // ------- Data (8 cards) -------
+      const titles = [
+        'Purchase: Broken Skyline',
+        'Rental: Silver Current',
+        'Rental: Ember & Ash',
+        'Purchase: Lunar Outpost',
+        'Rental: Glass Orchard',
+        'Purchase: Carbon Trace',
+        'Rental: River of Neon',
+        'Rental: Paper Planes'
+      ];
+
+      // ------- Elements -------
+      const viewport = document.getElementById('rentViewport');
+      const track    = document.getElementById('rentTrack');
+      const tpl      = document.getElementById('rentSlideTpl');
+      const dotsWrap = document.getElementById('rentDots');
+
+      // ------- Build slides -------
+      const slides = titles.map((t, i) => {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.querySelector('.rent-title').textContent = t;
+        node.querySelector('img').src = `https://placehold.co/640x360?text=${encodeURIComponent(i+1)}`;
+        return node;
+      });
+
+      // ------- State -------
+      let perView = 3;                 // responsive: recalculated
+      let slideW  = 0;                 // px
+      const gap   = 24;                // Tailwind gap-6
+      let index   = 0;                 // current virtual index (includes clones)
+
+      // Dots
+      function buildDots() {
+        dotsWrap.innerHTML = '';
+        slides.forEach((_, i) => {
+          const d = document.createElement('span');
+          d.className = 'h-2 w-2 rounded-full bg-white/15';
+          d.setAttribute('data-dot', i);
+          dotsWrap.appendChild(d);
+        });
+      }
+      function setActiveDot(realIdx) {
+        const dots = dotsWrap.querySelectorAll('span');
+        dots.forEach((dot, i) => {
+          dot.className = 'h-2 w-2 rounded-full transition-colors ' + (i === realIdx ? 'bg-[#E50000]/60' : 'bg-white/15');
+        });
+      }
+      function realIndex() {
+        // map virtual index -> 0..(slides.length-1)
+        const total = slides.length;
+        return ((index - perView) % total + total) % total;
+      }
+
+      // ------- Helpers -------
+      function computePerView() {
+        if (window.innerWidth >= 1280) return 4; // show more on wide
+        if (window.innerWidth >= 1024) return 3;
+        if (window.innerWidth >= 768)  return 2;
+        return 1;
+      }
+
+      function layout() {
+        // Reset track
+        track.innerHTML = '';
+        perView = computePerView();
+
+        // Clone edges for infinite loop
+        const total = slides.length;
+        const headClones = slides.slice(0, perView).map(n => n.cloneNode(true));
+        const tailClones = slides.slice(-perView).map(n => n.cloneNode(true));
+
+        // Append: tail clones, originals, head clones
+        tailClones.forEach(n => track.appendChild(n));
+        slides.forEach(n => track.appendChild(n));
+        headClones.forEach(n => track.appendChild(n));
+
+        // Calculate slide width to fit perView
+        slideW = (viewport.clientWidth - gap * (perView - 1)) / perView;
+
+        // Apply width to all slides
+        [...track.children].forEach(el => {
+          el.style.width = slideW + 'px';
+          el.style.flex  = `0 0 ${slideW}px`;
+        });
+
+        // Dots
+        buildDots();
+
+        // Start at first real slide
+        index = perView;
+        setTranslate(false);
+        setActiveDot(realIndex());
+      }
+
+      function setTranslate(withAnim = true) {
+        const x = -index * (slideW + gap);
+        track.style.transition = withAnim ? 'transform 420ms cubic-bezier(.22,.61,.36,1)' : 'none';
+        track.style.transform  = `translateX(${x}px)`;
+      }
+
+      function jumpIfNeeded() {
+        const total = slides.length;
+        const maxIndex = perView + total - 1;
+        if (index > maxIndex) {
+          index = perView; // jump back to first real
+          setTranslate(false);
+        }
+        if (index < perView) {
+          index = perView + total - 1; // jump to last real
+          setTranslate(false);
+        }
+        setActiveDot(realIndex());
+      }
+
+      function next() { index += 1; setTranslate(true); }
+      function prev() { index -= 1; setTranslate(true); }
+
+      // ------- Swipe / Drag (tuned for touch) -------
+      let dragging = false, startX = 0, lastX = 0, startT = 0;
+      viewport.style.touchAction = 'pan-y'; // allow vertical page scroll, horizontal swipe here
+
+      viewport.addEventListener('pointerdown', (e) => {
+        dragging = true; startX = lastX = e.clientX; startT = performance.now();
+        viewport.setPointerCapture(e.pointerId);
+        track.style.transition = 'none';
+      });
+
+      viewport.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        lastX = e.clientX;
+        const dx = lastX - startX;
+        const currentX = -index * (slideW + gap) + dx;
+        track.style.transform = `translateX(${currentX}px)`;
+      });
+
+      viewport.addEventListener('pointerup', (e) => {
+        if (!dragging) return;
+        dragging = false;
+        const totalDx = lastX - startX;
+        const dt = Math.max(1, performance.now() - startT);
+        const velocity = totalDx / dt; // px per ms
+
+        // Thresholds: distance OR flick
+        const distanceOK = Math.abs(totalDx) > slideW * 0.22;
+        const flickOK    = Math.abs(velocity) > 0.65; // quick swipe
+
+        if (distanceOK || flickOK) {
+          if (totalDx < 0) next(); else prev();
+        } else {
+          setTranslate(true);
+        }
+      });
+
+      // ------- Wheel / trackpad (smooth, easy) -------
+      let wheelLock = false;
+      viewport.addEventListener('wheel', (e) => {
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (Math.abs(delta) < 10 || wheelLock) return;
+        e.preventDefault();
+        wheelLock = true;
+        if (delta > 0) next(); else prev();
+        setTimeout(() => { wheelLock = false; }, 420);
+      }, { passive: false });
+
+      // ------- Dots click (optional UX) -------
+      dotsWrap.addEventListener('click', (e) => {
+        const dot = e.target.closest('span[data-dot]');
+        if (!dot) return;
+        const target = Number(dot.getAttribute('data-dot'));
+        const current = realIndex();
+        const step = target - current;
+        index += step; // move relative
+        setTranslate(true);
+      });
+
+      // Transition end = housekeeping
+      track.addEventListener('transitionend', jumpIfNeeded);
+
+      // Resize
+      window.addEventListener('resize', layout);
+
+      // Init
+      layout();
+    })();
+  </script>
+</section>
+
+<!-- Media Collections — Classic Infinite Carousel (7 cards, swipe + red dots, no arrows) -->
+<section class="space-y-6 select-none">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <div class="flex items-baseline gap-2">
+      <h2 class="text-3xl font-extrabold leading-tight">Media Collections</h2>
+      <button class="px-2 py-0.5 text-[10px] font-medium text-white bg-[#E50000] rounded hover:bg-red-700 transition">
+        + See More
+      </button>
+    </div>
+  </div>
+
+  <!-- Viewport -->
+  <div id="pcViewport" class="relative overflow-hidden touch-pan-y">
+    <!-- Track -->
+    <div id="pcTrack" class="flex items-stretch gap-6 will-change-transform"></div>
+  </div>
+
+  <!-- Pagination Dots -->
+  <div id="pcDots" class="mt-3 flex justify-center gap-2"></div>
+
+  <!-- Slide Template (2 portrait thumbs side-by-side) -->
+  <template id="pcSlideTpl">
+    <article class="pc-slide flex-shrink-0 flex flex-col gap-5 bg-[#1A1A1A] ring-1 ring-[#262626] rounded-xl p-6 h-[378px]">
+      <div class="relative flex-1 rounded-lg overflow-hidden bg-gradient-to-b from-transparent to-[#1A1A1A]">
+        <div class="flex gap-3 h-full">
+          <img src="https://placehold.co/121x141" class="w-1/2 h-full rounded object-cover" />
+          <img src="https://placehold.co/121x141" class="w-1/2 h-full rounded object-cover" />
+        </div>
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-[#1A1A1A]"></div>
+      </div>
+      <div class="flex items-center gap-5">
+        <div class="flex-1 space-y-1">
+          <button class="rounded-lg bg-[#E50000] px-4 py-2 text-sm font-semibold">Seen More</button>
+          <h3 class="pc-title text-xl font-semibold"></h3>
+        </div>
+        <div class="size-7 flex items-center justify-center overflow-hidden">
+          <svg viewBox="0 0 24 24" fill="none" class="size-5" aria-hidden="true">
+            <path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    (function () {
+      // ------- Data (7 cards) -------
+      const titles = [
+        'Night Before Dawn',
+        'The Biggest Catch',
+        'Run Until Daylight',
+        'Echoes of Iron',
+        'Neon Harbor',
+        'Silent Peak',
+        'Golden Hour Crew'
+      ];
+
+      // ------- Elements -------
+      const viewport = document.getElementById('pcViewport');
+      const track    = document.getElementById('pcTrack');
+      const tpl      = document.getElementById('pcSlideTpl');
+      const dotsWrap = document.getElementById('pcDots');
+
+      // ------- Build slides (cards unchanged) -------
+      const slides = titles.map(t => {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.querySelector('.pc-title').textContent = t;
+        return node;
+      });
+
+      // ------- State -------
+      let perView = 3;
+      let slideW  = 0;
+      const gap   = 24; // gap-6
+      let index   = 0;  // virtual index (includes clones)
+
+      // ------- Dots -------
+      function buildDots() {
+        dotsWrap.innerHTML = '';
+        slides.forEach((_, i) => {
+          const dot = document.createElement('span');
+          dot.className = 'h-2 w-2 rounded-full bg-white/15 transition-colors';
+          dot.setAttribute('data-dot', i);
+          dotsWrap.appendChild(dot);
+        });
+      }
+      function setActiveDot(realIdx) {
+        const dots = dotsWrap.querySelectorAll('span');
+        dots.forEach((d, i) => {
+          d.className = 'h-2 w-2 rounded-full transition-colors ' + (i === realIdx ? 'bg-[#E50000]/60' : 'bg-white/15');
+        });
+      }
+      function realIndex() {
+        const total = slides.length;
+        return ((index - perView) % total + total) % total;
+      }
+
+      // ------- Helpers -------
+      function computePerView() {
+        if (window.innerWidth >= 1280) return 4;
+        if (window.innerWidth >= 1024) return 3;
+        if (window.innerWidth >= 768)  return 2;
+        return 1;
+      }
+
+      function layout() {
+        track.innerHTML = '';
+        perView = computePerView();
+
+        // Clone edges for seamless loop
+        const total = slides.length;
+        const headClones = slides.slice(0, perView).map(n => n.cloneNode(true));
+        const tailClones = slides.slice(-perView).map(n => n.cloneNode(true));
+
+        // Append: tail clones, originals, head clones
+        tailClones.forEach(n => track.appendChild(n));
+        slides.forEach(n => track.appendChild(n));
+        headClones.forEach(n => track.appendChild(n));
+
+        // Width per slide
+        slideW = (viewport.clientWidth - gap * (perView - 1)) / perView;
+
+        // Apply width
+        [...track.children].forEach(el => {
+          el.style.width = slideW + 'px';
+          el.style.flex  = `0 0 ${slideW}px`;
+        });
+
+        buildDots();
+        index = perView;          // start on first real slide
+        setTranslate(false);
+        setActiveDot(realIndex());
+      }
+
+      function setTranslate(withAnim = true) {
+        const x = -index * (slideW + gap);
+        track.style.transition = withAnim ? 'transform 420ms cubic-bezier(.22,.61,.36,1)' : 'none';
+        track.style.transform  = `translateX(${x}px)`;
+      }
+
+      function jumpIfNeeded() {
+        const total = slides.length;
+        const maxIndex = perView + total - 1;
+        if (index > maxIndex) { index = perView; setTranslate(false); }
+        if (index < perView)  { index = perView + total - 1; setTranslate(false); }
+        setActiveDot(realIndex());
+      }
+
+      function next() { index += 1; setTranslate(true); }
+      function prev() { index -= 1; setTranslate(true); }
+
+      // ------- Swipe / Drag (easy & responsive) -------
+      let dragging = false, startX = 0, lastX = 0, startT = 0;
+      viewport.style.touchAction = 'pan-y'; // keep vertical page scroll natural
+
+      viewport.addEventListener('pointerdown', (e) => {
+        dragging = true; startX = lastX = e.clientX; startT = performance.now();
+        viewport.setPointerCapture(e.pointerId);
+        track.style.transition = 'none';
+      });
+
+      viewport.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        lastX = e.clientX;
+        const dx = lastX - startX;
+        const currentX = -index * (slideW + gap) + dx;
+        track.style.transform = `translateX(${currentX}px)`;
+      });
+
+      viewport.addEventListener('pointerup', () => {
+        if (!dragging) return;
+        dragging = false;
+        const totalDx = lastX - startX;
+        const dt = Math.max(1, performance.now() - startT);
+        const velocity = totalDx / dt; // px per ms
+
+        const distanceOK = Math.abs(totalDx) > slideW * 0.22;
+        const flickOK    = Math.abs(velocity) > 0.65;
+
+        if (distanceOK || flickOK) {
+          if (totalDx < 0) next(); else prev();
+        } else {
+          setTranslate(true);
+        }
+      });
+
+      // Wheel / trackpad (smooth)
+      let wheelLock = false;
+      viewport.addEventListener('wheel', (e) => {
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (Math.abs(delta) < 10 || wheelLock) return;
+        e.preventDefault();
+        wheelLock = true;
+        if (delta > 0) next(); else prev();
+        setTimeout(() => { wheelLock = false; }, 420);
+      }, { passive: false });
+
+      // Click dots to jump
+      dotsWrap.addEventListener('click', (e) => {
+        const dot = e.target.closest('span[data-dot]');
+        if (!dot) return;
+        const target = Number(dot.getAttribute('data-dot'));
+        const step = target - realIndex();
+        if (step !== 0) { index += step; setTranslate(true); }
+      });
+
+      track.addEventListener('transitionend', jumpIfNeeded);
+      window.addEventListener('resize', layout);
+
+      // Init
+      layout();
+    })();
+  </script>
+</section>
+
+
+<!-- Media Categories — Classic Infinite Carousel (7+ categories, 4 thumbs/card, swipe + red dots, no arrows) -->
+<section class="space-y-6 select-none">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <div class="flex items-baseline gap-2">
+      <h2 class="text-3xl font-extrabold leading-tight">Media Categories</h2>
+      <button class="px-2 py-0.5 text-[10px] font-medium text-white bg-[#E50000] rounded hover:bg-red-700 transition">
+        + See More
+      </button>
+    </div>
+  </div>
+
+  
+
+  <!-- Viewport -->
+  <div id="catViewport" class="relative overflow-hidden touch-pan-y">
+    <!-- Track -->
+    <div id="catTrack" class="flex items-stretch gap-6 will-change-transform"></div>
+  </div>
+
+  <!-- Pagination Dots -->
+  <div id="catDots" class="mt-3 flex justify-center gap-2"></div>
+
+  <!-- Slide Template (cards unchanged) -->
+  <template id="catSlideTpl">
+    <article class="cat-slide flex-shrink-0 flex flex-col gap-5 bg-[#1A1A1A] ring-1 ring-[#262626] rounded-xl p-6 h-[378px]">
+      <!-- Preview: 2 rows × 2 columns -->
+      <div class="relative flex-1 rounded-lg overflow-hidden space-y-2 bg-gradient-to-b from-transparent to-[#1A1A1A]">
+        <div class="absolute inset-0 p-0">
+          <div class="flex gap-2 h-1/2">
+            <img src="https://placehold.co/141x121" class="w-1/2 h-full rounded object-cover" alt="">
+            <img src="https://placehold.co/141x121" class="w-1/2 h-full rounded object-cover" alt="">
+          </div>
+          <div class="flex gap-2 h-1/2 mt-2">
+            <img src="https://placehold.co/141x121" class="w-1/2 h-full rounded object-cover" alt="">
+            <img src="https://placehold.co/141x121" class="w-1/2 h-full rounded object-cover" alt="">
+          </div>
+        </div>
+        <div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent to-[#1A1A1A]/90"></div>
+      </div>
+
+      <div class="flex items-center gap-5">
+        <div class="flex-1 space-y-1">
+          <button class="rounded-lg bg-[#E50000] px-4 py-2 text-sm font-semibold">Seen More</button>
+          <h3 class="cat-title text-xl font-semibold">Category</h3>
+        </div>
+        <div class="size-7 flex items-center justify-center overflow-hidden">
+          <svg viewBox="0 0 24 24" fill="none" class="size-5" aria-hidden="true">
+            <path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+    (function () {
+      // ------- Categories (7+) -------
+      const categories = [
+        'Action','Adventure','Comedy','Drama','Sci-Fi','Thriller','Documentary','Fantasy','Crime'
+      ];
+
+      // ------- Elements -------
+      const viewport = document.getElementById('catViewport');
+      const track    = document.getElementById('catTrack');
+      const tpl      = document.getElementById('catSlideTpl');
+      const dotsWrap = document.getElementById('catDots');
+
+      // ------- Build slides (do not change card structure) -------
+      const slides = categories.map(name => {
+        const node = tpl.content.firstElementChild.cloneNode(true);
+        node.querySelector('.cat-title').textContent = name;
+        return node;
+      });
+
+      // ------- State -------
+      let perView = 3;               // recalculated responsively
+      let slideW  = 0;               // px
+      const gap   = 24;              // Tailwind gap-6
+      let index   = 0;               // virtual index incl. clones
+
+      // ------- Dots -------
+      function buildDots() {
+        dotsWrap.innerHTML = '';
+        slides.forEach((_, i) => {
+          const dot = document.createElement('span');
+          dot.className = 'h-2 w-2 rounded-full bg-white/15 transition-colors';
+          dot.setAttribute('data-dot', i);
+          dotsWrap.appendChild(dot);
+        });
+      }
+      function setActiveDot(realIdx) {
+        dotsWrap.querySelectorAll('span').forEach((el, i) => {
+          el.className = 'h-2 w-2 rounded-full transition-colors ' + (i === realIdx ? 'bg-[#E50000]/60' : 'bg-white/15');
+        });
+      }
+      function realIndex() {
+        const total = slides.length;
+        return ((index - perView) % total + total) % total;
+      }
+
+      // ------- Helpers -------
+      function computePerView() {
+        if (window.innerWidth >= 1280) return 4;
+        if (window.innerWidth >= 1024) return 3;
+        if (window.innerWidth >= 768)  return 2;
+        return 1;
+      }
+
+      function layout() {
+        track.innerHTML = '';
+        perView = computePerView();
+
+        // Clone edges for seamless loop
+        const total = slides.length;
+        const headClones = slides.slice(0, perView).map(n => n.cloneNode(true));
+        const tailClones = slides.slice(-perView).map(n => n.cloneNode(true));
+
+        // Append: tail clones, originals, head clones
+        tailClones.forEach(n => track.appendChild(n));
+        slides.forEach(n => track.appendChild(n));
+        headClones.forEach(n => track.appendChild(n));
+
+        // Width per slide
+        slideW = (viewport.clientWidth - gap * (perView - 1)) / perView;
+
+        // Apply width
+        [...track.children].forEach(el => {
+          el.style.width = slideW + 'px';
+          el.style.flex  = `0 0 ${slideW}px`;
+        });
+
+        // Dots + start at first real
+        buildDots();
+        index = perView;
+        setTranslate(false);
+        setActiveDot(realIndex());
+      }
+
+      function setTranslate(withAnim = true) {
+        const x = -index * (slideW + gap);
+        track.style.transition = withAnim ? 'transform 420ms cubic-bezier(.22,.61,.36,1)' : 'none';
+        track.style.transform  = `translateX(${x}px)`;
+      }
+
+      function jumpIfNeeded() {
+        const total = slides.length;
+        const maxIndex = perView + total - 1;
+        if (index > maxIndex) { index = perView; setTranslate(false); }
+        if (index < perView)  { index = perView + total - 1; setTranslate(false); }
+        setActiveDot(realIndex());
+      }
+
+      function next() { index += 1; setTranslate(true); }
+      function prev() { index -= 1; setTranslate(true); }
+
+      // ------- Swipe / Drag (easy & responsive) -------
+      viewport.style.touchAction = 'pan-y'; // keep vertical scroll natural
+
+      let dragging = false, startX = 0, lastX = 0, startT = 0;
+      viewport.addEventListener('pointerdown', (e) => {
+        dragging = true; startX = lastX = e.clientX; startT = performance.now();
+        viewport.setPointerCapture(e.pointerId);
+        track.style.transition = 'none';
+      });
+      viewport.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        lastX = e.clientX;
+        const dx = lastX - startX;
+        const currentX = -index * (slideW + gap) + dx;
+        track.style.transform = `translateX(${currentX}px)`;
+      });
+      viewport.addEventListener('pointerup', () => {
+        if (!dragging) return;
+        dragging = false;
+        const totalDx = lastX - startX;
+        const dt = Math.max(1, performance.now() - startT);
+        const velocity = totalDx / dt; // px/ms
+
+        const distanceOK = Math.abs(totalDx) > slideW * 0.22;
+        const flickOK    = Math.abs(velocity) > 0.65;
+
+        if (distanceOK || flickOK) {
+          if (totalDx < 0) next(); else prev();
+        } else {
+          setTranslate(true);
+        }
+      });
+
+      // Wheel / trackpad
+      let wheelLock = false;
+      viewport.addEventListener('wheel', (e) => {
+        const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
+        if (Math.abs(delta) < 10 || wheelLock) return;
+        e.preventDefault();
+        wheelLock = true;
+        if (delta > 0) next(); else prev();
+        setTimeout(() => { wheelLock = false; }, 420);
+      }, { passive: false });
+
+      // Click dots to jump
+      dotsWrap.addEventListener('click', (e) => {
+        const dot = e.target.closest('span[data-dot]');
+        if (!dot) return;
+        const target = Number(dot.getAttribute('data-dot'));
+        const step = target - realIndex();
+        if (step !== 0) { index += step; setTranslate(true); }
+      });
+
+      // Lifecycle
+      track.addEventListener('transitionend', jumpIfNeeded);
+      window.addEventListener('resize', layout);
+
+      // Init
+      layout();
+    })();
+  </script>
+</section>
+
+<!-- ==================== CATALOGUE (4 x 3) ==================== -->
+<section class="w-full">
+  <div class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] p-6">
+
+    <!-- Header: left = red icons (never wrap, scale); right = title + More -->
+    <div class="flex items-center justify-between mb-4">
+      <!-- Left icon cluster -->
+      <div class="flex items-center flex-nowrap whitespace-nowrap gap-[0.75em] text-[#E50000]"
+           style="font-size: clamp(10px, 2.2vw, 14px);">
+        <!-- Image -->
+        <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+          <svg class="w-[1.25em] h-[1.25em]" viewBox="0 0 24 24" fill="none">
+            <rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/>
+            <path d="M7 14l3-3 3 3 3-4 4 6H7z" fill="currentColor"/>
+            <circle cx="9" cy="8" r="1.4" fill="currentColor"/>
+          </svg>
+        </span>
+        <!-- Play -->
+        <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+          <svg class="w-[1.25em] h-[1.25em]" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+          </svg>
+        </span>
+        <!-- Audio / Speaker -->
+        <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+          <svg class="w-[1.25em] h-[1.25em]" viewBox="0 0 24 24" fill="none">
+            <path d="M4 10v4h3l5 4V6l-5 4H4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+            <path d="M16.5 8.5a4 4 0 0 1 0 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+            <path d="M18.5 6a7 7 0 0 1 0 12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </span>
+      </div>
+
+      <!-- Right title block -->
+      <div class="flex items-center gap-2">
+        <span class="inline-block h-2 w-8 rounded-full bg-[#E50000]"></span>
+        <h3 class="text-xl font-semibold whitespace-nowrap">Catalogue</h3>
+        <button class="ml-1 px-1.5 py-0.5 text-[9px] font-medium text-white bg-[#E50000] rounded-sm hover:bg-red-700 transition whitespace-nowrap">
+          + More
+        </button>
+      </div>
+    </div>
+
+    <!-- 4 x 3 grid -->
+    <div class="grid grid-cols-3 gap-3">
+
+      <!-- Card helper: title row (right) + icons row (right under title, red, tight) -->
+      <!-- Duplicate this pattern for each card; titles and icons never wrap -->
+
+      <!-- Card 1 -->
+      <article class="group rounded-lg overflow-hidden ring-1 ring-[#262626] bg-[#141414]">
+        <div class="relative aspect-[3/2] overflow-hidden">
+          <img src="https://placehold.co/600x400?text=1" class="absolute inset-0 w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        </div>
+        <div class="px-3 py-2">
+          <!-- Title (right aligned, never wraps, truncates) -->
+          <div class="flex justify-end">
+            <h4 class="text-sm font-medium text-white/90 truncate max-w-full whitespace-nowrap">Night Runner</h4>
+          </div>
+          <!-- Icons row under title (right aligned, red, tight spacing, never wraps, scales with clamp) -->
+          <div class="mt-1 flex justify-end">
+            <div class="inline-flex items-center flex-nowrap whitespace-nowrap gap-[0.5em] text-[#E50000]"
+                 style="font-size: clamp(10px, 2.2vw, 13px);">
+              <!-- Lock -->
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <!-- Play -->
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+                </svg>
+              </span>
+              <!-- Info -->
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="group rounded-lg overflow-hidden ring-1 ring-[#262626] bg-[#141414]">
+        <div class="relative aspect-[3/2] overflow-hidden">
+          <img src="https://placehold.co/600x400?text=2" class="absolute inset-0 w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        </div>
+        <div class="px-3 py-2">
+          <div class="flex justify-end">
+            <h4 class="text-sm font-medium text-white/90 truncate max-w-full whitespace-nowrap">Hidden Courts</h4>
+          </div>
+          <div class="mt-1 flex justify-end">
+            <div class="inline-flex items-center flex-nowrap whitespace-nowrap gap-[0.5em] text-[#E50000]"
+                 style="font-size: clamp(10px, 2.2vw, 13px);">
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="group rounded-lg overflow-hidden ring-1 ring-[#262626] bg-[#141414]">
+        <div class="relative aspect-[3/2] overflow-hidden">
+          <img src="https://placehold.co/600x400?text=3" class="absolute inset-0 w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        </div>
+        <div class="px-3 py-2">
+          <div class="flex justify-end">
+            <h4 class="text-sm font-medium text-white/90 truncate max-w-full whitespace-nowrap">Slam Dunk Space</h4>
+          </div>
+          <div class="mt-1 flex justify-end">
+            <div class="inline-flex items-center flex-nowrap whitespace-nowrap gap-[0.5em] text-[#E50000]"
+                 style="font-size: clamp(10px, 2.2vw, 13px);">
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4 -->
+      <article class="group rounded-lg overflow-hidden ring-1 ring-[#262626] bg-[#141414]">
+        <div class="relative aspect-[3/2] overflow-hidden">
+          <img src="https://placehold.co/600x400?text=4" class="absolute inset-0 w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        </div>
+        <div class="px-3 py-2">
+          <div class="flex justify-end">
+            <h4 class="text-sm font-medium text-white/90 truncate max-w-full whitespace-nowrap">See No Evil</h4>
+          </div>
+          <div class="mt-1 flex justify-end">
+            <div class="inline-flex items-center flex-nowrap whitespace-nowrap gap-[0.5em] text-[#E50000]"
+                 style="font-size: clamp(10px, 2.2vw, 13px);">
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 5 -->
+      <article class="group rounded-lg overflow-hidden ring-1 ring-[#262626] bg-[#141414]">
+        <div class="relative aspect-[3/2] overflow-hidden">
+          <img src="https://placehold.co/600x400?text=5" class="absolute inset-0 w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        </div>
+        <div class="px-3 py-2">
+          <div class="flex justify-end">
+            <h4 class="text-sm font-medium text-white/90 truncate max-w-full whitespace-nowrap">Behind the Clock</h4>
+          </div>
+          <div class="mt-1 flex justify-end">
+            <div class="inline-flex items-center flex-nowrap whitespace-nowrap gap-[0.5em] text-[#E50000]"
+                 style="font-size: clamp(10px, 2.2vw, 13px);">
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 6 -->
+      <article class="group rounded-lg overflow-hidden ring-1 ring-[#262626] bg-[#141414]">
+        <div class="relative aspect-[3/2] overflow-hidden">
+          <img src="https://placehold.co/600x400?text=6" class="absolute inset-0 w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        </div>
+        <div class="px-3 py-2">
+          <div class="flex justify-end">
+            <h4 class="text-sm font-medium text-white/90 truncate max-w-full whitespace-nowrap">Jack and Any</h4>
+          </div>
+          <div class="mt-1 flex justify-end">
+            <div class="inline-flex items-center flex-nowrap whitespace-nowrap gap-[0.5em] text-[#E50000]"
+                 style="font-size: clamp(10px, 2.2vw, 13px);">
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 7 -->
+      <article class="group rounded-lg overflow-hidden ring-1 ring-[#262626] bg-[#141414]">
+        <div class="relative aspect-[3/2] overflow-hidden">
+          <img src="https://placehold.co/600x400?text=7" class="absolute inset-0 w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        </div>
+        <div class="px-3 py-2">
+          <div class="flex justify-end">
+            <h4 class="text-sm font-medium text-white/90 truncate max-w-full whitespace-nowrap">Echoes of Iron</h4>
+          </div>
+          <div class="mt-1 flex justify-end">
+            <div class="inline-flex items-center flex-nowrap whitespace-nowrap gap-[0.5em] text-[#E50000]"
+                 style="font-size: clamp(10px, 2.2vw, 13px);">
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 8 -->
+      <article class="group rounded-lg overflow-hidden ring-1 ring-[#262626] bg-[#141414]">
+        <div class="relative aspect-[3/2] overflow-hidden">
+          <img src="https://placehold.co/600x400?text=8" class="absolute inset-0 w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        </div>
+        <div class="px-3 py-2">
+          <div class="flex justify-end">
+            <h4 class="text-sm font-medium text-white/90 truncate max-w-full whitespace-nowrap">Neon Harbor</h4>
+          </div>
+          <div class="mt-1 flex justify-end">
+            <div class="inline-flex items-center flex-nowrap whitespace-nowrap gap-[0.5em] text-[#E50000]"
+                 style="font-size: clamp(10px, 2.2vw, 13px);">
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 9 -->
+      <article class="group rounded-lg overflow-hidden ring-1 ring-[#262626] bg-[#141414]">
+        <div class="relative aspect-[3/2] overflow-hidden">
+          <img src="https://placehold.co/600x400?text=9" class="absolute inset-0 w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        </div>
+        <div class="px-3 py-2">
+          <div class="flex justify-end">
+            <h4 class="text-sm font-medium text-white/90 truncate max-w-full whitespace-nowrap">Golden Hour Crew</h4>
+          </div>
+          <div class="mt-1 flex justify-end">
+            <div class="inline-flex items-center flex-nowrap whitespace-nowrap gap-[0.5em] text-[#E50000]"
+                 style="font-size: clamp(10px, 2.2vw, 13px);">
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 10 -->
+      <article class="group rounded-lg overflow-hidden ring-1 ring-[#262626] bg-[#141414]">
+        <div class="relative aspect-[3/2] overflow-hidden">
+          <img src="https://placehold.co/600x400?text=10" class="absolute inset-0 w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        </div>
+        <div class="px-3 py-2">
+          <div class="flex justify-end">
+            <h4 class="text-sm font-medium text-white/90 truncate max-w-full whitespace-nowrap">Crimson Lines</h4>
+          </div>
+          <div class="mt-1 flex justify-end">
+            <div class="inline-flex items-center flex-nowrap whitespace-nowrap gap-[0.5em] text-[#E50000]"
+                 style="font-size: clamp(10px, 2.2vw, 13px);">
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 11 -->
+      <article class="group rounded-lg overflow-hidden ring-1 ring-[#262626] bg-[#141414]">
+        <div class="relative aspect-[3/2] overflow-hidden">
+          <img src="https://placehold.co/600x400?text=11" class="absolute inset-0 w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        </div>
+        <div class="px-3 py-2">
+          <div class="flex justify-end">
+            <h4 class="text-sm font-medium text-white/90 truncate max-w-full whitespace-nowrap">Low Tide City</h4>
+          </div>
+          <div class="mt-1 flex justify-end">
+            <div class="inline-flex items-center flex-nowrap whitespace-nowrap gap-[0.5em] text-[#E50000]"
+                 style="font-size: clamp(10px, 2.2vw, 13px);">
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 12 -->
+      <article class="group rounded-lg overflow-hidden ring-1 ring-[#262626] bg-[#141414]">
+        <div class="relative aspect-[3/2] overflow-hidden">
+          <img src="https://placehold.co/600x400?text=12" class="absolute inset-0 w-full h-full object-cover" alt="">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition"></div>
+        </div>
+        <div class="px-3 py-2">
+          <div class="flex justify-end">
+            <h4 class="text-sm font-medium text-white/90 truncate max-w-full whitespace-nowrap">Shadow Market</h4>
+          </div>
+          <div class="mt-1 flex justify-end">
+            <div class="inline-flex items-center flex-nowrap whitespace-nowrap gap-[0.5em] text-[#E50000]"
+                 style="font-size: clamp(10px, 2.2vw, 13px);">
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <rect x="4.5" y="10" width="15" height="10" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M8 10V7a4 4 0 1 1 8 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+                </svg>
+              </span>
+              <span class="inline-flex items-center shrink-0 select-none" aria-hidden="true">
+                <svg class="w-[1.1em] h-[1.1em]" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+    <!-- ==================== PERSONALIZATION — PRO INFINITE CAROUSEL (NO AUTOPLAY, NO V-SCROLL DRIFT) ==================== -->
+<style>
+  .pcarousel { position: relative; width: 100%; }
+  .pc-viewport {
+    overflow: hidden;
+    width: 100%;
+    /* allow native vertical page scroll; carousel handles horizontal */
+    touch-action: pan-y;
+  }
+  .pc-track {
+    display: flex;
+    gap: 12px;                 /* visual spacing between slides */
+    will-change: transform;
+  }
+  .pc-slide { flex: 0 0 auto; } /* width assigned by JS for exact 1/2/3-up */
+
+  /* Dots: subtle red */
+  .pc-dots { display:flex; gap:.375rem; justify-content:center; align-items:center; margin-top:.5rem; }
+  .pc-dot { width:6px; height:6px; border-radius:9999px; background: rgba(229,0,0,.45); }
+  .pc-dot.is-active { background:#E50000; width:8px; height:8px; }
+
+  /* Desktop “grab” feel */
+  @media (hover:hover) and (pointer:fine) {
+    .pc-viewport { cursor: grab; }
+    .pc-viewport.dragging { cursor: grabbing; }
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .pc-track { scroll-behavior: auto; }
+  }
+</style>
+
+<div id="PersonalizationPro" class="pcarousel" aria-roledescription="carousel">
+  <div class="pc-viewport">
+    <div class="pc-track" aria-live="polite"></div>
+  </div>
+  <div class="pc-dots" aria-hidden="true"></div>
+</div>
+
+<!-- ===== Source block: your original cards (UNMODIFIED). We read & hide them; do not alter inside. ===== -->
+<section id="PersonalizationSource" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+  <!-- Media List -->
+  <aside class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] p-6 space-y-4">
+    <h3 class="text-xl font-semibold">Media List</h3>
+    <div class="space-y-4">
+      <div class="flex items-center gap-3 h-16">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1 flex flex-col justify-center h-full">
+          <p class="font-medium text-sm leading-tight">Night Runner</p>
+          <button class="mt-1 px-2 py-1 rounded bg-[#E50000] text-white text-xs font-semibold hover:bg-[#D40000] w-fit">See More</button>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 h-16">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1 flex flex-col justify-center h-full">
+          <p class="font-medium text-sm leading-tight">Hidden Courts</p>
+          <button class="mt-1 px-2 py-1 rounded bg-[#E50000] text-white text-xs font-semibold hover:bg-[#D40000] w-fit">See More</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Favorites -->
+  <aside class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] p-6 space-y-4">
+    <h3 class="text-xl font-semibold">Favorites</h3>
+    <div class="space-y-4">
+      <div class="flex items-center gap-3 h-16">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1 flex flex-col justify-center h-full">
+          <p class="font-medium text-sm leading-tight">Head Hunters</p>
+          <button class="mt-1 px-2 py-1 rounded bg-[#E50000] text-white text-xs font-semibold hover:bg-[#D40000] w-fit">See More</button>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 h-16">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1 flex flex-col justify-center h-full">
+          <p class="font-medium text-sm leading-tight">In the Court of Law</p>
+          <button class="mt-1 px-2 py-1 rounded bg-[#E50000] text-white text-xs font-semibold hover:bg-[#D40000] w-fit">See More</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- My Purchases -->
+  <aside class="rounded-2xl bg-[#111] ring-1 ring-[#1F1F1F] p-6 space-y-4">
+    <h3 class="text-xl font-semibold">My Purchases</h3>
+    <div class="space-y-4">
+      <div class="flex items-center gap-3 h-16">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1 flex flex-col justify-center h-full">
+          <p class="font-medium text-sm leading-tight">Jack and Any</p>
+          <button class="mt-1 px-2 py-1 rounded bg-[#E50000] text-white text-xs font-semibold hover:bg-[#D40000] w-fit">See More</button>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 h-16">
+        <img src="https://placehold.co/96x64" class="h-16 w-24 rounded-md object-cover" />
+        <div class="flex-1 flex flex-col justify-center h-full">
+          <p class="font-medium text-sm leading-tight">Behind the Clock</p>
+          <button class="mt-1 px-2 py-1 rounded bg-[#E50000] text-white text-xs font-semibold hover:bg-[#D40000] w-fit">See More</button>
+        </div>
+      </div>
+    </div>
+  </aside>
+</section>
+
+<script>
+(() => {
+  const root = document.getElementById('PersonalizationPro');
+  const viewport = root.querySelector('.pc-viewport');
+  const track = root.querySelector('.pc-track');
+  const dotsWrap = root.querySelector('.pc-dots');
+
+  // === 1) Read your original cards WITHOUT altering them ===
+  const source = document.getElementById('PersonalizationSource');
+  const originals = Array.from(source?.children || []).filter(n => n.tagName.toLowerCase() === 'aside');
+  if (!originals.length) return;
+  // Keep source for reference but hide it from layout/accessibility
+  source.style.display = 'none';
+  source.setAttribute('aria-hidden', 'true');
+
+  // === 2) Settings ===
+  const GAP = 12; // must match .pc-track gap (px)
+  const breakpoints = { lg: 1024, sm: 640 };
+  const perViewForWidth = (w) => (w >= breakpoints.lg ? 3 : (w >= breakpoints.sm ? 2 : 1));
+  const ease = 'cubic-bezier(.22,.61,.36,1)';
+  const dur = 380; // ms
+
+  // === 3) State ===
+  let perView = 3;
+  let slideW = 0;
+  let index = 0;               // virtual index within real slides (item-based)
+  let headClones = 0;
+  let tailClones = 0;
+  let slides = [];             // real slides (cloned asides wrapped in .pc-slide)
+  let pageCount = 1;
+  let dots = [];
+  let animating = false;
+
+  // === 4) Build / Rebuild ===
+  function clearTrack() {
+    track.innerHTML = '';
+    dotsWrap.innerHTML = '';
+    slides = [];
+    dots = [];
+  }
+
+  function build() {
+    const w = root.clientWidth;
+    perView = perViewForWidth(w);
+
+    clearTrack();
+
+    // Wrap each original <aside> into a .pc-slide (clone to keep originals intact)
+    const real = originals.map(node => {
+      const slide = document.createElement('div');
+      slide.className = 'pc-slide';
+      slide.appendChild(node.cloneNode(true));  // exact clone, no changes inside
+      return slide;
+    });
+
+    // Clones for infinite loop
+    headClones = perView + 1; // extra for smoother drag across edges
+    tailClones = perView + 1;
+
+    const head = real.slice(-headClones).map(s => s.cloneNode(true));
+    const tail = real.slice(0, tailClones).map(s => s.cloneNode(true));
+
+    // Append in order: head clones + real + tail clones
+    [...head, ...real, ...tail].forEach(s => track.appendChild(s));
+
+    slides = real;
+    index = 0;
+
+    // Compute slide width so exactly perView items (plus gaps) fit viewport
+    const totalGap = GAP * (perView - 1);
+    slideW = (viewport.clientWidth - totalGap) / perView;
+    Array.from(track.children).forEach((sl) => {
+      sl.style.width = slideW + 'px';
+    });
+
+    // Position at the first real item
+    setX(-((headClones) * (slideW + GAP)), false);
+
+    // Build dots per "page" (items / perView)
+    pageCount = Math.max(1, Math.ceil(slides.length / perView));
+    for (let i = 0; i < pageCount; i++) {
+      const d = document.createElement('button');
+      d.className = 'pc-dot';
+      d.addEventListener('click', () => goToPage(i));
+      dotsWrap.appendChild(d);
+      dots.push(d);
+    }
+    // Hide dots if only one page
+    dotsWrap.style.display = pageCount > 1 ? 'flex' : 'none';
+    updateDots();
+  }
+
+  function translateFor(i) {
+    // i = item index within real slides
+    const base = headClones; // offset caused by head clones
+    return -((base + i) * (slideW + GAP));
+  }
+
+  function setX(x, animate = true) {
+    track.style.transition = animate ? `transform ${dur}ms ${ease}` : 'none';
+    track.style.transform = `translate3d(${x}px,0,0)`;
+  }
+
+  function snapToIndex(newIndex, animate = true) {
+    index = newIndex;
+    setX(translateFor(index), animate);
+    if (animate) {
+      animating = true;
+      track.addEventListener('transitionend', () => { animating = false; normalize(); updateDots(); }, { once: true });
+    } else {
+      normalize();
+      updateDots();
+    }
+  }
+
+  function normalize() {
+    // If we moved past the ends, jump seamlessly
+    const n = slides.length;
+    if (index < 0) {
+      index = n - 1;
+      setX(translateFor(index), false);
+    } else if (index >= n) {
+      index = 0;
+      setX(translateFor(index), false);
+    }
+  }
+
+  function updateDots() {
+    if (!dots.length) return;
+    const active = Math.floor(index / perView);
+    dots.forEach((d, i) => d.classList.toggle('is-active', i === active));
+  }
+
+  function goToPage(p) {
+    const target = Math.min(slides.length - perView, Math.max(0, p * perView));
+    snapToIndex(target);
+  }
+
+  // === 5) Controls: next/prev, pointer drag with velocity, wheel (horizontal only) ===
+  function next(step = 1) {
+    if (animating) return;
+    snapToIndex(index + step);
+  }
+  function prev(step = 1) {
+    if (animating) return;
+    snapToIndex(index - step);
+  }
+
+  // expose for optional external controls
+  window.__pc_next = next;
+  window.__pc_prev = prev;
+
+  // Pointer drag with velocity-aware snapping
+  let isDown = false, startX = 0, startTime = 0, startOffsetX = 0, dx = 0;
+  function currentOffset() {
+    // compute current translateX based on computed style
+    const style = getComputedStyle(track).transform;
+    let tx = 0;
+    if (style && style !== 'none') {
+      const m = style.includes('matrix3d') ? style.match(/matrix3d\((.+)\)/)[1].split(',') : style.match(/matrix\((.+)\)/)[1].split(',');
+      tx = parseFloat(m[12] || m[4] || 0);
+    }
+    return tx;
+  }
+
+  viewport.addEventListener('pointerdown', (e) => {
+    isDown = true;
+    viewport.classList.add('dragging');
+    startX = e.clientX;
+    startTime = performance.now();
+    startOffsetX = currentOffset();
+    track.style.transition = 'none';
+  });
+  window.addEventListener('pointermove', (e) => {
+    if (!isDown) return;
+    dx = e.clientX - startX;
+    track.style.transform = `translate3d(${startOffsetX + dx}px,0,0)`;
+  });
+  window.addEventListener('pointerup', () => {
+    if (!isDown) return;
+    isDown = false;
+    viewport.classList.remove('dragging');
+
+    const dt = Math.max(1, performance.now() - startTime);
+    const v = dx / dt; // px per ms
+    const momentum = Math.sign(v) * Math.min(2, Math.abs(v) * 12); // modest boost
+    const movedItems = Math.round((-(dx + momentum * slideW * 0.35)) / (slideW + GAP));
+
+    dx = 0;
+    snapToIndex(index + movedItems);
+  });
+
+  // Wheel: ONLY react to horizontal intent; never hijack vertical page scroll
+  let wheelCooldown = false;
+  viewport.addEventListener('wheel', (e) => {
+    const horizIntent = Math.abs(e.deltaX) > Math.abs(e.deltaY) * 1.2 || e.shiftKey;
+    const significant  = Math.abs(e.deltaX) > 6; // ignore tiny jitters
+    if (!horizIntent || !significant || wheelCooldown) return; // let page scroll vertically
+
+    e.preventDefault(); // block horizontal page scroll only
+    e.deltaX > 0 ? next(1) : prev(1);
+
+    wheelCooldown = true;
+    setTimeout(() => (wheelCooldown = false), 160);
+  }, { passive: false });
+
+  // Keyboard (optional)
+  root.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight') next(1);
+    if (e.key === 'ArrowLeft')  prev(1);
+  });
+  root.tabIndex = 0; // focusable for keyboard use
+
+  // === 6) Resize / Rebuild with state preservation ===
+  let rebuildTimer = null;
+  function rebuild(preserve = true) {
+    const currentItem = index;
+    build();
+    if (preserve) {
+      snapToIndex(Math.min(slides.length - 1, currentItem), false);
+    }
+  }
+  window.addEventListener('resize', () => {
+    clearTimeout(rebuildTimer);
+    rebuildTimer = setTimeout(() => rebuild(true), 120);
+  });
+
+  // Init
+  build();
+  snapToIndex(0, false);
+})();
+</script>
+
+</div>
+
+<!-- ==================== GLOBAL FOOTER — CREATOR SUBSCRIBER UPSELL (REFINED) ==================== -->
+<footer class="bg-[#0F0F0F] text-gray-300">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
+
+    <!-- Top: Brand + Join card -->
+    <div class="grid gap-10 lg:grid-cols-3">
+      <!-- Brand & short pitch -->
+      <div class="space-y-5">
+        <!-- Logo placeholder -->
+        <a href="/" class="inline-flex items-center gap-3 group">
+          <span class="inline-flex h-9 w-2 items-center justify-center rounded-md bg-[#E50000]"></span>
+          <span class="h-5 w-36 rounded bg-white/90 group-hover:bg-white transition-colors"></span>
+          <span class="sr-only">Creator</span>
+        </a>
+
+        <p class="text-sm text-gray-400 leading-relaxed">
+          Unlock the full catalog, live replays, and member-only drops. Your support fuels new releases.
+        </p>
+
+        <!-- Social (subtle) -->
+        <div class="pt-1 flex items-center gap-3">
+          <a href="#" aria-label="Instagram" class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-black/40 ring-1 ring-white/10 hover:bg-white/5">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true">
+              <path d="M12 7.3A4.7 4.7 0 1 0 12 16.7 4.7 4.7 0 0 0 12 7.3Zm0-5.3c2.6 0 2.9 0 3.9.1 1 .1 1.7.2 2.3.5.6.3 1.1.6 1.6 1.1.5.5.8 1 .9 1.6.3.6.4 1.3.5 2.3.1 1 .1 1.3.1 3.9s0 2.9-.1 3.9c-.1 1-.2 1.7-.5 2.3-.3.6-.6 1.1-1.1 1.6-.5.5-1 .8-1.6 1.1-.6.3-1.3.4-2.3.5-1 .1-1.3.1-3.9.1s-2.9 0-3.9-.1-1.7-.2-2.3-.5c-.6-.3-1.1-.6-1.6-1.1-.5-.5-.8-1-.9-1.6-.3-.6-.4-1.3-.5-2.3C2 14.9 2 14.6 2 12s0-2.9.1-3.9c.1-1 .2-1.7.5-2.3.3-.6.6-1.1 1.1-1.6.5-.5 1-.8 1.6-1.1.6-.3 1.3-.4 2.3-.5C9.1 2 9.4 2 12 2Z"/>
+              <circle cx="18" cy="6" r="1.2"/>
+              <circle cx="12" cy="12" r="3.2" fill="#0F0F0F"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="YouTube" class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-black/40 ring-1 ring-white/10 hover:bg-white/5">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M23 7.5s-.2-1.5-.8-2.1c-.8-.8-1.7-.8-2.1-.9C17.5 4 12 4 12 4s-5.5 0-8.1.5c-.4.1-1.3.1-2.1.9C1.2 6 1 7.5 1 7.5S.8 9.3.8 11v2c0 1.7.2 3.5.2 3.5s.2 1.5.8 2.1c.8.8 1.9.8 2.4.9 1.8.2 7.8.5 7.8.5s5.5 0 8.1-.5c.4-.1 1.3-.1 2.1-.9.6-.6.8-2.1.8-2.1s.2-1.8.2-3.5v-2c0-1.7-.2-3.5-.2-3.5ZM9.8 15.5v-7l6.2 3.5-6.2 3.5Z"/></svg>
+          </a>
+          <a href="#" aria-label="X" class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-black/40 ring-1 ring-white/10 hover:bg-white/5">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M18.9 3H21l-6.5 7.4L22 21h-6.8l-4.3-5.3L5.9 21H3l7-8-6.6-7.9H10l4 4.9L18.9 3Z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Join the Membership card -->
+      <div class="lg:col-span-2">
+        <div class="rounded-2xl bg-[#121212] ring-1 ring-white/10 p-6 sm:p-8">
+          <div class="grid gap-6 md:grid-cols-3 md:gap-8">
+            <!-- Copy -->
+            <div class="md:col-span-2">
+              <h3 class="text-2xl font-bold text-white">Join the Membership</h3>
+              <!-- Perks row -->
+              <ul class="mt-4 flex items-center gap-4 sm:gap-5 text-xs text-gray-400 whitespace-nowrap [font-size:clamp(10px,2.6vw,12px)]">
+                <li class="inline-flex items-center gap-2">
+                  <span class="inline-block h-2 w-2 rounded-full bg-[#E50000]"></span> Ad-free
+                </li>
+                <li class="inline-flex items-center gap-2">
+                  <span class="inline-block h-2 w-2 rounded-full bg-[#E50000]"></span> Early Access
+                </li>
+                <li class="inline-flex items-center gap-2">
+                  <span class="inline-block h-2 w-2 rounded-full bg-[#E50000]"></span> Exclusive Content
+                </li>
+              </ul>
+            </div>
+
+            <!-- CTAs -->
+            <div class="md:col-span-1 flex flex-col gap-3">
+              <a href="#subscribe" class="inline-flex w-full justify-center rounded-lg bg-[#E50000] px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-600">
+                Subscribe
+              </a>
+              <a href="#shop" class="inline-flex w-full justify-center rounded-lg bg-white/5 ring-1 ring-white/10 px-5 py-2.5 text-sm hover:bg-white/10">
+                Buy a Title
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick links (Explore + Help side by side even on mobile) -->
+    <div class="mt-12 grid grid-cols-2 gap-8 sm:grid-cols-2 lg:grid-cols-2">
+      <!-- Explore -->
+      <div>
+        <h4 class="text-base font-semibold text-white">Learn More</h4>
+        <div class="mt-4 flex flex-col gap-2">
+          <a href="#catalog" class="rounded-md bg-white/5 ring-1 ring-white/10 px-3 py-2 text-sm hover:bg-white/10 text-center sm:text-left">About Us</a>
+          <a href="#new" class="rounded-md bg-white/5 ring-1 ring-white/10 px-3 py-2 text-sm hover:bg-white/10 text-center sm:text-left">Pricing Details</a>
+          <a href="#new" class="rounded-md bg-white/5 ring-1 ring-white/10 px-3 py-2 text-sm hover:bg-white/10 text-center sm:text-left">FAQ</a>
+        </div>
+      </div>
+
+      <!-- Help -->
+      <div>
+        <h4 class="text-base font-semibold text-white">Help</h4>
+        <div class="mt-4 flex flex-col gap-2">
+          <a href="#help" class="rounded-md bg-white/5 ring-1 ring-white/10 px-3 py-2 text-sm hover:bg-white/10 text-center sm:text-left">Help Center</a>
+          <a href="#contact" class="rounded-md bg-white/5 ring-1 ring-white/10 px-3 py-2 text-sm hover:bg-white/10 text-center sm:text-left">Contact</a>
+          <a href="#contact" class="rounded-md bg-white/5 ring-1 ring-white/10 px-3 py-2 text-sm hover:bg-white/10 text-center sm:text-left">Help FAQ</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="mt-12 h-px bg-white/10"></div>
+
+    <!-- Bottom: payments + legal -->
+    <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+      <!-- Legal -->
+      <div class="flex flex-wrap items-center gap-4 text-xs text-gray-500">
+        <p class="order-2 sm:order-1 w-full sm:w-auto">© 2025 Creator. All rights reserved.</p>
+        <div class="order-1 sm:order-2 flex items-center gap-4">
+          <a href="#terms" class="hover:text-gray-300">Terms</a>
+          <span class="h-3 w-px bg-white/10"></span>
+          <a href="#privacy" class="hover:text-gray-300">Privacy</a>
+          <span class="h-3 w-px bg-white/10"></span>
+          <a href="#cookies" class="hover:text-gray-300">Cookies</a>
+          <span class="h-3 w-px bg-white/10"></span>
+          <a href="#dmca" class="hover:text-gray-300">DMCA</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  <!-- Mobile menu toggle -->
+  <script>
+    const btn = document.getElementById('menuBtn');
+    const nav = document.getElementById('mobileNav');
+    if (btn && nav) {
+      btn.addEventListener('click', () => {
+        nav.classList.toggle('hidden');
+      });
+    }
+  </script>
+</body>
+</html>
