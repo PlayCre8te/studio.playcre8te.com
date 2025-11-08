@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>PlayCre8te Creator Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Uppy CSS + JS -->
+  <link href="https://releases.transloadit.com/uppy/v3.26.0/uppy.min.css" rel="stylesheet">
+  <script src="https://releases.transloadit.com/uppy/v3.26.0/uppy.min.js"></script>
+
+  <!-- Video.js -->
+  <link href="https://vjs.zencdn.net/8.10.0/video-js.css" rel="stylesheet" />
+  <script src="https://vjs.zencdn.net/8.10.0/video.min.js"></script>
+
+  <style>
+    /* Your dark bg + Uppy theme copied over verbatim */
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at top left, #0f172a, #1e293b);
+      z-index: -1;
+    }
+    
+    /* Page Protection (Ending) */
+
+    /* ===============================
+   Uppy — Dark Theme CSS Styling Beginning
+   =============================== */
+
+/* Base dark theme + tokens */
+.uppy-theme-dark {
+  /* Neutrals */
+  --bg:        #0b1220;
+  --panel:     #0f172a;
+  --muted:     #151c2f;
+  --muted-2:   #1f2937;
+  --line:      #334155;
+  /* Use light text everywhere for contrast */
+  --text:      #f9fafb;
+  --text-soft: #f3f4f6;
+  --text-dim:  #e5e7eb;
+
+  /* Brand */
+  --brand:     #38bdf8; /* light blue */
+  --brand-600: #0ea5e9;
+  --accent:    #22c55e; /* success / primary */
+  --accent-700:#16a34a;
+
+  /* Radii / shadows / motion */
+  --radius-lg: 1rem;
+  --radius-md: .75rem;
+  --radius-sm: .5rem;
+  --shadow-lg: 0 20px 45px rgba(0,0,0,.45);
+  --shadow-md: 0 10px 30px rgba(0,0,0,.35);
+  --transition: 180ms cubic-bezier(.2,.8,.2,1);
+}
+
+/* Prefer dark UI */
+@media (prefers-color-scheme: dark) { :root { color-scheme: dark; } }
+
+/* Shell */
+.uppy-theme-dark .uppy-Dashboard-inner {
+  background: var(--panel);
+  color: var(--text);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--line);
+}
+
+/* Top bar + status bar (no logo, no extra padding) */
+.uppy-theme-dark .uppy-DashboardContent-bar,
+.uppy-theme-dark .uppy-StatusBar {
+  background: var(--muted);
+  color: var(--text);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Tabs / provider buttons */
+.uppy-theme-dark .uppy-DashboardTab-btn {
+  background: var(--muted-2);
+  color: var(--text);
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  transition: transform var(--transition), background var(--transition), border-color var(--transition);
+}
+.uppy-theme-dark .uppy-DashboardTab-btn:hover {
+  background: var(--muted);
+  border-color: var(--line);
+  transform: translateY(-1px);
+}
+.uppy-theme-dark .uppy-DashboardTab-btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Drop area */
+.uppy-theme-dark .uppy-Dashboard-AddFiles {
+  background: var(--bg);
+  border: 2px dashed var(--line);
+  border-radius: var(--radius-md);
+  transition: border-color var(--transition), background var(--transition);
+  color: var(--text);
+}
+.uppy-theme-dark .uppy-Dashboard-AddFiles:hover {
+  border-color: var(--brand);
+  background: linear-gradient(180deg, var(--bg), var(--panel));
+}
+
+/* “Drop files here or” text — make brand blue */
+.uppy-theme-dark .uppy-Dashboard-AddFiles-title {
+  color: var(--brand);
+  font-weight: 500;
+}
+
+/* “Browse files” link/button — make brand blue + smaller text */
+.uppy-theme-dark .uppy-Dashboard-browse {
+  background-color: var(--brand);
+  color: #081320; /* dark text on light blue */
+  font-size: 0.85rem;
+  line-height: 1.1;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.5rem;
+  border: none;
+  transition: background-color var(--transition), transform var(--transition);
+}
+.uppy-theme-dark .uppy-Dashboard-browse:hover {
+  background-color: var(--brand-600);
+  transform: translateY(-1px);
+}
+.uppy-theme-dark .uppy-Dashboard-browse:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* File items */
+.uppy-theme-dark .uppy-DashboardItem-preview {
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+.uppy-theme-dark .uppy-DashboardItem-name { color: var(--text); }
+.uppy-theme-dark .uppy-DashboardItem-statusSize { color: var(--text-soft); }
+
+/* Inputs */
+.uppy-theme-dark .uppy-Dashboard-input,
+.uppy-theme-dark .uppy-ProviderBrowser-input {
+  background: var(--muted-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: .375rem;
+}
+.uppy-theme-dark .uppy-Dashboard-input::placeholder,
+.uppy-theme-dark .uppy-ProviderBrowser-input::placeholder { color: var(--text-soft); }
+
+/* Provider browser */
+.uppy-theme-dark .uppy-ProviderBrowser {
+  background: var(--panel);
+  color: var(--text);
+  border-top: 1px solid var(--line);
+}
+
+/* Primary actions */
+.uppy-theme-dark .uppy-StatusBar-actionBtn--upload,
+.uppy-theme-dark .uppy-DashboardAddFiles-btn {
+  background: var(--accent);
+  color: #081320;
+  border-radius: .5rem;
+  border: 1px solid transparent;
+  transition: transform var(--transition), background var(--transition), box-shadow var(--transition);
+}
+.uppy-theme-dark .uppy-StatusBar-actionBtn--upload:hover,
+.uppy-theme-dark .uppy-DashboardAddFiles-btn:hover {
+  background: var(--accent-700);
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(34,197,94,.25);
+}
+.uppy-theme-dark .uppy-StatusBar-actionBtn--upload:focus-visible,
+.uppy-theme-dark .uppy-DashboardAddFiles-btn:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Secondary buttons */
+.uppy-theme-dark .uppy-StatusBar-actionBtn--cancel,
+.uppy-theme-dark .uppy-c-btn {
+  background: var(--muted-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  border-radius: .5rem;
+}
+.uppy-theme-dark .uppy-StatusBar-actionBtn--cancel:hover,
+.uppy-theme-dark .uppy-c-btn:hover { background: var(--muted); }
+
+/* Progress + states */
+.uppy-theme-dark .uppy-StatusBar-progress {
+  background: var(--accent);
+  border-radius: .375rem;
+}
+.uppy-theme-dark .uppy-StatusBar.is-waiting,
+.uppy-theme-dark .uppy-StatusBar.is-processing,
+.uppy-theme-dark .uppy-StatusBar.is-complete {
+  background: var(--muted);
+  color: var(--text-soft);
+  border-top: 1px solid var(--line);
+}
+.uppy-theme-dark .uppy-StatusBar.is-complete .uppy-StatusBar-statusPrimary { color: var(--accent); }
+
+/* Informer / toasts */
+.uppy-theme-dark .uppy-Informer {
+  background: var(--muted-2);
+  color: var(--text);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-md);
+}
+
+/* Icon tint */
+.uppy-theme-dark .uppy-c-icon { color: var(--text-soft); }
+
+/* Focus rings */
+.uppy-theme-dark .uppy-Dashboard .uppy-u-reset:focus-visible,
+.uppy-theme-dark .uppy-Dashboard [tabindex]:focus-visible,
+.uppy-theme-dark .uppy-ProviderBrowser [tabindex]:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+  border-radius: .375rem;
+}
+
+/* Mobile polish */
+@media (max-width: 640px) {
+  .uppy-theme-dark .uppy-Dashboard-inner {
+    border-radius: .75rem;
+    box-shadow: 0 12px 28px rgba(0,0,0,.35);
+  }
+}
+
+/* Make the modal's "Done/Close" button readable and on-brand */
+.uppy-Dashboard-close {
+  background-color: var(--brand, #38bdf8) !important;
+  color: #0f172a !important;
+  font-weight: 600;
+  border-radius: 0.375rem;
+  padding: 0.5rem 1rem;
+  border: none;
+}
+.uppy-Dashboard-close:hover {
+  background-color: var(--brand-600, #0ea5e9) !important;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .uppy-theme-dark * { transition: none !important; animation: none !important; }
+}
+
+    /* ===============================
+   Uppy — Dark Theme CSS Styling Ending
+   =============================== */
+    /* (… keep your long Uppy dark theme CSS exactly as-is …) */
+  </style>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen flex flex-col uppy-theme-dark playcre8te-brand">
+
+<!-- Header (unchanged) -->
+<header class="sticky top-0 z-50 bg-gray-900 px-4 py-3 border-b border-gray-700 flex justify-between items-center md:px-6">
+  <div class="flex items-center space-x-4">
+    <button id="hamburgerBtn" class="md:hidden text-white text-2xl focus:outline-none">☰</button>
+    <div class="flex items-center h-10">
+      <img src="./playcrea8telogo.png" alt="PlayCre8te Logo" class="h-9 w-auto md:h-11" />
+    </div>
+  </div>
+  <div class="flex items-center space-x-4">
+    <button data-route="settings" class="focus:outline-none">
+      <img id="avatarHDThumb" src="" alt="Avatar" class="w-10 h-10 rounded-full object-cover border border-blue-500" />
+    </button>
+    <button id="logoutBtn" class="text-sm text-white bg-red-600 px-3 py-1 rounded hover:bg-red-700">Sign Out</button>
+  </div>
+</header>
+
+<!-- Mobile Menu -->
+<div id="mobileMenu" class="md:hidden hidden bg-gray-800 px-4 py-4 space-y-3 border-b border-gray-700">
+  <a href="#dashboard" class="block hover:text-blue-400">📊 Dashboard</a>
+  <a href="#media" class="block hover:text-blue-400">🎥 Media Library</a>
+  <a href="#brands" class="block hover:text-blue-400">🏷️ My Brands</a>
+  <a href="#products" class="block hover:text-blue-400">🛍️ Products</a>
+  <a href="#subscribers" class="block hover:text-blue-400">👥 Subscribers</a>
+  <a href="#analytics" class="block hover:text-blue-400">📈 Analytics</a>
+  <a href="#earnings" class="block hover:text-blue-400">💰 Earnings</a>
+  <a href="#addons" class="block hover:text-blue-400">🧩 Add-Ons & Upgrades</a>
+  <a href="#billing" class="block hover:text-blue-400">💳 Account Billing</a>
+  <a href="#settings" class="block hover:text-blue-400">⚙️ Account Settings</a>
+  <a href="#help" class="block hover:text-blue-400">❓ Need Help?</a>
+</div>
+
+<div class="flex min-h-screen">
+  <!-- Sidebar (desktop) -->
+  <aside class="fixed top-0 left-0 h-full w-64 bg-gray-800 p-6 z-40 hidden md:block">
+    <nav class="space-y-4 mt-16">
+      <a href="#dashboard" class="block font-medium hover:text-blue-400">📊 Dashboard</a>
+      <a href="#media" class="block hover:text-blue-400">🎥 Media Library</a>
+      <a href="#brands" class="block hover:text-blue-400">🏷️ My Brands</a>
+      <a href="#products" class="block hover:text-blue-400">🛍️ Products</a>
+      <a href="#subscribers" class="block hover:text-blue-400">👥 Subscribers</a>
+      <a href="#analytics" class="block hover:text-blue-400">📈 Analytics</a>
+      <a href="#earnings" class="block hover:text-blue-400">💰 Earnings</a>
+      <a href="#addons" class="block hover:text-blue-400">🧩 Add-Ons & Upgrades</a>
+      <a href="#billing" class="block hover:text-blue-400">💳 Account Billing</a>
+      <a href="#settings" class="block hover:text-blue-400">⚙️ Account Settings</a>
+      <a href="#help" class="block hover:text-blue-400">❓ Need Help?</a>
+    </nav>
+  </aside>
+
+  <!-- Main content mounts here -->
+  <main class="flex-1 pt-4 md:pl-64 px-4 sm:px-6 md:px-8">
+    <div id="app"></div>
+  </main>
+</div>
+
+<script type="module" src="./index.js"></script>
+</body>
+</html>

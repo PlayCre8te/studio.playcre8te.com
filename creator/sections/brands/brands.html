@@ -1,0 +1,89 @@
+<!-- My Brands Section -->
+<!-- Keep your config FIRST -->
+<style id="brands-layout-fixes">
+  /* Kill any accidental horizontal scroll caused by overly wide children */
+  html, body { overflow-x: hidden; }
+
+  /* Make sure the brand list never forces a wider-than-viewport layout */
+  #brandList {
+    box-sizing: border-box;
+    max-width: 100%;
+  }
+</style>
+
+<div class="px-4 sm:px-6 lg:px-8 max-w-screen-xl mx-auto">
+  <div class="bg-gray-800 pt-6 pr-6 pl-6 pb-3 rounded-xl max-w-3xl mx-auto text-center mb-6">
+    <h2 class="text-2xl font-semibold mb-3">🏷️ My Brands</h2>
+    <p class="text-gray-300 mb-5">Create and customize your brands. Set themes, descriptions, domains, and manage brand-specific content.</p>
+
+    <!-- Create Brand Button (hides when modal opens) -->
+    <button id="btnCreateBrand"
+            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold">
+      ➕ Create Brand
+    </button>
+  </div>
+
+  <!-- Brand List -->
+  <div class="px-2 sm:px-4 lg:px-6 max-w-full mx-auto">
+    <!-- Switched to flex so cards hug their content and wrap/center cleanly. IDs unchanged. -->
+    <div
+      id="brandList"
+      class="flex flex-wrap justify-center items-stretch gap-4 max-w-full"
+      style="padding-inline: 8px;"
+    ></div>
+
+    <div id="brandEmptyState" class="hidden text-center text-gray-400 py-10">
+      You don’t have any brands yet — click <span class="text-blue-400">Create Brand</span> to get started.
+    </div>
+  </div>
+
+  <template id="createBrandTemplate">
+    <form id="formCreateBrand" class="flex-1 flex flex-col min-h-0">
+      <!-- your entire updated Create Brand form markup goes here
+           (header, scrollable body, sticky footer, etc.) -->
+    </form>
+  </template>
+
+  <!-- Brand Setup Wizard (UI-only) -->
+  <div id="brandWizard" class="fixed inset-0 z-50 hidden">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-black/60" data-close-wizard></div>
+
+    <!-- Drawer -->
+    <div
+      class="absolute right-0 top-0 h-full w-full max-w-3xl bg-gray-900 text-white shadow-2xl ring-1 ring-white/10 flex flex-col"
+      style="max-width: min(100vw, 48rem);"
+    >
+      <!-- Header -->
+      <div class="flex items-center justify-between px-5 py-4 border-b border-white/10">
+        <div>
+          <div class="text-sm text-gray-400">Brand Setup</div>
+          <h3 id="wizardBrandName" class="text-xl font-semibold">Brand</h3>
+        </div>
+        <button id="wizardCloseBtn" class="text-2xl leading-none text-gray-300 hover:text-white" data-close-wizard>&times;</button>
+      </div>
+
+      <!-- Step nav -->
+      <div class="px-5 py-3 border-b border-white/10">
+        <div id="wizardSteps" class="flex flex-wrap gap-2">
+          <!-- Steps rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div id="wizardContent" class="flex-1 overflow-y-auto p-5" style="overscroll-behavior: contain;">
+        <!-- Step content rendered by JS -->
+      </div>
+
+      <!-- Footer actions -->
+      <div class="px-5 py-4 border-t border-white/10 flex items-center justify-between">
+        <button id="wizardPrevBtn" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded disabled:opacity-50">Back</button>
+        <div class="flex items-center gap-2">
+          <button id="wizardSaveBtn" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded">Save</button>
+          <button id="wizardNextBtn" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded">Next</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- /Brand Setup Wizard -->
+</div>

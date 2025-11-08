@@ -1,0 +1,37 @@
+<!-- creator/sections/earnings.html -->
+<div class="bg-gray-800 p-6 rounded-xl max-w-2xl mx-auto text-center">
+  <h2 class="text-2xl font-semibold mb-4">💰 Earnings</h2>
+  <p class="text-gray-300">
+    Connect your Stripe account to receive payouts. You can finish or refresh onboarding at any time.
+  </p>
+</div>
+
+<!-- One-account panel -->
+<div id="earningsPanel" class="mt-6 bg-gray-900/60 border border-gray-700 rounded-xl p-4 max-w-3xl mx-auto">
+  <div class="flex items-center justify-between gap-4 mb-3">
+    <h3 class="text-lg font-semibold">Stripe Connect Account</h3>
+    <button id="earningsStartOnboarding" class="px-3 py-1.5 rounded bg-indigo-600 hover:bg-indigo-500">
+      + Create / Continue Onboarding
+    </button>
+  </div>
+
+  <div class="text-sm text-gray-400 mb-4">
+    We support one Connect account per creator. All brands will route to this account by default.
+  </div>
+
+  <div id="earningsStatus" class="text-sm text-gray-300 mb-2"></div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left text-sm">
+      <thead class="text-gray-400">
+        <tr>
+          <th class="py-2 pr-4">Account ID</th>
+          <th class="py-2 pr-4">Charges</th>
+          <th class="py-2 pr-4">Payouts</th>
+          <th class="py-2 pr-4">Updated</th>
+        </tr>
+      </thead>
+      <tbody id="earningsAccounts"></tbody>
+    </table>
+  </div>
+</div>

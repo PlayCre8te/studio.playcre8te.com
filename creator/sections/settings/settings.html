@@ -1,0 +1,25 @@
+<div class="max-w-2xl w-full bg-gray-900/90 backdrop-blur-sm p-8 rounded-2xl shadow-xl text-center mx-auto">
+  <img src="./playcrea8telogo.png" alt="PlayCre8te Logo" class="mx-auto mb-6 w-40" />
+  <img id="avatarHD" src="" alt="Avatar HD" class="mx-auto mb-6 w-[128px] h-[128px] rounded-full object-cover border-4 border-blue-500 shadow-lg hidden" />
+
+  <div id="userInfo" class="mt-2 space-y-2 text-sm text-gray-300 mb-6">
+    <div><strong>Username:</strong> <span id="displayName">Loading...</span></div>
+    <div><strong>Email:</strong> <span id="email">Loading...</span></div>
+    <div><strong>Mode:</strong> <span id="mode">Loading...</span></div>
+  </div>
+
+  <div class="w-full max-w-xl mx-auto mb-6 text-left">
+    <label for="creatorBioInput" class="block mb-1 font-semibold text-blue-300">Creator Bio</label>
+    <textarea id="creatorBioInput" rows="4" class="w-full p-3 rounded text-sm text-gray-900" placeholder="Add your bio here..."></textarea>
+    <button id="saveBioBtn" class="mt-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold">Save Bio</button>
+    <p id="bioSavedMessage" class="text-green-400 text-sm mt-2 hidden">✅ Bio saved!</p>
+  </div>
+
+  <div class="bg-white text-gray-800 p-6 rounded-xl shadow-md w-full max-w-md mx-auto mb-6">
+    <h2 class="text-center text-lg font-semibold mb-4">Upload Your Avatar Here</h2>
+    <button id="uploadAvatarBtn" class="w-full mb-4 px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-semibold rounded">Upload Avatar</button>
+    <input id="avatarInput" type="file" accept="image/*" class="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-blue-600 file:text-white hover:file:bg-blue-700" />
+  </div>
+
+  <button id="settingsLogoutBtn" class="mt-4 px-4 py-2 bg-red-600 hover:bg-red-700 rounded text-white font-semibold">Sign Out</button>
+</div>
