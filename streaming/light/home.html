@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>PlayCre8te – Universal Themed Page</title>
+
+  <!-- Manrope font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              red: "#E50000",
+              card: "#1A1A1A",
+              line: "#262626",
+              line2: "#1F1F1F",
+              panel: "#0F0F0F",
+              bg: "#0B0B0B",
+            }
+          },
+          boxShadow: {
+            soft: "0 10px 30px rgba(0,0,0,0.35)",
+            glow: "0 0 0 4px rgba(229,0,0,0.25)"
+          }
+        }
+      }
+    }
+  </script>
+
+<style id="pc-accent-overrides">
+  /* single source of truth default accent color- #E50000 */
+  :root { --pc-accent: #E50000; } /* default; bootstrap.js will replace at runtime */
+
+  /* derived shades + translucents (fallbacks) */
+  :root{
+    --pc-accent-600:#cc0000; --pc-accent-700:#b30000;
+    --pc-accent-45a:rgba(229,0,0,.45);
+    --pc-accent-50a:rgba(229,0,0,.50);
+    --pc-accent-60a:rgba(229,0,0,.60);
+  }
+  @supports (color: color-mix(in srgb, black 10%, white)) {
+    :root{
+      --pc-accent-600: color-mix(in srgb, var(--pc-accent) 90%, black);
+      --pc-accent-700: color-mix(in srgb, var(--pc-accent) 80%, black);
+      --pc-accent-45a: color-mix(in srgb, var(--pc-accent) 45%, transparent);
+      --pc-accent-50a: color-mix(in srgb, var(--pc-accent) 50%, transparent);
+      --pc-accent-60a: color-mix(in srgb, var(--pc-accent) 60%, transparent);
+    }
+  }
+
+  /* map your Tailwind-ish reds to the token */
+  .bg-brand-red{background-color:var(--pc-accent)!important}
+  .text-brand-red{color:var(--pc-accent)!important}
+  .border-brand-red{border-color:var(--pc-accent)!important}
+  .ring-brand-red{--tw-ring-color:var(--pc-accent)!important}
+  .focus\:ring-brand-red:focus{--tw-ring-color:var(--pc-accent)!important}
+
+  /* arbitrary-hex utilities (with/without alpha; both cases) */
+  .bg-\[\#E50000\], .bg-\[\#e50000\]{background-color:var(--pc-accent)!important}
+  .text-\[\#E50000\], .text-\[\#e50000\]{color:var(--pc-accent)!important}
+  .fill-\[\#E50000\], .fill-\[\#e50000\]{fill:var(--pc-accent)!important}
+  .stroke-\[\#E50000\], .stroke-\[\#e50000\]{stroke:var(--pc-accent)!important}
+  .bg-\[\#E50000\]\/50, .bg-\[\#e50000\]\/50{background-color:var(--pc-accent-50a)!important}
+  .bg-\[\#E50000\]\/60, .bg-\[\#e50000\]\/60{background-color:var(--pc-accent-60a)!important}
+
+  /* hover/focus shades in sync */
+  .hover\:bg-red-600:hover{background-color:var(--pc-accent-600)!important}
+  .hover\:bg-red-700:hover{background-color:var(--pc-accent-700)!important}
+  .focus\:ring-red-600:focus{--tw-ring-color:var(--pc-accent-600)!important}
+  .focus\:ring-red-700:focus{--tw-ring-color:var(--pc-accent-700)!important}
+
+  /* dots (hero + mobile + snap carousels + generic pc-dot) */
+  .hc-dot{background:var(--pc-accent-50a)!important}
+  .hc-dot.is-active{background:var(--pc-accent)!important}
+  .mcar-dot{background:var(--pc-accent-45a)!important}
+  .mcar-dot.is-active{background:var(--pc-accent)!important}
+  #leDots button.bg-\[\#E50000\]\/60,
+  #rentDots button.bg-\[\#E50000\]\/60,
+  #pcDots button.bg-\[\#E50000\]\/60,
+  #catDots button.bg-\[\#E50000\]\/60{background-color:var(--pc-accent-60a)!important}
+  .pc-dot{background:var(--pc-accent-45a)!important}
+  .pc-dot.is-active{background:var(--pc-accent)!important}
+</style>
+
+<style id="pc-section-overrides">
+/* =========================
+   UNIVERSAL SECTION OVERRIDES
+   (Home + Explore)
+   Place AFTER Tailwind & pc-accent-overrides
+========================== */
+:root{
+  /* Page defaults (edit these) */
+  --site-bg:#ffffff;
+  --site-title:#000000;
+
+  /* Headings for top sections */
+  --sec-trending-bg:transparent;    --sec-trending-title:#000000;
+  --sec-newreleases-bg:transparent; --sec-newreleases-title:#000000;
+  --sec-mustwatch-bg:transparent;   --sec-mustwatch-title:#000000;
+  --sec-free-bg:transparent;        --sec-free-title:#0B0B0B;
+
+  /* Card titles (top sections) */
+  --sec-trending-card-title:#ffffff;
+  --sec-newreleases-card-title:#ffffff;
+  --sec-mustwatch-card-title:#ffffff;
+  --sec-free-card-title:#ffffff;
+
+  /* Explore (block two) — section titles */
+  --explore-live-bg:transparent;          --explore-live-title:#000000;
+  --explore-purchase-bg:transparent;      --explore-purchase-title:#000000;
+  --explore-collections-bg:transparent;   --explore-collections-title:#000000;
+  --explore-categories-bg:transparent;    --explore-categories-title:#000000;
+  --explore-personalization-bg:transparent; --explore-personalization-pad:0; --explore-personalization-title:#ffffff;
+
+  /* Explore (block two) — card titles */
+  --explore-live-card-title:#ffffff;
+  --explore-purchase-card-title:#ffffff;
+  --explore-collections-card-title:#ffffff;
+  --explore-categories-card-title:#ffffff;
+
+  /* Plans (Home) */
+  --plans-bg:transparent;
+  --plans-title:#0B0B0B;
+  --plans-sub:#D1D5DB;
+
+  /* Footer */
+  --footer-bg:#0F0F0F; --footer-fg:#D1D5DB; --footer-title:#FFFFFF;
+}
+
+/* ===== PAGE BACKGROUND — override Tailwind .bg-brand-bg on <body> ===== */
+html, body{ background-color:var(--site-bg) !important; }
+.bg-brand-bg{ background-color:var(--site-bg) !important; } /* handles <body class="bg-brand-bg"> on Home */
+
+/* =========================
+   SECTION HEADING COLORS
+   (works on both pages)
+========================== */
+/* Trending */
+section[data-pc-section="trending"],
+section.trending{ background-color:var(--sec-trending-bg) !important; }
+section[data-pc-section="trending"] h2,
+section.trending h2{ color:var(--sec-trending-title) !important; }
+
+/* New Releases */
+section[data-pc-section="newreleases"],
+section.new-releases{ background-color:var(--sec-newreleases-bg) !important; }
+section[data-pc-section="newreleases"] h2,
+section.new-releases h2{ color:var(--sec-newreleases-title) !important; }
+
+/* Must-Watch */
+section[data-pc-section="mustwatch"],
+section.must-watch{ background-color:var(--sec-mustwatch-bg) !important; }
+section[data-pc-section="mustwatch"] h2,
+section.must-watch h2{ color:var(--sec-mustwatch-title) !important; }
+
+/* Explore Free Media — includes Home coverflow fallback via :has(#cfViewportFM) */
+section[data-pc-section="free"],
+section.free-media,
+section:has(#cfViewportFM){ background-color:var(--sec-free-bg) !important; }
+section[data-pc-section="free"] h2,
+section.free-media h2,
+section:has(#cfViewportFM) h2{ color:var(--sec-free-title) !important; }
+
+/* =========================
+   CARD TITLE COLORS (per section)
+   Supports both grid (.pc-title) and coverflow (.cf-title) usages
+========================== */
+/* Trending */
+section[data-pc-section="trending"] .pc-title,
+section.trending .pc-title,
+section:has(#cfViewportTN) .cf-title{
+  color:var(--sec-trending-card-title) !important;
+}
+
+/* New Releases */
+section[data-pc-section="newreleases"] .pc-title,
+section.new-releases .pc-title,
+section:has(#cfViewportNR) .cf-title{
+  color:var(--sec-newreleases-card-title) !important;
+}
+
+/* Must-Watch */
+section[data-pc-section="mustwatch"] .pc-title,
+section.must-watch .pc-title,
+section:has(#cfViewportMW) .cf-title{
+  color:var(--sec-mustwatch-card-title) !important;
+}
+
+/* Explore Free Media */
+section[data-pc-section="free"] .pc-title,
+section.free-media .pc-title,
+section:has(#cfViewportFM) .cf-title{
+  color:var(--sec-free-card-title) !important;
+}
+
+/* =========================
+   EXPLORE — BLOCK TWO
+   (titles and card titles decoupled)
+========================== */
+/* Live Events */
+section:has(#leViewport){ background-color:var(--explore-live-bg) !important; }
+section:has(#leViewport) h2{ color:var(--explore-live-title) !important; }
+section:has(#leViewport) .le-title{ color:var(--explore-live-card-title) !important; }
+
+/* Purchases & Rentals */
+section:has(#rentViewport){ background-color:var(--explore-purchase-bg) !important; }
+section:has(#rentViewport) h2{ color:var(--explore-purchase-title) !important; }
+section:has(#rentViewport) .rent-title{ color:var(--explore-purchase-card-title) !important; }
+
+/* Media Collections */
+section:has(#pcViewport){ background-color:var(--explore-collections-bg) !important; }
+section:has(#pcViewport) h2{ color:var(--explore-collections-title) !important; }
+section:has(#pcViewport) .pc-title{ color:var(--explore-collections-card-title) !important; }
+
+/* Media Categories */
+section:has(#catViewport){ background-color:var(--explore-categories-bg) !important; }
+section:has(#catViewport) h2{ color:var(--explore-categories-title) !important; }
+section:has(#catViewport) .cat-title{ color:var(--explore-categories-card-title) !important; }
+
+/* Personalization Pro */
+#PersonalizationPro{ background-color:var(--explore-personalization-bg) !important; padding-block:var(--explore-personalization-pad) !important; }
+#PersonalizationPro h2{ color:var(--explore-personalization-title) !important; }
+
+/* =========================
+   PLANS (Home)
+========================== */
+#plans{ background-color:var(--plans-bg) !important; }
+#plans h2{ color:var(--plans-title) !important; }
+#plans p{ color:var(--plans-sub) !important; }
+
+/* =========================
+   FOOTER
+========================== */
+footer{ background-color:var(--footer-bg) !important; color:var(--footer-fg) !important; }
+footer h2, footer h3, footer h4{ color:var(--footer-title) !important; }
+</style>
+
+<script>
+(function () {
+  try {
+    var d = document.documentElement;
+    var host = location.host.toLowerCase().replace(/^www\./,'');
+    // Prefer per-domain cached site config (from bootstrap.js)
+    var raw = localStorage.getItem('pc:siteConfig:' + host);
+    if (raw) {
+      var cfg = JSON.parse(raw);
+
+      // Accent
+      var accent = cfg?.tokens?.accent;
+      if (accent) d.style.setProperty('--pc-accent', accent);
+
+      // Site background & title defaults
+      if (cfg?.tokens?.siteBg) d.style.setProperty('--site-bg', cfg.tokens.siteBg);
+      if (cfg?.tokens?.siteTitle) d.style.setProperty('--site-title', cfg.tokens.siteTitle);
+
+      // Section tokens (match what we defined in pc-section-overrides)
+      var sections = [
+        'trending','newreleases','mustwatch','free','catalogue'
+      ];
+      sections.forEach(function (key) {
+        var bg = cfg?.tokens?.[key+'Bg'];
+        var title = cfg?.tokens?.[key+'Title'];
+        if (bg) d.style.setProperty('--sec-'+key+'-bg', bg);
+        if (title) d.style.setProperty('--sec-'+key+'-title', title);
+      });
+      return;
+    }
+
+    // Fallback: legacy accent only
+    var accent2 = localStorage.getItem('pc:accent');
+    if (accent2) d.style.setProperty('--pc-accent', accent2);
+
+    // Optional: respect ?accent=HEX on first load
+    var m = location.search.match(/[?&]accent=(%23|#)?([0-9a-fA-F]{3,8})\b/);
+    if (m) d.style.setProperty('--pc-accent', '#' + m[2]);
+  } catch (e) {}
+})();
+</script>
+
+  <style>
+    :root { color-scheme: dark; }
+    html, body { height: 100%; }
+    body { font-family: "Manrope", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, "Helvetica Neue", Arial; }
+  </style>
+<style>
+  /* Two-line clamp (with vendor + standard for compatibility) */
+  .clamp-2 {
+    display: -webkit-box;        /* Required for webkit */
+    -webkit-line-clamp: 2;       /* Limit lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+
+    line-clamp: 2;               /* Standard property (not widely supported yet) */
+  }
+</style>
+
+<!-- Utilities (place once on page) -->
+<style>
+  /* Two-line clamp (with standard + webkit) */
+  .clamp-2{
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+            line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  /* No-wrap text that still shrinks on smaller screens */
+  .nowrap-ellipsis{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+</style>
+
+</head>
+<body class="bg-brand-bg text-white antialiased">
+
+<!-- ===================== Universal Header ===================== -->
+<header id="AppHeader"
+  class="sticky top-0 z-50 backdrop-blur supports-[backdrop-filter]:bg-black/35 bg-black/55 border-b border-white/10 transition-[box-shadow,background-color] duration-200">
+
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 items-center justify-between">
+      
+      <!-- Logo + Wordmark (link to home.html) -->
+      <a href="home.html" class="group flex items-center gap-3" aria-label="Home">
+        <span class="inline-flex h-9 w-2 items-center justify-center rounded-md bg-[#E50000]"></span>
+        <span class="flex items-center justify-center h-8 w-28 rounded bg-white/90 text-black font-semibold text-sm">Your Logo</span>
+        <!-- Wordmark text -->
+        <span class="hidden sm:block text-white/80 text-sm tracking-wide">Your&nbsp;Brand</span>
+      </a>
+
+      <!-- Desktop Nav -->
+      <nav class="hidden md:flex items-center gap-1 rounded-xl bg-black/70 ring-1 ring-white/10 p-1">
+        <a href="home.html" class="relative px-4 py-2 rounded-lg text-white font-medium bg-white/5">
+          Home
+          <span class="absolute inset-x-3 -bottom-[2px] h-[2px] rounded-full bg-[#E50000]"></span>
+        </a>
+        <a href="explore.html" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">Explore</a>
+        <a href="#" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">Support</a>
+        <a href="#" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">More</a>
+        <a href="#" class="px-4 py-2 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">Subscribe</a>
+      </nav>
+
+      <!-- Actions (Desktop) -->
+      <div class="hidden md:flex items-center gap-2">
+        <!-- Search -->
+        <button class="inline-flex h-9 w-9 items-center justify-center rounded-lg ring-1 ring-white/20 hover:bg-white/10" aria-label="Search">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="16.65" y1="16.65" x2="21" y2="21" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <!-- Profile -->
+        <button class="inline-flex h-9 w-9 items-center justify-center rounded-lg ring-1 ring-white/20 hover:bg-white/10" aria-label="Profile">
+          <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M5.5 21c1.5-4 11.5-4 13 0" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Mobile Hamburger -->
+      <button id="menuBtn"
+        class="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg ring-1 ring-white/20 hover:bg-white/10"
+        aria-expanded="false" aria-controls="mobileNav">
+        <span class="sr-only">Open Menu</span>
+        <!-- Hamburger icon -->
+        <svg class="h-6 w-6 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Mobile Drawer -->
+    <div id="mobileNav" class="hidden md:hidden pb-4">
+      <nav class="mt-3 rounded-xl bg-black/70 ring-1 ring-white/10 p-2 flex flex-col">
+        <a href="home.html" class="px-4 py-3 rounded-lg bg-white/5 text-white font-medium">Home</a>
+        <a href="explore.html" class="px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">Explore</a>
+        <a href="#" class="px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">Support</a>
+        <a href="#" class="px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">More</a>
+        <a href="#" class="px-4 py-3 rounded-lg text-gray-300 hover:text-white hover:bg-white/5">Subscribe</a>
+
+        <!-- Quick Actions -->
+        <div class="mt-2 grid grid-cols-2 gap-2">
+          <!-- Search -->
+          <button class="flex items-center justify-center gap-2 rounded-lg px-3 py-3 bg-white/5 ring-1 ring-white/10 text-white hover:bg-white/10" aria-label="Search">
+            <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" stroke-linecap="round" stroke-linejoin="round"/>
+              <line x1="16.65" y1="16.65" x2="21" y2="21" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="text-sm">Search</span>
+          </button>
+
+          <!-- Profile -->
+          <button class="flex items-center justify-center gap-2 rounded-lg px-3 py-3 bg-white/5 ring-1 ring-white/10 text-white hover:bg-white/10" aria-label="Profile">
+            <svg class="h-5 w-5 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="12" cy="7" r="4" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M5.5 21c1.5-4 11.5-4 13 0" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="text-sm">Profile</span>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </div>
+</header>
+
+
+<script>
+  (function () {
+    const btn = document.getElementById('menuBtn');
+    const drawer = document.getElementById('mobileNav');
+    if (!btn || !drawer) return;
+
+    let open = false;
+    btn.addEventListener('click', () => {
+      open = !open;
+      drawer.classList.toggle('hidden', !open);
+      btn.setAttribute('aria-expanded', String(open));
+    });
+  })();
+</script>
+
+  <!-- ===================== Hero ===================== -->
+<!-- ===================== Hero (Full-Visible 16:9 Rotating Banner) ===================== -->
+<section class="relative overflow-hidden">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-8 pt-10">
+    <!-- 16:9 box, rounded-2xl, ring -->
+    <div class="relative aspect-[16/9] w-full rounded-2xl overflow-hidden ring-1 ring-brand-line bg-brand-card">
+      <!-- Banner image -->
+      <img
+        id="heroBannerImg2"
+        src="https://placehold.co/1280x720?text=Banner+1"
+        alt="Featured banner"
+        class="absolute inset-0 w-full h-full object-contain transition-opacity duration-700 opacity-100 bg-brand-card"
+      />
+
+      <!-- Bottom gradient overlay -->
+      <div class="pointer-events-none absolute inset-x-0 bottom-0 h-44 sm:h-52 bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
+
+      <!-- Title + Subtext grouped inside gradient -->
+      <div class="absolute inset-x-0 bottom-0 px-6 sm:px-8 pb-8 text-center">
+        <h1 id="heroHeading2" class="text-3xl sm:text-5xl md:text-6xl font-extrabold leading-tight text-white">
+          The Best Streaming Experience
+        </h1>
+        <p id="heroSub2" class="mt-3 text-sm sm:text-base md:text-lg text-gray-300 max-w-4xl mx-auto">
+          Blockbusters, classics, and originals — all in one place. Stream anywhere, anytime.
+        </p>
+      </div>
+
+    </div>
+
+      <!-- CTA under the banner (updated: added 2nd button, responsive sizing, no wrap) -->
+          <div class="mt-8 flex items-center justify-center gap-2 sm:gap-3 md:gap-4 flex-nowrap w-full overflow-x-auto">
+            <!-- Primary: Subscribe Now (red) -->
+            <a
+              href="#plans"
+              class="shrink-0 inline-flex items-center gap-2 rounded-2xl bg-brand-red px-4 sm:px-6 md:px-7 py-2.5 sm:py-3.5 md:py-4
+                    text-xs sm:text-sm md:text-base font-semibold shadow-soft
+                    hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-brand-red focus:ring-offset-black
+                    whitespace-nowrap"
+            >
+              <span class="inline-block h-3 w-2 sm:h-3.5 sm:w-2.5 md:h-4 md:w-3 bg-white [clip-path:polygon(0_0,100%_50%,0_100%)]"></span>
+              Subscribe
+            </a>
+
+            <!-- Secondary: Subscribe Now (white / black) -->
+            <a
+              href="#plans"
+              class="shrink-0 inline-flex items-center gap-2 rounded-2xl bg-white text-black px-4 sm:px-6 md:px-7 py-2.5 sm:py-3.5 md:py-4
+                    text-xs sm:text-sm md:text-base font-semibold shadow-soft
+                    hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-black
+                    whitespace-nowrap"
+            >
+              <span class="inline-block h-3 w-2 sm:h-3.5 sm:w-2.5 md:h-4 md:w-3 bg-black [clip-path:polygon(0_0,100%_50%,0_100%)]"></span>
+              Sign In
+            </a>
+          </div>
+
+
+
+  <!-- Rotation script (3 banners, 10s each) -->
+  <script>
+    (function () {
+      const banners = [
+        {
+          img: 'https://placehold.co/1280x720?text=Banner+1',
+          h1:  'The Best Streaming Experience',
+          sub: 'Blockbusters, classics, and originals — all in one place. Stream anywhere, anytime.',
+        },
+        {
+          img: 'https://placehold.co/1280x720?text=Banner+2',
+          h1:  'New Releases Weekly',
+          sub: 'Discover fresh drops every week. Curated collections and handpicked gems.',
+        },
+        {
+          img: 'https://placehold.co/1280x720?text=Banner+3',
+          h1:  'Your Watchlists, Your Way',
+          sub: 'Create, organize, and resume across devices with lightning-fast playback.',
+        }
+      ];
+
+      const imgEl = document.getElementById('heroBannerImg2');
+      const hEl   = document.getElementById('heroHeading2');
+      const pEl   = document.getElementById('heroSub2');
+
+      let i = 0;
+      const DUR = 10000; // 10 seconds
+
+      function applyBanner(index, fade = true) {
+        const b = banners[index % banners.length];
+        if (!b) return;
+
+        if (fade) imgEl.style.opacity = '0';
+        hEl.textContent = b.h1;
+        pEl.textContent = b.sub;
+
+        setTimeout(() => {
+          imgEl.src = b.img;
+          requestAnimationFrame(() => (imgEl.style.opacity = '1'));
+        }, 120);
+      }
+
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) {
+        applyBanner(0, false);
+        return;
+      }
+
+      applyBanner(0, false);
+      setInterval(() => {
+        i = (i + 1) % banners.length;
+        applyBanner(i, true);
+      }, DUR);
+    })();
+  </script>
+</section>
+
+<!-- ===================== Free Media — Pro CoverFlow (Responsive for Mobile) ===================== -->
+<section class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-6 pb-8 select-none">
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+    <div class="flex items-baseline gap-2">
+      <h2 class="text-[clamp(22px,5vw,36px)] font-extrabold leading-tight">Explore Free Media</h2>
+      <button class="px-2 py-0.5 text-[10px] font-medium text-white bg-[#E50000] rounded hover:bg-red-700 transition whitespace-nowrap">
+        + See More
+      </button>
+    </div>
+  </div>
+
+  <!-- Viewport -->
+  <div id="cfViewportFM"
+      class="relative w-full overflow-hidden px-3 sm:px-4 md:px-6 py-8 sm:py-10 cursor-grab active:cursor-grabbing"
+      style="perspective:1200px; contain:layout paint; overscroll-behavior-x:contain;">
+    <div id="cfStageFM" class="relative mx-auto w-full"></div>
+  </div>
+
+  <!-- Slide Template -->
+  <template id="cfSlideTplFM">
+    <article class="cf-slide absolute top-1/2 left-1/2
+                    rounded-2xl ring-1 ring-[#262626] bg-[#1A1A1A] overflow-hidden
+                    shadow-[0_12px_28px_-10px_rgba(0,0,0,.6)] will-change-transform"
+             style="height:var(--slideH); transform-origin:center center;">
+      <div class="relative w-full h-full">
+        <img class="cf-img absolute inset-0 w-full h-full object-cover" src="" alt="" draggable="false" />
+
+        <!-- Darker bottom gradient -->
+        <div class="pointer-events-none absolute inset-x-0 bottom-0 h-40 sm:h-48
+                    bg-gradient-to-t from-black/90 via-black/60 to-transparent"></div>
+
+        <!-- Title + Icons -->
+        <div class="absolute left-0 right-0 bottom-0 p-4 sm:p-5">
+          <h3 class="cf-title text-white font-semibold text-sm sm:text-lg md:text-xl leading-tight
+                     whitespace-nowrap overflow-hidden text-ellipsis pr-2"></h3>
+          <div class="mt-2 flex items-center justify-between gap-1 sm:gap-1.5 md:gap-2 flex-nowrap w-full overflow-x-auto">
+          <!-- LEFT: Info + Views -->
+          <div class="flex items-center gap-1 sm:gap-1.5 md:gap-2">
+            <!-- Info -->
+            <div class="inline-flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full bg-black/40 ring-1 ring-white/20 text-white text-[10px] sm:text-xs md:text-sm whitespace-nowrap">
+              <span class="inline-flex items-center text-[#FFFFFF]">
+                <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"/>
+                  <path d="M12 10v7M12 7.2v.2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+              </span>
+            </div>
+            <!-- Views -->
+            <div class="inline-flex items-center gap-1 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full bg-black/40 ring-1 ring-white/20 text-white text-[10px] sm:text-xs md:text-sm whitespace-nowrap">
+              <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M2.5 12s3.5-6.5 9.5-6.5S21.5 12 21.5 12s-3.5 6.5-9.5 6.5S2.5 12 2.5 12Z"
+                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="12" cy="12" r="2.8" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+              <span class="cf-views">0</span>
+            </div>
+          </div>
+          <!-- RIGHT: $ (subscription), Card (one-time), Play -->
+          <div class="flex items-center gap-1 sm:gap-1.5 md:gap-2 whitespace-nowrap">
+            <!-- Subscription: Bold $ (SVG path for consistent weight) -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 6v-2M12 20v-2M16 10c0-1.657-1.79-3-4-3s-4 1.343-4 3 1.343 3 4 3 4 1.343 4 3-1.79 3-4 3-4-1.343-4-3"
+                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <!-- One-time Purchase: Credit Card -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="2" y="5" width="20" height="14" rx="2" ry="2"
+                      stroke="currentColor" stroke-width="1.8" fill="none"/>
+                <line x1="2" y1="10" x2="22" y2="10"
+                      stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+            </span>
+            <!-- Play -->
+            <span class="inline-flex items-center text-[#E50000]">
+              <svg class="w-3 h-3 sm:w-3.5 sm:h-3.5 md:w-4 md:h-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                <path d="M8 5.5v13l11-6.5-11-6.5Z"/>
+              </svg>
+            </span>
+          </div>
+        </div>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script>
+  (function(){
+    const OVERLAP = 0.22, RANGE = 2, DUR = 480, AUTO_MS = 3600;
+    const MAX_Z = 170, SCALE_C = 1.06, SCALE_S = 0.86, OVAL_Y = 14, STACK_NUDGE = 6;
+
+    const data = [
+      { img:'https://placehold.co/640x900?text=FM1', title:'City Lights, Free Nights', views:'245K' },
+      { img:'https://placehold.co/640x900?text=FM2', title:'Open Air Stories', views:'198K' },
+      { img:'https://placehold.co/640x900?text=FM3', title:'Midtown Mosaic', views:'173K' },
+      { img:'https://placehold.co/640x900?text=FM4', title:'Freewave Chronicles', views:'150K' },
+      { img:'https://placehold.co/640x900?text=FM5', title:'Harborline Tales', views:'132K' },
+      { img:'https://placehold.co/640x900?text=FM6', title:'Open Circuit', views:'119K' },
+      { img:'https://placehold.co/640x900?text=FM7', title:'Sunset Commons', views:'101K' }
+    ];
+
+    const viewport = document.getElementById('cfViewportFM');
+    const stage = document.getElementById('cfStageFM');
+    const tpl = document.getElementById('cfSlideTplFM');
+
+    const slides = data.map(d=>{
+      const node = tpl.content.firstElementChild.cloneNode(true);
+      node.querySelector('.cf-img').src = d.img;
+      node.querySelector('.cf-title').textContent = d.title;
+      node.querySelector('.cf-views').textContent = d.views;
+      stage.appendChild(node);
+      return node;
+    });
+
+    const N = slides.length;
+    let center = 0, locked = false;
+
+    function visibleTarget(){ return (window.innerWidth >= 1024)?5:3; }
+
+    function computeGeometry(){
+      const W = viewport.clientWidth;
+      const vis = visibleTarget();
+      const usable = Math.max(0, W - 24);
+      const denom = (vis - OVERLAP * (vis - 1));
+      let slideW = usable / denom;
+      if (W < 480) slideW = Math.min(slideW, 220);
+      slideW = Math.max(160, Math.min(320, slideW));
+      const slideH = Math.round(slideW * 1.3);
+      stage.style.width = W+'px';
+      stage.style.height = slideH+'px';
+      return { slideW, slideH, step: slideW * (1 - OVERLAP), W };
+    }
+
+    function wrap(i){ return (i % N + N) % N; }
+    function shortestDelta(from,to){
+      const raw=(to-from)%N; const a=(raw+N)%N; return (a>N/2)?a-N:a;
+    }
+
+    function placeSlides(animate=true){
+      const {slideW, slideH, step, W} = computeGeometry();
+      const tiltMax = (W<480)?14:26;
+      slides.forEach((slide,i)=>{
+        const d=shortestDelta(center,i);
+        const ad=Math.abs(d), side=Math.sign(d);
+        const clamped=Math.min(ad,RANGE), isCenter=(d===0);
+        let x=(clamped*side)*step;
+        if(ad>RANGE)x+=side*(ad-RANGE)*STACK_NUDGE;
+        const z=MAX_Z*(1-clamped/(RANGE+0.8));
+        const tilt=side*-tiltMax*(clamped/(RANGE+0.2));
+        const scale=isCenter?SCALE_C:(SCALE_S+(1-clamped/(RANGE+0.8))*0.12);
+        const y=OVAL_Y*(clamped/RANGE)-OVAL_Y*0.5;
+        const opacity=Math.max(0.30,1-(clamped*0.18));
+        const zBase=1000-clamped*10+(isCenter?1000:0);
+        const zTweak=side<0?-1:1;
+        slide.style.setProperty('--slideH', slideH+'px');
+        slide.style.width=slideW+'px';
+        slide.style.height=slideH+'px';
+        slide.style.opacity=opacity.toFixed(3);
+        slide.style.zIndex=String(zBase+zTweak);
+        slide.style.transition=animate?`transform ${DUR}ms cubic-bezier(.22,.61,.36,1), opacity ${DUR}ms ease`:'none';
+        slide.style.transform=`
+          translate(-50%,-50%)
+          translateX(${x}px)
+          translateY(${y}px)
+          translateZ(${z}px)
+          rotateY(${tilt}deg)
+          scale(${scale})
+        `;
+      });
+    }
+
+    function goto(targetCenter){
+      if(locked)return;
+      locked=true; center=wrap(targetCenter);
+      placeSlides(true);
+      clearTimeout(goto._t);
+      goto._t=setTimeout(()=>{locked=false;},DUR+20);
+    }
+    function next(){goto(center+1);} function prev(){goto(center-1);}
+
+    stage.addEventListener('click',e=>{
+      if(locked)return;
+      const card=e.target.closest('.cf-slide'); if(!card)return;
+      const idx=slides.indexOf(card); if(idx===-1)return;
+      const delta=shortestDelta(center,idx);
+      if(delta!==0)goto(center+delta);
+    });
+
+    let startX=0,dragging=false;
+    viewport.addEventListener('pointerdown',e=>{
+      if(locked)return; dragging=true; startX=e.clientX;
+      viewport.setPointerCapture(e.pointerId);
+    });
+    viewport.addEventListener('pointermove',e=>{
+      if(!dragging||locked)return;
+      const dx=e.clientX-startX;
+      if(Math.abs(dx)>48){ dx<0?next():prev(); dragging=false; }
+    });
+    window.addEventListener('pointerup',()=>{dragging=false;});
+
+    let wheelCooldown=false;
+    viewport.addEventListener('wheel',e=>{
+      const delta=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+      if(Math.abs(delta)<12)return; e.preventDefault();
+      if(wheelCooldown||locked)return;
+      wheelCooldown=true;
+      delta>0?next():prev();
+      setTimeout(()=>{wheelCooldown=false;},DUR+60);
+    },{passive:false});
+
+    window.addEventListener('keydown',e=>{
+      if(e.key==='ArrowRight')next();
+      if(e.key==='ArrowLeft')prev();
+    });
+
+    let autoTimerFM;
+    function startAuto(){stopAuto(); autoTimerFM=setInterval(next,AUTO_MS);}
+    function stopAuto(){if(autoTimerFM)clearInterval(autoTimerFM),(autoTimerFM=null);}
+    viewport.addEventListener('mouseenter',stopAuto);
+    viewport.addEventListener('mouseleave',startAuto);
+    viewport.addEventListener('touchstart',stopAuto,{passive:true});
+    viewport.addEventListener('touchend',startAuto,{passive:true});
+
+    function init(){ center=0; placeSlides(false); requestAnimationFrame(()=>placeSlides(false)); startAuto();}
+    window.addEventListener('resize',()=>placeSlides(false));
+    init();
+  })();
+  </script>
+</section>
+
+
+<!-- ===================== Pricing — Professional 3-card Carousel ===================== -->
+<section id="plans" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-8">
+  <div class="flex items-end justify-between gap-6">
+    <div class="max-w-7xl">
+      <h2 class="font-extrabold leading-tight text-[clamp(22px,3vw,36px)] whitespace-nowrap">
+        Choose the plan that’s right for you
+      </h2>
+    </div>
+  </div>
+
+  <!--
+    Mobile: horizontal scroll-snap, shows 1 full card + peek of next.
+    Tablet/Desktop: exactly 3 visible, no awkward scroll (arrows jump between cards).
+  -->
+  <div id="priceViewport"
+       class="relative mt-8 rounded-2xl">
+    <div id="priceTrack"
+         class="flex gap-6 overflow-x-auto md:overflow-x-hidden snap-x snap-mandatory scroll-smooth no-scrollbar"
+         style="scroll-padding-left: 1rem;">
+      <!-- Card 1 -->
+      <article class="price-card snap-start shrink-0 rounded-2xl bg-brand-card ring-1 ring-brand-line p-8 flex flex-col justify-between
+                      w-[85%] xs:w-[78%] sm:w-[70%] md:w-[calc((100%-48px)/3)]">
+        <div>
+          <h3 class="font-bold text-[clamp(16px,2.6vw,22px)] whitespace-nowrap">Basic Plan</h3>
+          <p class="mt-2 text-gray-400 clamp-2 text-[clamp(12px,1.9vw,16px)]">
+            Access a large library of movies and shows, including recent titles.
+          </p>
+        </div>
+        <div class="flex items-end gap-2 mt-6">
+          <span class="font-semibold text-[clamp(20px,4vw,32px)]">$9.99</span>
+          <span class="text-gray-400 text-[clamp(12px,2vw,14px)]">/month</span>
+        </div>
+        <div class="mt-6">
+          <a href="#"
+             class="inline-flex items-center justify-center rounded-2xl bg-brand-red px-5 py-3 text-white font-semibold hover:brightness-110 whitespace-nowrap">
+            Choose Plan
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 2 -->
+      <article class="price-card snap-start shrink-0 rounded-2xl bg-brand-card ring-1 ring-brand-line p-8 flex flex-col justify-between
+                      w-[85%] xs:w-[78%] sm:w-[70%] md:w-[calc((100%-48px)/3)]">
+        <div>
+          <h3 class="font-bold text-[clamp(16px,2.6vw,22px)] whitespace-nowrap">Standard Plan</h3>
+          <p class="mt-2 text-gray-400 clamp-2 text-[clamp(12px,1.9vw,16px)]">
+            Wider selection with most new releases and exclusive content.
+          </p>
+        </div>
+        <div class="flex items-end gap-2 mt-6">
+          <span class="font-semibold text-[clamp(20px,4vw,32px)]">$12.99</span>
+          <span class="text-gray-400 text-[clamp(12px,2vw,14px)]">/month</span>
+        </div>
+        <div class="mt-6">
+          <a href="#"
+             class="inline-flex items-center justify-center rounded-2xl bg-brand-red px-5 py-3 text-white font-semibold hover:brightness-110 whitespace-nowrap">
+            Choose Plan
+          </a>
+        </div>
+      </article>
+
+      <!-- Card 3 -->
+      <article class="price-card snap-start shrink-0 rounded-2xl bg-brand-card ring-1 ring-brand-line p-8 flex flex-col justify-between
+                      w-[85%] xs:w-[78%] sm:w-[70%] md:w-[calc((100%-48px)/3)]">
+        <div>
+          <h3 class="font-bold text-[clamp(16px,2.6vw,22px)] whitespace-nowrap">Premium Plan</h3>
+        <p class="mt-2 text-gray-400 clamp-2 text-[clamp(12px,1.9vw,16px)]">
+            All new releases, offline viewing, and the widest selection.
+          </p>
+        </div>
+        <div class="flex items-end gap-2 mt-6">
+          <span class="font-semibold text-[clamp(20px,4vw,32px)]">$14.99</span>
+          <span class="text-gray-400 text-[clamp(12px,2vw,14px)]">/month</span>
+        </div>
+        <div class="mt-6">
+          <a href="#"
+             class="inline-flex items-center justify-center rounded-2xl bg-brand-red px-5 py-3 text-white font-semibold hover:brightness-110 whitespace-nowrap">
+            Choose Plan
+          </a>
+        </div>
+      </article>
+    </div>
+
+    <!-- Pagination dots (always 3) -->
+    <div id="priceDots" class="mt-6 flex items-center justify-center gap-2">
+      <button class="h-1.5 w-5 rounded-full bg-[#E50000]" aria-label="Go to slide 1"></button>
+      <button class="h-1.5 w-5 rounded-full bg-gray-600" aria-label="Go to slide 2"></button>
+      <button class="h-1.5 w-5 rounded-full bg-gray-600" aria-label="Go to slide 3"></button>
+    </div>
+  </div>
+</section>
+
+<!-- Tiny helpers -->
+<style>
+  /* Hide scrollbar (keeps scroll working) */
+  .no-scrollbar::-webkit-scrollbar{ display:none; }
+  .no-scrollbar{ -ms-overflow-style:none; scrollbar-width:none; }
+  /* Two-line clamp with standard + webkit for lints/compat */
+  .clamp-2{
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+            line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .nowrap-ellipsis{ white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+</style>
+
+<script>
+  // ===== Professional 3-card carousel behavior =====
+  (function(){
+    const viewport = document.getElementById('priceViewport');
+    const track    = document.getElementById('priceTrack');
+    const cards    = Array.from(track.querySelectorAll('.price-card'));
+    const dots     = Array.from(document.getElementById('priceDots').children);
+    const prevBtn  = document.getElementById('pricePrev');
+    const nextBtn  = document.getElementById('priceNext');
+
+    // Scroll to specific index (0..2)
+    function scrollToIndex(i){
+      const isDesktop = window.matchMedia('(min-width: 768px)').matches; // tablet/desktop
+      if(isDesktop){
+        // Exactly 3 visible — align to start, no overflow scrolling
+        track.scrollTo({ left: 0, behavior: 'smooth' });
+      }else{
+        const card = cards[i];
+        if(!card) return;
+        const left = card.offsetLeft - parseInt(getComputedStyle(track).paddingLeft || 0);
+        track.scrollTo({ left, behavior: 'smooth' });
+      }
+      setActiveDot(i);
+    }
+
+    function setActiveDot(i){
+      dots.forEach((d,idx)=>{
+        d.classList.toggle('bg-[#E50000]', idx===i);
+        d.classList.toggle('bg-gray-600', idx!==i);
+      });
+    }
+
+    // Dots click
+    dots.forEach((d, i)=> d.addEventListener('click', ()=>scrollToIndex(i)));
+
+    // Arrows (desktop/tablet jump between cards 0..2)
+    let current = 0;
+    function next(){ current = (current+1)%3; scrollToIndex(current); }
+    function prev(){ current = (current+2)%3; scrollToIndex(current); }
+    if(prevBtn && nextBtn){
+      prevBtn.addEventListener('click', prev);
+      nextBtn.addEventListener('click', next);
+    }
+
+    // Sync active dot on mobile scroll
+    let ticking = false;
+    track.addEventListener('scroll', ()=>{
+      if(window.matchMedia('(min-width: 768px)').matches) return; // ignore desktop
+      if(!ticking){
+        window.requestAnimationFrame(()=>{
+          const x = track.scrollLeft + track.clientWidth * 0.1; // bias to current
+          let idx = 0, minDist = Infinity;
+          cards.forEach((c,i)=>{
+            const dist = Math.abs(c.offsetLeft - x);
+            if(dist < minDist){ minDist = dist; idx = i; }
+          });
+          current = idx;
+          setActiveDot(current);
+          ticking = false;
+        });
+        ticking = true;
+      }
+    }, {passive:true});
+
+    // Ensure initial layout shows 1 full + peek on mobile; 3 fixed on md+
+    function ensurePeek(){
+      // On small screens the widths (w-[85%]/[78%]/[70%]) produce a visible peek of next card.
+      // Nothing needed here; method kept for future adjustments.
+    }
+
+    window.addEventListener('resize', ()=>scrollToIndex(current));
+    // Init
+    setActiveDot(0);
+    ensurePeek();
+  })();
+</script>
+
+<!-- ===================== Universal Footer ===================== -->
+<footer class="bg-[#0F0F0F] text-gray-300">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
+
+    <!-- Top: Brand + Join card -->
+    <div class="grid gap-10 lg:grid-cols-3">
+      <!-- Brand & short pitch -->
+      <div class="space-y-5">
+        <!-- Logo placeholder -->
+        <a href="/" class="inline-flex items-center gap-3 group">
+          <span class="inline-flex h-9 w-2 items-center justify-center rounded-md bg-[#E50000]"></span>
+        <span class="flex items-center justify-center h-8 w-28 rounded bg-white/90 text-black font-semibold text-sm">Your Logo</span>
+          <span class="sr-only">Creator</span>
+        </a>
+
+        <p class="text-sm text-gray-400 leading-relaxed">
+          Connect and engage with us.
+        </p>
+
+        <!-- Social (subtle) -->
+        <div class="pt-1 flex items-center gap-3">
+          <a href="#" aria-label="Instagram" class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-black/40 ring-1 ring-white/10 hover:bg-white/5">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true">
+              <path d="M12 7.3A4.7 4.7 0 1 0 12 16.7 4.7 4.7 0 0 0 12 7.3Zm0-5.3c2.6 0 2.9 0 3.9.1 1 .1 1.7.2 2.3.5.6.3 1.1.6 1.6 1.1.5.5.8 1 .9 1.6.3.6.4 1.3.5 2.3.1 1 .1 1.3.1 3.9s0 2.9-.1 3.9c-.1 1-.2 1.7-.5 2.3-.3.6-.6 1.1-1.1 1.6-.5.5-1 .8-1.6 1.1-.6.3-1.3.4-2.3.5-1 .1-1.3.1-3.9.1s-2.9 0-3.9-.1-1.7-.2-2.3-.5c-.6-.3-1.1-.6-1.6-1.1-.5-.5-.8-1-.9-1.6-.3-.6-.4-1.3-.5-2.3C2 14.9 2 14.6 2 12s0-2.9.1-3.9c.1-1 .2-1.7.5-2.3.3-.6.6-1.1 1.1-1.6.5-.5 1-.8 1.6-1.1.6-.3 1.3-.4 2.3-.5C9.1 2 9.4 2 12 2Z"/>
+              <circle cx="18" cy="6" r="1.2"/>
+              <circle cx="12" cy="12" r="3.2" fill="#0F0F0F"/>
+            </svg>
+          </a>
+          <a href="#" aria-label="YouTube" class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-black/40 ring-1 ring-white/10 hover:bg-white/5">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M23 7.5s-.2-1.5-.8-2.1c-.8-.8-1.7-.8-2.1-.9C17.5 4 12 4 12 4s-5.5 0-8.1.5c-.4.1-1.3.1-2.1.9C1.2 6 1 7.5 1 7.5S.8 9.3.8 11v2c0 1.7.2 3.5.2 3.5s.2 1.5.8 2.1c.8.8 1.9.8 2.4.9 1.8.2 7.8.5 7.8.5s5.5 0 8.1-.5c.4-.1 1.3-.1 2.1-.9.6-.6.8-2.1.8-2.1s.2-1.8.2-3.5v-2c0-1.7-.2-3.5-.2-3.5ZM9.8 15.5v-7l6.2 3.5-6.2 3.5Z"/></svg>
+          </a>
+          <a href="#" aria-label="X" class="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-black/40 ring-1 ring-white/10 hover:bg-white/5">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="currentColor" aria-hidden="true"><path d="M18.9 3H21l-6.5 7.4L22 21h-6.8l-4.3-5.3L5.9 21H3l7-8-6.6-7.9H10l4 4.9L18.9 3Z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Join the Membership card -->
+      <div class="lg:col-span-2">
+        <div class="rounded-2xl bg-[#121212] ring-1 ring-white/10 p-6 sm:p-8">
+          <div class="grid gap-6 md:grid-cols-3 md:gap-8">
+            <!-- Copy -->
+            <div class="md:col-span-2">
+              <h3 class="text-2xl font-bold text-white">Join the Membership</h3>
+              <!-- Perks row -->
+              <ul class="mt-4 flex items-center gap-4 sm:gap-5 text-xs text-gray-400 whitespace-nowrap [font-size:clamp(10px,2.6vw,12px)]">
+                <li class="inline-flex items-center gap-2">
+                  <span class="inline-block h-2 w-2 rounded-full bg-[#E50000]"></span> Ad-free
+                </li>
+                <li class="inline-flex items-center gap-2">
+                  <span class="inline-block h-2 w-2 rounded-full bg-[#E50000]"></span> Early Access
+                </li>
+                <li class="inline-flex items-center gap-2">
+                  <span class="inline-block h-2 w-2 rounded-full bg-[#E50000]"></span> Exclusive Content
+                </li>
+              </ul>
+            </div>
+
+            <!-- CTAs -->
+            <div class="md:col-span-1 flex flex-col gap-3">
+              <a href="#subscribe" class="inline-flex w-full justify-center rounded-lg bg-[#E50000] px-5 py-2.5 text-sm font-semibold text-white hover:bg-red-600">
+                Subscribe
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick links (Explore + Help side by side even on mobile) -->
+    <div class="mt-12 grid grid-cols-2 gap-8 sm:grid-cols-2 lg:grid-cols-2">
+      <!-- Learn More -->
+      <div>
+        <h4 class="text-base font-semibold text-white">Learn More</h4>
+        <div class="mt-4 flex flex-col gap-2">
+          <a href="#catalog" class="rounded-md bg-white/5 ring-1 ring-white/10 px-3 py-2 text-sm hover:bg-white/10 text-center sm:text-left">About Us</a>
+          <a href="#new" class="rounded-md bg-white/5 ring-1 ring-white/10 px-3 py-2 text-sm hover:bg-white/10 text-center sm:text-left">Pricing Details</a>
+          <a href="#new" class="rounded-md bg-white/5 ring-1 ring-white/10 px-3 py-2 text-sm hover:bg-white/10 text-center sm:text-left">FAQ</a>
+        </div>
+      </div>
+
+      <!-- Help -->
+      <div>
+        <h4 class="text-base font-semibold text-white">Help</h4>
+        <div class="mt-4 flex flex-col gap-2">
+          <a href="#help" class="rounded-md bg-white/5 ring-1 ring-white/10 px-3 py-2 text-sm hover:bg-white/10 text-center sm:text-left">Help Center</a>
+          <a href="#contact" class="rounded-md bg-white/5 ring-1 ring-white/10 px-3 py-2 text-sm hover:bg-white/10 text-center sm:text-left">Contact</a>
+          <a href="#contact" class="rounded-md bg-white/5 ring-1 ring-white/10 px-3 py-2 text-sm hover:bg-white/10 text-center sm:text-left">Help FAQ</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="mt-12 h-px bg-white/10"></div>
+
+    <!-- Bottom: payments + legal -->
+    <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+
+      <!-- Legal -->
+      <div class="flex flex-wrap items-center gap-4 text-xs text-gray-500">
+        <p class="order-2 sm:order-1 w-full sm:w-auto">© 2025 PlayCre8te. All rights reserved.</p>
+        <div class="order-1 sm:order-2 flex items-center gap-4">
+          <a href="#terms" class="hover:text-gray-300">Terms</a>
+          <span class="h-3 w-px bg-white/10"></span>
+          <a href="#privacy" class="hover:text-gray-300">Privacy</a>
+          <span class="h-3 w-px bg-white/10"></span>
+          <a href="#dmca" class="hover:text-gray-300">DMCA</a>
+          <span class="whitespace-nowrap">
+          <span class="h-3 w-px bg-white/10"></span>
+          <a href="playcre8te" class="hover:text-gray-300">Powered By PlayCre8te</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+  <!-- Mobile menu toggle -->
+  <script>
+    const btn = document.getElementById('menuBtn');
+    const nav = document.getElementById('mobileNav');
+    if (btn && nav) {
+      btn.addEventListener('click', () => {
+        nav.classList.toggle('hidden');
+      });
+    }
+  </script>
+</body>
+</html>
